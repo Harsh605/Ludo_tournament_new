@@ -283,7 +283,7 @@ function SecondPage({ walletUpdate }) {
             this._socketListeners[eventName] = callback
         }
         // let socket = new WebSocket("wss://socket.ludo-khelo.com/server");
-        let socket = new WebSocket("wss://socket.khelludokhel.info");
+        let socket = new WebSocket("wss://84.247.133.7:7001");
         function openFunc() {
             socket.onopen = () => {
                 console.log('websocket is connected 👍');
@@ -484,7 +484,7 @@ function SecondPage({ walletUpdate }) {
                 if (isMounted.current) {
                     clearTimeout(socket.pingTimeout);
                     setSocket(undefined);
-                    socket = new WebSocket("wss://socket.khelludokhel.info");
+                    socket = new WebSocket("wss://84.247.133.7:7001");
                     //socket = new WebSocket("ws://192.168.29.119:5001/server");
                     openFunc();
                     listenFunc();
