@@ -727,13 +727,13 @@ function EnterFirstGame(props) {
                                     </div>
                                     || Game?.Room_code == 0 && (Game?.Created_by._id == user && <div className='roomCode cxy flex-column text-center'>
                                         Set Room Code
-                                        {/* <h6>लूडो किंग से रूम कोड अपलोड करें</h6> */}
-                                        {/* <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} /> */}
+                                        <h6>लूडो किंग से रूम कोड अपलोड करें</h6>
+                                        <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} />
                                         <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => getPost()}>Create ludo Game</button>
 
                                     </div> || (Game?.Accepetd_By._id == user) &&
                                         <div className='roomCode cxy flex-column text-center'>
-                                            Waiting for Game Link
+                                            Waiting for Room Code
                                             <h6>रूम कोड का इंतजार है।</h6>
                                             <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 
