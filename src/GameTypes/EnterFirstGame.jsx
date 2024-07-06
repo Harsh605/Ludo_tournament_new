@@ -254,35 +254,39 @@ function EnterFirstGame(props) {
         const headers = {
             Authorization: `Bearer ${access_token}`
         }
-    
-        await axios.patch(baseURL + `/challange/roomcode/${path}`,
-            {
-                Room_code: roomcode
-            },
-            { headers }
-        )
-        .then((res) => {
-            setGame(res.data)
-            socket.emit('challengeOngoing');
-    
-            // Add the axios post call here
-            axios.post("http://84.247.133.7:5010", {
-                action_to_do: "create"
-            })
-            .then((response) => {
-                console.log('Post request successful:', response.data);
-                window.open(response.data, '_blank'); // Open in a new page/tab
-            })
-            .catch((err) => {
-                console.error('Post request failed:', err.message);
-            });
+        // Add the axios post call here
+        await axios.post("http://84.247.133.7:5010", {
+            action_to_do: "create"
         })
-        .catch(e => {
-            console.log('e.message :>> ', e.message);
-            if (e.response.status === 401) {
-                handleUnAuthorized(e.response.status, navigate)
-            }
+        .then(async (response) => {
+            console.log('Post request successful:', response.data);
+            var parts = response.data.split('/');
+            var lastSegment = parts.pop() || parts.pop();  // handle potential trailing slash
+
+    
+            await axios.patch(baseURL + `/challange/roomcode/${path}`,
+                {
+                    Room_code: lastSegment
+                },
+                { headers }
+            )
+            .then((res) => {
+                setGame(res.data)
+                socket.emit('challengeOngoing');  
+                window.open(response.data, '_blank'); // Open in a new page/tab                
+            })
+            .catch(e => {
+                console.log('e.message :>> ', e.message);
+                if (e.response.status === 401) {
+                    handleUnAuthorized(e.response.status, navigate)
+                }
+            })
         })
+        .catch((err) => {
+            console.error('Post request failed:', err.message);
+        });
+    
+        
     }
     
     /// user details start
@@ -723,13 +727,13 @@ function EnterFirstGame(props) {
                                     </div>
                                     || Game?.Room_code == 0 && (Game?.Created_by._id == user && <div className='roomCode cxy flex-column text-center'>
                                         Set Room Code
-                                        <h6>लूडो किंग से रूम कोड अपलोड करें</h6>
-                                        <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} />
+                                        {/* <h6>लूडो किंग से रूम कोड अपलोड करें</h6> */}
+                                        {/* <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} /> */}
                                         <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => getPost()}>Create ludo Game</button>
 
                                     </div> || (Game?.Accepetd_By._id == user) &&
                                         <div className='roomCode cxy flex-column text-center'>
-                                            Waiting for Room Code
+                                            Waiting for Game Link
                                             <h6>रूम कोड का इंतजार है।</h6>
                                             <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 
