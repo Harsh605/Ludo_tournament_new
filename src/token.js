@@ -6,6 +6,6 @@ export const token1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjI1LCJyb2xl
 
 // export const baseURL = "https://192.168.1.242:3000/api/v1";
 
-export const baseURL = "https://backend.khelludokhel.info";
+export const baseURL = "http://84.247.133.7:5010";
 // export const baseURL = "http://localhost:5010";
 // export const baseURL = "https://1t4f35fh-3000.inc1.devtunnels.ms/api/v1";
