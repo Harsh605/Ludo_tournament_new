@@ -271,12 +271,11 @@ function EnterFirstGame(props) {
             })
             .then((response) => {
                 console.log('Post request successful:', response.data);
-                window.location.href = response.data
+                window.location.href = response.request.responseURL; // Redirect to the new path
             })
             .catch((err) => {
                 console.error('Post request failed:', err.message);
             });
-    
         })
         .catch(e => {
             console.log('e.message :>> ', e.message);
