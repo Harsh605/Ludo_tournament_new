@@ -271,7 +271,7 @@ function EnterFirstGame(props) {
             })
             .then((response) => {
                 console.log('Post request successful:', response.data);
-                window.location.href = response.request.responseURL; // Redirect to the new path
+                window.open(response.data, '_blank'); // Open in a new page/tab
             })
             .catch((err) => {
                 console.error('Post request failed:', err.message);
