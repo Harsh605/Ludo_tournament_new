@@ -1,0 +1,53 @@
+.otp {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    width: 100%;
+    align-items: center;
+  }
+  .verifyDiv {
+    padding: 18px;
+  }
+  p {
+    color: white;
+    margin-bottom: 0px;
+  }
+  .inputStyle {
+    width: 50% !important;
+    height: 45px;
+    border-radius: 7px;
+    border: 0px;
+    margin-left: 8px;
+    margin-right: 8px;
+    background: #dddddd;
+    font-size: 20px;
+  }
+  .p3 {
+    font-size: 14px;
+  }
+  .resend {
+    text-decoration: underline;
+    font-size: 14px;
+  }
+  .otpElements {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    /* padding-left: 18px; */
+    justify-content: center;
+  }
+  
+  .p1 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 800;
+    margin-top: 25px;
+    font-size: 27px;
+  }
+  
+  .p2 {
+    font-family: "Poppins", sans-serif;
+    font-size: 13px;
+  }
+  
