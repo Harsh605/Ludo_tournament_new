@@ -719,7 +719,8 @@ function EnterFirstGame(props) {
 
                                         <div className='text-center'>
                                             <div>Room Code</div>
-                                            <span>{Game?.Room_code}</span>
+                                            {/* <span>{Game?.Room_code}</span> */}
+                                            <a href={`http://84.247.133.7:5010/ludo/${Game?.Room_code}`}>{Game?.Room_code}</a>
                                         </div>
                                         <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} onClick={(e) => copyCode(e)} >
                                             Copy Code
