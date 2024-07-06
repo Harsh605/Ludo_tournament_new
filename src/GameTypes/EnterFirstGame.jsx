@@ -219,33 +219,72 @@ function EnterFirstGame(props) {
                 // }
             })
     }
+    // const getPost = async () => {
+    //     const access_token = localStorage.getItem("access_token")
+    //     const headers = {
+    //         Authorization: `Bearer ${access_token}`
+    //     }
+    //     await axios.patch(baseURL + `/challange/roomcode/${path}`,
+    //         {
+    //             Room_code: roomcode
+    //         }
+    //         , { headers })
+    //         .then((res) => {
+    //             //let gameUrl = "http://84.247.133.7:5010/ludo/6v401d";
+    //             setGame(res.data)
+    //             socket.emit('challengeOngoing');
+                
+    //         })
+    //         .catch(e => {
+    //             console.log('e.message :>> ', e.message);
+    //             if (e.response.status == 401) {
+    //                 handleUnAuthorized(e.response.status, navigate)
+    //             }
+    //             // if (e.response.status == 401) {
+    //             //     localStorage.removeItem('token');
+    //             //     localStorage.removeItem('token');
+    //             //     window.location.reload()
+    //             //     navigate("/LoginPage")
+    //             // }
+    //         })
+    // }
+
     const getPost = async () => {
         const access_token = localStorage.getItem("access_token")
         const headers = {
             Authorization: `Bearer ${access_token}`
         }
+    
         await axios.patch(baseURL + `/challange/roomcode/${path}`,
             {
                 Room_code: roomcode
+            },
+            { headers }
+        )
+        .then((res) => {
+            setGame(res.data)
+            socket.emit('challengeOngoing');
+    
+            // Add the axios post call here
+            axios.post("http://84.247.133.7:5010", {
+                action_to_do: "create"
+            })
+            .then((response) => {
+                console.log('Post request successful:', response.data);
+            })
+            .catch((err) => {
+                console.error('Post request failed:', err.message);
+            });
+    
+        })
+        .catch(e => {
+            console.log('e.message :>> ', e.message);
+            if (e.response.status === 401) {
+                handleUnAuthorized(e.response.status, navigate)
             }
-            , { headers })
-            .then((res) => {
-                setGame(res.data)
-                socket.emit('challengeOngoing');
-            })
-            .catch(e => {
-                console.log('e.message :>> ', e.message);
-                if (e.response.status == 401) {
-                    handleUnAuthorized(e.response.status, navigate)
-                }
-                // if (e.response.status == 401) {
-                //     localStorage.removeItem('token');
-                //     localStorage.removeItem('token');
-                //     window.location.reload()
-                //     navigate("/LoginPage")
-                // }
-            })
+        })
     }
+    
     /// user details start
 
 
@@ -686,7 +725,7 @@ function EnterFirstGame(props) {
                                         Set Room Code
                                         <h6>लूडो किंग से रूम कोड अपलोड करें</h6>
                                         <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} />
-                                        <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => getPost()}>SET ROOM CODE</button>
+                                        <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => getPost()}>Create ludo Game</button>
 
                                     </div> || (Game?.Accepetd_By._id == user) &&
                                         <div className='roomCode cxy flex-column text-center'>
