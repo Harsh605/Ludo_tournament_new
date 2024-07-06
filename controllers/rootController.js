@@ -29,9 +29,26 @@ exports.post = (req,res)=>{
 }
 
 //to generate unique rooms
-function randomPath(){
-    let randomPath = Math.random().toString(36).substr(2, 6);
-    if(!Object.keys(rooms).includes(randomPath)){
+// function randomPath(){
+//     let randomPath = Math.random().toString(36).substr(2, 6);
+//     if(!Object.keys(rooms).includes(randomPath)){
+//         return randomPath;
+//     } else{ randomPath(); }
+// };
+
+function randomPath() {
+    function generateCode() {
+        // Generate a 7-digit random number and pad it with zeros if necessary
+        let randomPath = '0' + Math.floor(Math.random() * 1e7).toString().padStart(7, '0');
         return randomPath;
-    } else{ randomPath(); }
-};
+    }
+
+    let newCode = generateCode();
+    // Ensure the code is unique
+    while (rooms.hasOwnProperty(newCode)) {
+        newCode = generateCode();
+    }
+
+    return newCode;
+}
+
