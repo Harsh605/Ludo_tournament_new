@@ -1,0 +1,219 @@
+.small-box{
+   width: 310px;
+   padding: 20px;
+   margin-left: 5px;
+ 
+   animation: fadeInOut 1s;
+}
+.small-box.bg-range{
+background-color: #15236e!important;
+width: 600px;
+}
+
+.small-box.bg-info {
+    background-color: #15236e!important;
+}
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    
+  }
+  70% {
+    opacity: 1;
+    transition: 450ms;
+  }
+ 
+}
+h3{ 
+    transform: scale(1.04) ;
+   transition: 0.8s !important;
+   transition-duration: 0.9s !important;
+   transition-timing-function: ease all !important;
+}
+.small-box>p{
+    text-align: right;
+    color: rgb(138, 177, 255);
+}
+.small-box>.inner>h3{
+    
+    font-size: 30px;
+    text-align: right;
+    color: yellow;
+}
+.main-small-box{
+    margin-left: 2%;
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgb(135, 135, 135);
+    
+}
+.small-box .icon svg {
+    font-size: 70px;
+    position: absolute;
+    right: 226px;
+    top: 15px;
+    transition: -webkit-transform .3s linear;
+    transition: transform .3s linear;
+    transition: transform .3s linear,-webkit-transform .3s linear;
+}
+
+
+.inner{
+    color: black;
+   margin-bottom: 6px ;
+    border-bottom: 2px solid rgb(118, 116, 116);
+}
+.bg-info {
+    background-color: #ffffff!important;
+}
+.container-heading{
+    padding-top: 5px;
+    margin-left: 5%;
+    padding-bottom :30px;
+}
+.container-heading>h1{
+   color: rgb(230, 251, 141);
+    margin-top: 20px;
+    padding-top: 40px;
+    margin-bottom: -19px;
+    font-size: 30px;
+    
+}
+h2{  font-size: 15px !important;
+    color: rgb(249, 226, 110) !important;
+}
+@media (max-width:1130px){
+    .main-small-box{
+        place-content: center;
+     
+    }
+}
+
+.css-hyum1k-MuiToolbar-root{
+      background-color: #19072e;
+}
+.section{
+    place-items: center;
+}
+@media (min-width: 600px){
+
+.css-hyum1k-MuiToolbar-root {
+    background-color: #19072e;
+    min-height: 64px;
+}}
+@media (min-width: 600px){
+
+.css-2dum1v-MuiDrawer-docked .MuiDrawer-paper {
+    width: calc(64px + 1px);
+    background-color: #371b58;
+}}
+@media (min-width: 600px){
+
+.css-1r9jet7 {
+    min-height: 64px;
+    background-color: #371b58;
+}}
+#icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.color-changing-icon {
+  animation: colorAnimation 3s infinite;
+}
+
+@keyframes colorAnimation {
+  0% {
+    color: red;
+  }
+  50% {
+    color: lightgreen;
+  }
+  100% {
+    color: red;
+  }
+}
+
+
+
+
+.css-1r9jet7 {
+    background-color: #00064b !important;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: end;
+    justify-content: flex-end;
+    padding: 0px 8px;
+    min-height: 56px;
+}
+.css-1ontqvh {
+   background-color: #00064b !important;
+    list-style: none;
+    margin: 0px;
+    padding: 8px 0px;
+    position: relative;
+}
+.css-1l8j5k8 {
+    background-color: #00064b !important;
+    color: rgba(0, 0, 0, 0.87);
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    box-shadow: none;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 1 0 auto;
+    z-index: 1200;
+    position: fixed;
+    top: 0px;
+    outline: 0px;
+    left: 0px;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.css-hlvchu .MuiDrawer-paper {
+  background-color: #00064b !important;
+    width: 240px;
+    transition: width 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+    overflow-x: hidden;
+}
+
+.registration-container {
+    background-color: rgb(255 255 255) !important;
+    /* background-color: #5e5196; */
+    /* background-color: #8062D6; */
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 2rem;
+    box-shadow: 0px 11px 21px -18px rgb(255 255 255 ) !important;
+}
+/* .registration-container {
+    background-color: rgb(166 128 249) !important;
+    background-color: #5e5196;
+    background-color: #8062D6;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 2rem;
+        box-shadow: 0px 11px 21px -18px rgb(255 255 255 ) !important;
+} */
+
+/* Style for form inputs */
+.MuiFormControl-root {
+    margin-bottom: 1rem !important;
+}
+
+/* Style for the Register button */
+.MuiButton-containedPrimary {
+    background-color: #6200ea !important;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.MuiButton-containedPrimary:hover {
+    background-color: #4700b3 !important;
+}
+

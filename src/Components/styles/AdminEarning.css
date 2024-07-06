@@ -1,0 +1,31 @@
+.Admin-earning{
+  animation: fadeInOut 1s;
+       
+  transition: 0.8s !important;
+  transition-duration: 0.9s !important;
+  transition-timing-function: ease !important;
+}
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    
+  }
+  50% {
+    opacity: 1;
+    transition: 450ms;
+  }
+ 
+}
+/* Add Media Query for Tablets */
+@media screen and (max-width: 1024px) {
+  .Admin-earning {
+    /* Adjust styling for tablet-sized screens */
+  }
+}
+
+/* Add Media Query for Phones */
+@media screen and (max-width: 768px) {
+  .Admin-earning {
+    /* Adjust styling for phone-sized screens */
+  }
+}

@@ -1,0 +1,30 @@
+.admin-manager{
+animation: fadeInOut 1s;
+       
+  transition: 0.8s !important;
+  transition-duration: 0.9s !important;
+  transition-timing-function: ease !important;
+}
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    
+  }
+  50% {
+    opacity: 1;
+    transition: 450ms;
+  }
+ 
+}
+
+.hoverbutton{
+background: rgb(95, 40, 222) !important;
+  border: none;
+  color: white;
+  transition: 150ms;
+}
+.hoverbutton:hover{
+transform: scale(1.08);
+color: white;
+
+}

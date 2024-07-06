@@ -1,0 +1,8 @@
+/* fadeIn animation */
+.fadeIn {
+    opacity: 0 !important; /* Start with 0 opacity */
+    transition: opacity 0.5s ease-in-out !important; /* Transition opacity over 0.5 seconds */
+}
+.fadeIn.show {
+    opacity: 1 !important; /* Show the component by setting opacity to 1 */
+}

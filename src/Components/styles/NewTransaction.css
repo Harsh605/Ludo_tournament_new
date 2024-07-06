@@ -1,0 +1,14 @@
+.attractive-button {
+  background-color: #4caf50; /* Green background color */
+  border: none; /* Remove border */
+  color: white; /* White text color */
+  padding: 10px 20px; /* Add padding */
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px; /* Add rounded corners */
+  cursor: pointer;
+  margin-right: 10px; /* Add some spacing between buttons */
+}
+
