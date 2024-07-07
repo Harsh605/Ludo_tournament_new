@@ -153,6 +153,7 @@ nsp.on('connection',(socket)=>{
             console.log(rooms[roomKey.room],socket.id);
             socket.to(roomKey.room).emit('user-disconnected',roomKey.key)
         }
+        socket.emit('imposter');
         console.log('A client just got disconnected');
     });
 });
