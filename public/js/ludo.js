@@ -363,7 +363,7 @@ function outputMessage(anObject,k){
                 // Optionally, you could redirect to a specific URL here
                 // window.location.href = 'your-fallback-url.html';
             }
-        }, 2000); // 2000 milliseconds = 2 seconds
+        }, 15000); // 2000 milliseconds = 2 seconds
     }
     msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
 };
