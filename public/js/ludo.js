@@ -352,6 +352,11 @@ function outputMessage(anObject,k){
         div.classList.add('messageFromServer');
         div.innerHTML = `<p>&#8605;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> just left the game </br> You are the winner of this game 🤩🥳🥳🤑</span></p>`;
         msgBoard.appendChild(div);
+
+        // Add a slight delay before navigating back
+        setTimeout(() => {
+            window.history.back(); // This will navigate to the previous page
+        }, 2000); // 2000 milliseconds = 2 seconds
     }
     msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
 };
