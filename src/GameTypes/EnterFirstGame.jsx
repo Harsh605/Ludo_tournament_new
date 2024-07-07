@@ -606,6 +606,17 @@ function EnterFirstGame(props) {
         setScrnshot1(URL.createObjectURL(e.target.files[0]))
         setScrnshot(e.target.files[0])
     }
+
+    const [selectedMode, setSelectedMode] = useState("");
+
+    useEffect(() => {
+        // Get the gameMode from localStorage when the component mounts
+        const savedGameMode = localStorage.getItem("gameMode");
+        if (savedGameMode) {
+            setSelectedMode(savedGameMode);
+        }
+    }, []);
+
     return (
         <>
             <section id="main-bg">
@@ -719,12 +730,20 @@ function EnterFirstGame(props) {
 
                                         <div className='text-center'>
                                             <div>Room Code</div>
+                                            {
+                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <a href={`http://84.247.133.7:5010/ludo/${Game?.Room_code}`} target="_blank">{`http://84.247.133.7:5010/ludo/${Game?.Room_code}`}</a>
+                                            }
                                             {/* <span>{Game?.Room_code}</span> */}
-                                            <a href={`http://84.247.133.7:5010/ludo/${Game?.Room_code}`} target="_blank">{`http://84.247.133.7:5010/ludo/${Game?.Room_code}`}</a>
+                                            
                                         </div>
-                                        <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} onClick={(e) => copyCode(e)} >
+
+                                        {
+                                            selectedMode === "offSite" ? <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} onClick={(e) => copyCode(e)} >
                                             Copy Code
-                                        </button>
+                                        </button> : null
+                                        
+                                        }
+                                        
                                     </div>
                                     || Game?.Room_code == 0 && (Game?.Created_by._id == user && <div className='roomCode cxy flex-column text-center'>
                                         Set Room Code

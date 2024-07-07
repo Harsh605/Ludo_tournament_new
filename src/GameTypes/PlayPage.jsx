@@ -57,6 +57,24 @@ function PlayPage() {
         // return () => clearInterval(intervalId);
     }, [])
 
+    const [selectedMode, setSelectedMode] = useState("");
+
+    useEffect(() => {
+        // Get the gameMode from localStorage when the component mounts
+        const savedGameMode = localStorage.getItem("gameMode");
+        if (savedGameMode) {
+            setSelectedMode(savedGameMode);
+        }
+    }, []);
+
+    const handleChange = (e) => {
+        const selectedMode = e.target.value;
+        if (selectedMode === "onSite" || selectedMode === "offSite") {
+            localStorage.setItem("gameMode", selectedMode);
+            setSelectedMode(selectedMode);
+        }
+    };
+
 
     return (
         <>
@@ -82,6 +100,27 @@ function PlayPage() {
 
                         </div>
                         <div className="col-12">
+                            <div className="row align-items-center my-2">
+                                <div className="my-auto col-6 text-white">
+                                    <h4>Games Mode</h4>
+                                </div>
+                                <div className="col-6 d-flex justify-content-end">
+                                    <div className='row d-flex'>
+                                        <select 
+                                            name="" 
+                                            className='form-control' 
+                                            id="" 
+                                            value={selectedMode}
+                                            onChange={handleChange}
+                                        >
+                                            <option value="" disabled>Select mode</option>
+                                            <option value="onSite">On site play</option>
+                                            <option value="offSite">Off site play</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
                             <div className="row align-items-center my-2">
                                 <div className="my-auto col-6 text-white">
                                     <h2>Games</h2>
