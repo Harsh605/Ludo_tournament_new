@@ -347,15 +347,22 @@ function outputMessage(anObject,k){
         msgBoard.appendChild(div);
     }
 
-    else if(k===6){
+    else if (k === 6) {
         const div = document.createElement('div');
         div.classList.add('messageFromServer');
         div.innerHTML = `<p>&#8605;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> just left the game </br> You are the winner of this game 🤩🥳🥳🤑</span></p>`;
         msgBoard.appendChild(div);
-
-        // Add a slight delay before navigating back
+        
+        // Add a slight delay before attempting to switch tabs
         setTimeout(() => {
-            window.history.back(); // This will navigate to the previous page
+            if (window.opener) {
+                window.opener.focus(); // This will focus the opener window
+                window.close(); // This will close the current window
+            } else {
+                console.log("No opener window found. Unable to switch tabs.");
+                // Optionally, you could redirect to a specific URL here
+                // window.location.href = 'your-fallback-url.html';
+            }
         }, 2000); // 2000 milliseconds = 2 seconds
     }
     msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
