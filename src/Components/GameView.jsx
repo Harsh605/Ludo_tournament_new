@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 const styles = {
     color: '#fff !important',
 }
-const baseUrl = 'https://backend.khelludokhel.info/'
+const baseUrl = 'http://84.247.133.7:5010/'
 
 function GameView() {
 

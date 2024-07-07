@@ -5,7 +5,7 @@ import { handleUnAuthorized } from './hooks/handleUnAuthorized'
 const $ = require("jquery")
 $.Datatable = require("datatables.net");
 // import { baseURL } from '../token';
-const baseURL = 'https://backend.khelludokhel.info/'
+const baseURL = 'http://84.247.133.7:5010/'
 
 export default function UserView() {
     const location = useLocation();
