@@ -350,7 +350,7 @@ function outputMessage(anObject,k){
     else if(k===6){
         const div = document.createElement('div');
         div.classList.add('messageFromServer');
-        div.innerHTML = `<p>&#8605;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> just left the game</span></p>`;
+        div.innerHTML = `<p>&#8605;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> just left the game </br> You are the winner of this game 🤩🥳🥳🤑</span></p>`;
         msgBoard.appendChild(div);
     }
     msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
