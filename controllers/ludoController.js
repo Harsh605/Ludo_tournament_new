@@ -11,7 +11,7 @@ exports.room = (req,res)=>{
     if(
     Object.keys(rooms).includes(req.params.ROOMCODE) &&
     Object.keys(req.query).length===0  &&
-    Object.keys(rooms[req.params.ROOMCODE]).length < 4 &&
+    Object.keys(rooms[req.params.ROOMCODE]).length < 2 &&
         (
         !(NumberOfMembers[req.params.ROOMCODE].constant) ||
         Object.keys(rooms[req.params.ROOMCODE]).length < NumberOfMembers[req.params.ROOMCODE].members

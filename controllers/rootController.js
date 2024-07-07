@@ -13,7 +13,7 @@ exports.post = (req,res)=>{
         rooms[p0th] = {};
         win[p0th] = {};
         NumberOfMembers[p0th] = {constant:false,members:2};
-        // res.redirect(301, 'ludo/' + p0th);
+         //res.redirect(301, 'ludo/' + p0th);
         res.send(200, `http://84.247.133.7:5010/ludo/${p0th}`)
     } else if(req.body.action_to_do === 'join'){
             if(Object.keys(rooms).includes(req.body.roomcode)){
@@ -25,6 +25,7 @@ exports.post = (req,res)=>{
         } else{
             res.statusCode = 404;
             res.end('404!');
+            res.redirect(301, '/');
         }
 }
 
