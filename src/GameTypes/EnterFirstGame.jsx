@@ -255,6 +255,32 @@ function EnterFirstGame(props) {
             Authorization: `Bearer ${access_token}`
         }
         // Add the axios post call here
+         await axios.patch(baseURL + `/challange/roomcode/${path}`,
+            {
+                Room_code: roomcode
+            },
+            { headers }
+        )
+        .then((res) => {
+            setGame(res.data)
+            socket.emit('challengeOngoing');  
+            //window.open(response.data, '_blank'); // Open in a new page/tab                
+        })
+        .catch(e => {
+            console.log('e.message :>> ', e.message);
+            if (e.response.status === 401) {
+                handleUnAuthorized(e.response.status, navigate)
+            }
+        })
+    
+        
+    }
+    const createLudoOnSiteGame = async () => {
+        const access_token = localStorage.getItem("access_token")
+        const headers = {
+            Authorization: `Bearer ${access_token}`
+        }
+        // Add the axios post call here
         await axios.post("http://84.247.133.7:5010", {
             action_to_do: "create"
         })
@@ -741,16 +767,25 @@ function EnterFirstGame(props) {
                                             selectedMode === "offSite" ? <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} onClick={(e) => copyCode(e)} >
                                             Copy Code
                                         </button> : null
-                                        
+
                                         }
                                         
                                     </div>
                                     || Game?.Room_code == 0 && (Game?.Created_by._id == user && <div className='roomCode cxy flex-column text-center'>
-                                        Set Room Code
-                                        <h6>लूडो किंग से रूम कोड अपलोड करें</h6>
-                                        <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} />
-                                        <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => getPost()}>Create ludo Game</button>
 
+                                        {
+                                            selectedMode === "offSite" ? (<>Set Room Code
+                                                <h6>लूडो किंग से रूम कोड अपलोड करें</h6>
+                                                <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} />
+                                                <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => getPost()}>Set Room code</button>
+                                               </>)  :  (<>Create game on site
+                                            {/* <h6>लूडो किंग से रूम कोड अपलोड करें</h6> */}
+                                            <br />
+                                            {/* <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} /> */}
+                                            <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => createLudoOnSiteGame()}>Create ludo Game</button>
+                                           </>)
+                                        }
+                                       
                                     </div> || (Game?.Accepetd_By._id == user) &&
                                         <div className='roomCode cxy flex-column text-center'>
                                             Waiting for Room Code
