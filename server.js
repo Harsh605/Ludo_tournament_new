@@ -155,18 +155,31 @@ nsp.on('connection',(socket)=>{
     //     }
     //     console.log('A client just got disconnected');
     // });
+    // socket.on('disconnect', () => {
+    //     let roomKey = deleteThisid(socket.id);
+    //     if (roomKey != undefined) {
+    //         console.log(rooms[roomKey.room], socket.id);
+    //         socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+            
+    //         // Check if the room is empty after this user disconnected
+    //         if (rooms[roomKey.room].length === 0) {
+    //             // If the room is empty, delete the room code
+    //             delete rooms[roomKey.room];
+    //             console.log(`Room ${roomKey.room} has been deleted as it's empty`);
+    //         }
+    //     }
+    //     console.log('A client just got disconnected');
+    // });
+
     socket.on('disconnect', () => {
         let roomKey = deleteThisid(socket.id);
         if (roomKey != undefined) {
             console.log(rooms[roomKey.room], socket.id);
             socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
             
-            // Check if the room is empty after this user disconnected
-            if (rooms[roomKey.room].length === 0) {
-                // If the room is empty, delete the room code
-                delete rooms[roomKey.room];
-                console.log(`Room ${roomKey.room} has been deleted as it's empty`);
-            }
+            // Delete the room code
+            delete rooms[roomKey.room];
+            console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
         }
         console.log('A client just got disconnected');
     });
