@@ -11,6 +11,11 @@ const Game = require("./Model/Games");
 const { default: axios } = require("axios");
 const morgan = require('morgan')
 
+const cookieParser = require('cookie-parser');
+
+app.use(cookieParser());
+
+
 const {join} = require('path');
 const socketIO = require('socket.io');
 
@@ -171,12 +176,22 @@ nsp.on('connection',(socket)=>{
     //     console.log('A client just got disconnected');
     // });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         let roomKey = deleteThisid(socket.id);
         if (roomKey != undefined) {
             console.log(rooms[roomKey.room], socket.id);
             socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
             
+            const formData = new FormData();
+           // formData.append('file', scrnshot);
+            formData.append('status', "lose");
+
+            // await axios({
+            //     method: "post",
+            //     url: 'http://84.247.133.7:5010' + `/challange/result/${path}`,
+            //     data: formData,
+            //     headers: headers,
+            // })
             // Delete the room code
             delete rooms[roomKey.room];
             console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
