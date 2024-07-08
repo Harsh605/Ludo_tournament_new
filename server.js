@@ -176,7 +176,7 @@ nsp.on('connection',(socket)=>{
     //     console.log('A client just got disconnected');
     // });
 
-    socket.on('disconnect', async () => {
+    socket.on('disconnect', async (req,res) => {
         let roomKey = deleteThisid(socket.id);
         if (roomKey != undefined) {
             console.log(rooms[roomKey.room], socket.id);
