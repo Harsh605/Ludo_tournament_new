@@ -209,7 +209,7 @@ body {
     align-content: center;
     position: relative;
     right: 20px;
-    left: 250px;
+    /* left: 250px; */
 }
 .ludoImg {
     width: 800px;
@@ -237,8 +237,10 @@ body {
 .diceBoard {
     position: relative;
     top: 20px;
-    left: 1100px;
+    left: 800px;
     right: 0px;
+    background-color: wheat;
+    border-radius: 20px;
 }
 
 .msgBoard {
