@@ -195,8 +195,16 @@ function EnterFirstGame(props) {
 
     const [submitProcess, setProcess] = useState(true);
 
+    const access_token = localStorage.getItem("access_token")
+
+    // Encode the data you want to pass
+    const dataToPass = encodeURIComponent(JSON.stringify({
+        token: access_token,
+        game_id: path
+    }));
+
     const getSetting = async () => {
-        const access_token = localStorage.getItem("access_token")
+        
         const headers = {
             Authorization: `Bearer ${access_token}`
         }
@@ -250,7 +258,7 @@ function EnterFirstGame(props) {
     // }
 
     const getPost = async () => {
-        const access_token = localStorage.getItem("access_token")
+        // const access_token = localStorage.getItem("access_token")
         const headers = {
             Authorization: `Bearer ${access_token}`
         }
@@ -276,13 +284,18 @@ function EnterFirstGame(props) {
         
     }
     const createLudoOnSiteGame = async () => {
-        const access_token = localStorage.getItem("access_token")
+        // const access_token = localStorage.getItem("access_token")
         const headers = {
             Authorization: `Bearer ${access_token}`
         }
+
+        localStorage.setItem('ludo_game_id', path);
+        
         // Add the axios post call here
         await axios.post("http://84.247.133.7:5010", {
-            action_to_do: "create"
+            action_to_do: "create",
+            token : access_token,
+            game_id: path,
         })
         .then(async (response) => {
             console.log('Post request successful:', response.data);
@@ -299,7 +312,13 @@ function EnterFirstGame(props) {
             .then((res) => {
                 setGame(res.data)
                 socket.emit('challengeOngoing');  
+                
                 window.open(response.data, '_blank'); // Open in a new page/tab                
+                
+                // // Append the data to the URL as a hash fragment
+                // const urlToOpen = `${response.data}#gameData=${dataToPass}`;
+                // window.open(urlToOpen, '_blank');
+                
             })
             .catch(e => {
                 console.log('e.message :>> ', e.message);
@@ -322,7 +341,7 @@ function EnterFirstGame(props) {
     const [userAllData, setUserAllData] = useState()
 
     const role = async () => {
-        const access_token = localStorage.getItem("access_token")
+        // const access_token = localStorage.getItem("access_token")
         const headers = {
             Authorization: `Bearer ${access_token}`
         }
@@ -560,7 +579,7 @@ function EnterFirstGame(props) {
             return
         if (submitReq.current == false) {
             submitReq.current = true;
-            const access_token = localStorage.getItem("access_token")
+            // const access_token = localStorage.getItem("access_token")
             const headers = {
                 Authorization: `Bearer ${access_token}`
             }
