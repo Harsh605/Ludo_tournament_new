@@ -184,7 +184,7 @@ nsp.on('connection',(socket)=>{
             
            // Retrieve token and game_id from cookies
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Njg4ZjA3OWNiOWRhOGQyMTY0Njc4YTMiLCJpYXQiOjE3MjA0MTcwMjksImV4cCI6MTcyMTI4MTAyOX0.IA6Okf7h8kwBginR3KZySruT7vjaitgXiYJY8QxEOLc";
-            const {Room_code} = await Game.findOne({Room_code: roomKey.room})
+            const gemeDeltail = await Game.findOne({Room_code: roomKey.room})
 
             if (!token || !Room_code) {
                 return res.status(400).json({ error: 'Token or Room_code not found in cookies' });
@@ -199,7 +199,7 @@ nsp.on('connection',(socket)=>{
 
             const response = await axios({
                 method: "post",
-                url: `http://84.247.133.7:5010/challange/result/${Room_code}`,
+                url: `http://84.247.133.7:5010/challange/result/${gemeDeltail._id}`,
                 data: JSON.stringify({
                     status: "lose"
                 }),
