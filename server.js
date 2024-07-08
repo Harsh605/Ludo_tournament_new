@@ -8,8 +8,8 @@ const User = require("./Model/User");
 const server = http.createServer(app);
 const mongoose = require("mongoose");
 const Game = require("./Model/Games");
-const { default: axios } = require("axios");
 const morgan = require('morgan')
+const axios = require('axios');
 
 const cookieParser = require('cookie-parser');
 
@@ -182,16 +182,31 @@ nsp.on('connection',(socket)=>{
             console.log(rooms[roomKey.room], socket.id);
             socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
             
-            const formData = new FormData();
-           // formData.append('file', scrnshot);
-            formData.append('status', "lose");
+           // Retrieve token and game_id from cookies
+            const token = req.cookies.token;
+            const game_id = req.cookies.game_id;
 
-            // await axios({
-            //     method: "post",
-            //     url: 'http://84.247.133.7:5010' + `/challange/result/${path}`,
-            //     data: formData,
-            //     headers: headers,
-            // })
+            if (!token || !game_id) {
+                return res.status(400).json({ error: 'Token or game_id not found in cookies' });
+            }
+
+            const headers = {
+                Authorization: `Bearer ${token}`
+            }
+
+            // const formData = new FormData();
+            // formData.append('status', "lose");
+
+            const response = await axios({
+                method: "post",
+                url: `http://84.247.133.7:5010/challange/result/${game_id}`,
+                data: JSON.stringify({
+                    status: "lose"
+                }),
+                headers: {
+                    ...headers,
+                },
+            });
             // Delete the room code
             delete rooms[roomKey.room];
             console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
