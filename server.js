@@ -8,8 +8,13 @@ const User = require("./Model/User");
 const server = http.createServer(app);
 const mongoose = require("mongoose");
 const Game = require("./Model/Games");
-const { default: axios } = require("axios");
 const morgan = require('morgan')
+const axios = require('axios');
+
+const cookieParser = require('cookie-parser');
+
+app.use(cookieParser());
+
 
 const {join} = require('path');
 const socketIO = require('socket.io');
@@ -171,12 +176,35 @@ nsp.on('connection',(socket)=>{
     //     console.log('A client just got disconnected');
     // });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         let roomKey = deleteThisid(socket.id);
         if (roomKey != undefined) {
             console.log(rooms[roomKey.room], socket.id);
             socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
             
+           // Retrieve token and game_id from cookies
+           const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Njg4ZjA3OWNiOWRhOGQyMTY0Njc4YTMiLCJpYXQiOjE3MjA0MTcwMjksImV4cCI6MTcyMTI4MTAyOX0.IA6Okf7h8kwBginR3KZySruT7vjaitgXiYJY8QxEOLc";
+           const gameDeltail = await Game.findOne({Room_code: roomKey.room});
+   
+           if (!token || !gameDeltail) {
+               return res.status(400).json({ error: 'Token or gameDeltail not found' });
+           }
+   
+           const headers = {
+               Authorization: `Bearer ${token}`,
+               'Content-Type': 'application/json'  // Add this line
+           }
+   
+           const response = await axios({
+               method: "post",
+               url: `http://84.247.133.7:5010/challange/result/${gameDeltail._id}`,
+               data: JSON.stringify({
+                   status: "lose"
+               }),
+               headers: headers,
+           });
+   
+           console.log(response.data); 
             // Delete the room code
             delete rooms[roomKey.room];
             console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
