@@ -15,14 +15,14 @@ exports.post = (req,res)=>{
         NumberOfMembers[p0th] = {constant:false,members:2};
          //res.redirect(301, 'ludo/' + p0th);
          let token = req.body.token;
-        let game_id = req.body.game_id;
-        
-        // Set cookies
-        res.cookie('token', token, { maxAge: 900000, httpOnly: true });
-        res.cookie('game_id', game_id, { maxAge: 900000, httpOnly: true });
-        res.cookie('room_path', p0th, { maxAge: 900000, httpOnly: true });
-
-        res.send(200, `http://84.247.133.7:5010/ludo/${p0th}`)
+         let game_id = req.body.game_id;
+         
+         // Set cookies
+         res.cookie('token', token, { maxAge: 900000, httpOnly: true, sameSite: 'strict' });
+         res.cookie('game_id', game_id, { maxAge: 900000, httpOnly: true, sameSite: 'strict' });
+         res.cookie('room_path', p0th, { maxAge: 900000, httpOnly: true, sameSite: 'strict' });
+ 
+         res.status(200).send(`http://84.247.133.7:5010/ludo/${p0th}`);
     } else if(req.body.action_to_do === 'join'){
             if(Object.keys(rooms).includes(req.body.roomcode)){
                 res.redirect(301, 'ludo/' + req.body.roomcode);
