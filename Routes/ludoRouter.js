@@ -6,7 +6,7 @@ router
     .get(ludoController.root);
 
 router
-    .route('/:ROOMCODE')
+    .route('/ludo')
     .get(ludoController.room);
 
 module.exports = router;

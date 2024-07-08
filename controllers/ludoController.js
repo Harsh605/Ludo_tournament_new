@@ -8,13 +8,15 @@ exports.root = (_req,res)=>{
 }
 
 exports.room = (req,res)=>{
+
+    let ROOMCODE = req.query.room_code
     if(
-    Object.keys(rooms).includes(req.params.ROOMCODE) &&
+    Object.keys(rooms).includes(ROOMCODE) &&
     Object.keys(req.query).length===0  &&
-    Object.keys(rooms[req.params.ROOMCODE]).length < 2 &&
+    Object.keys(rooms[ROOMCODE]).length < 2 &&
         (
-        !(NumberOfMembers[req.params.ROOMCODE].constant) ||
-        Object.keys(rooms[req.params.ROOMCODE]).length < NumberOfMembers[req.params.ROOMCODE].members
+        !(NumberOfMembers[ROOMCODE].constant) ||
+        Object.keys(rooms[ROOMCODE]).length < NumberOfMembers[ROOMCODE].members
         )
     ){
         res.sendFile('ludo.html', { root: views });
