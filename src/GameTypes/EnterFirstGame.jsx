@@ -313,11 +313,11 @@ function EnterFirstGame(props) {
                 setGame(res.data)
                 socket.emit('challengeOngoing');  
                 
-                window.open(response.data, '_blank'); // Open in a new page/tab                
-                
-                // // Append the data to the URL as a hash fragment
-                // const urlToOpen = `${response.data}#gameData=${dataToPass}`;
-                // window.open(urlToOpen, '_blank');
+               // window.open(response.data, '_blank'); // Open in a new page/tab   
+               
+               const newTabURL = `${response.data}?token=${access_token}&game_id=${path}`;
+               window.open(newTabURL, '_blank'); // Open in a new page/tab
+
                 
             })
             .catch(e => {
@@ -604,10 +604,11 @@ function EnterFirstGame(props) {
                     submitReq.current = false;
                     setProcess(false);
                     navigate(-1);
+                    // window.location.reload();
                 })
                     .catch((e) => {
                         if (e.response.status == 401) {
-                            handleUnAuthorized(e.response.status, navigate)
+                            handleUnAuthorized(e.response.status, navigate(-1))
                         }
                         // if (e.response?.status == 401) {
                         //     localStorage.removeItem('token');
@@ -776,7 +777,7 @@ function EnterFirstGame(props) {
                                         <div className='text-center'>
                                             <div>Room Code</div>
                                             {
-                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <a href={`http://84.247.133.7:5010/ludo/${Game?.Room_code}`} target="_blank">{`http://84.247.133.7:5010/ludo/${Game?.Room_code}`}</a>
+                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <a href={`http://84.247.133.7:5010/ludo/${Game?.Room_code}?token=${access_token}&game_id=${path}`} target="_blank">{`http://84.247.133.7:5010/ludo/${Game?.Room_code}`}</a>
                                             }
                                             {/* <span>{Game?.Room_code}</span> */}
                                             
