@@ -874,6 +874,183 @@ router.post('/challange/result/:id', Auth, upload.array('file'), async (req, res
     }
 })
 
+//live ludo onsite game api 
+router.post('/challange/result/live/:id', async (req, res) => {
+    try {
+        // if(InProcessSubmit==false)
+
+        // InProcessSubmit=true;
+        const game = await Game.findById(req.params.id)
+        if (game.Status != "cancelled" && game.Status != "completed") {
+
+            console.log('req comes');
+            const reqUser = req.user.id;
+
+            //player status update
+            const field = (game.Created_by == reqUser) ? 'Creator_Status' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status' : undefined);
+            const fieldUpdatedAt = (game.Created_by == reqUser) ? 'Creator_Status_Updated_at' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status_Updated_at' : undefined);
+            game[field] = req.body.status;
+            game[fieldUpdatedAt] = Date.now();
+
+            //if scrnshot comes with status
+            // if (req.files) {
+            //     const file = (game.Created_by == reqUser) ? 'Creator_Screenshot' : ((game.Accepetd_By == reqUser) ? 'Acceptor_screenshot' : undefined);
+            //     let path = "";
+            //     req.files.forEach(function (files) {
+            //         path = path + files.path + " , ";
+            //     });
+            //     path = path.substring(0, path.lastIndexOf(" , "));
+            //     game[file] = path;
+            // }
+
+            // if (req.files && typeof req.files[0] !== 'undefined') {
+            //     const file = (game.Created_by == reqUser) ? 'Creator_Screenshot' : ((game.Accepetd_By == reqUser) ? 'Acceptor_screenshot' : undefined);
+
+            //     fs.access("./public/gamedoc/", (error) => {
+            //         if (error) {
+            //           fs.mkdirSync("./public/gamedoc/");
+            //         }
+            //       });
+            //       const { buffer, originalname } = req.files[0];
+            //       const uniqueSuffix = Date.now() + "-1-" + Math.round(Math.random() * 1e9);
+
+            //       const ref = `${uniqueSuffix}.webp`;
+            //     //   console.log(buffer);
+            //       await sharp(buffer)
+            //         .webp({ quality: 20 })
+            //         .toFile("./public/gamedoc/" + ref);
+            //         game[file]= "./public/gamedoc/" + ref
+            // }
+
+            // if game cancelled and reason comes
+            // if (req.body.status == 'cancelled') {
+            //     const reason = (game.Created_by == reqUser) ? 'Creator_Status_Reason' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status_reason' : undefined);
+            //     game[reason] = req.body.reason;
+            // }
+
+            if (game.Creator_Status == null || game.Acceptor_status == null) {
+                // game.Status = 'pending';
+                const updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'pending' }).where("Status").equals('running');
+                if (updateResult != null) {
+                    setTimeout(async (GameID) => {
+                        const game = await Game.findById(GameID)
+                        if (game != null)
+                            if (game.Status == 'pending') {
+                                game.Status = 'conflict';
+                                await game.save();
+                            }
+                    }, 300000, req.params.id);
+                    await game.save();
+                    res.status(200).send(game)
+                }
+            }
+            
+            else if (game.Creator_Status == 'cancelled' || game.Acceptor_status == 'cancelled') {
+
+                // game.Status = "cancelled";
+                let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('running');
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('pending');
+                }
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('conflict');
+                }
+                if (updateResult != null) {
+                    // const { Winner_closingbalance, Loser_closingbalance } = await add_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount)
+                    // add wallet start
+                    const user1 = await User.findById(game.Accepetd_By);
+                    const user2 = await User.findById(game.Created_by)
+                    user2.Wallet_balance += game.Game_Ammount;
+                    user1.Wallet_balance += game.Game_Ammount;
+                    // user2.withdrawAmount += game.Game_Ammount;
+                    // user1.withdrawAmount += game.Game_Ammount;
+                    user2.withdrawAmount += game.creatorWithdrawDeducted;
+                    user1.withdrawAmount += game.acceptorWithdrawDeducted;
+                    user1.hold_balance -= game.Game_Ammount;
+                    user2.hold_balance -= game.Game_Ammount;
+                    // console.log('user1', user1.Wallet_balance);
+                    // console.log('user2', user2.Wallet_balance, 'gamer amout', game.Game_Ammount);
+                    await user2.save();
+                    await user1.save();
+                    // add wallet end
+                    game.Winner_closingbalance += game.Game_Ammount;
+                    game.Loser_closingbalance += game.Game_Ammount;
+                    await game.save();
+                    res.status(200).send(game)
+                }
+            }
+            else if ((game.Creator_Status == 'winn' || game.Acceptor_status == 'lose') || (game.Creator_Status == 'lose' || game.Acceptor_status == 'winn')) {
+                // console.log('completed');
+                // game.Status = 'completed';
+                let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'completed' }).where("Status").equals('running');
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'completed' }).where("Status").equals('pending');
+                }
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'completed' }).where("Status").equals('conflict');
+                }
+                if (updateResult != null) {
+                    // let winner,losser;
+                    // winner loser statemenet
+                    // game.Creator_Status=='winn'? (winner= game.Created_by,losser=game.Accepetd_By): game.Acceptor_status=='winn'?(winner= game.Accepetd_By,losser=game.Created_by):undefined;
+
+                    //  const { winnAmount, earnAdmin } = adminProfit(game.Game_Ammount,winner);
+
+                    if (game.Creator_Status == 'winn') {
+                        const { winnAmount, earnAdmin } = await adminProfit(game.Game_Ammount, game.Created_by);
+                        // const {Winner_closingbalance} =
+                        // await update_wallet(game.Created_by, game.Accepetd_By, game.Game_Ammount, winnAmount);
+                        await update_wallet(game.Created_by, game.Accepetd_By, game.Game_Ammount, winnAmount, game.creatorWithdrawDeducted);
+                        await Transaction(game.Created_by, game.Accepetd_By, winnAmount, 'I Win');
+                        await Transaction(game.Accepetd_By, game.Created_by, game.Game_Ammount, 'I Lose');
+                        await adminEaring(game.Accepetd_By, earnAdmin, req.params.id);
+                        game.Winner = game.Created_by;
+                        game.winnAmount = winnAmount;
+                        const creator_closingbalance = game.Loser_closingbalance;
+                        const acceptor_closingbalance = game.Winner_closingbalance;
+                        game.Winner_closingbalance = (creator_closingbalance + winnAmount + game.Game_Ammount);
+                        game.Loser_closingbalance = acceptor_closingbalance;
+                        game.Creator_Status = "winn"
+                        game.Acceptor_status = "loss"
+                        await game.save();
+                        res.status(200).send(game)
+                    }
+                    else if (game.Acceptor_status == 'winn') {
+                        const { winnAmount, earnAdmin } = await adminProfit(game.Game_Ammount, game.Accepetd_By);
+                        // const {Winner_closingbalance,Loser_closingbalance} =
+                        // await update_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount, winnAmount)
+                        await update_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount, winnAmount, game.acceptorWithdrawDeducted);
+                        await Transaction(game.Accepetd_By, game.Created_by, game.Game_Ammount, 'I Lose')
+                        await Transaction(game.Created_by, game.Accepetd_By, winnAmount, 'I Win')
+                        await adminEaring(game.Created_by, earnAdmin, game._id)
+                        game.Winner = game.Accepetd_By;
+                        game.winnAmount = winnAmount;
+                        const creator_closingbalance = game.Loser_closingbalance; const acceptor_closingbalance = game.Winner_closingbalance;
+
+                        game.Winner_closingbalance = (acceptor_closingbalance + winnAmount + game.Game_Ammount);
+                        game.Loser_closingbalance = creator_closingbalance;
+                        game.Creator_Status = "lose"
+                        game.Acceptor_status = "winn"
+                        await game.save();
+                        res.status(200).send(game)
+                    }
+                }
+
+            }
+
+
+        }
+        else {
+            console.log('else cme')
+            res.status(200).send(game);
+        }
+
+    } catch (e) {
+        console.log(e);
+        res.status(400).send(e)
+    }
+})
+
 
 router.post('/challange/admin/result/:id', Auth, async (req, res) => {
     try {
