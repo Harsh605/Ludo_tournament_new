@@ -241,10 +241,7 @@ socket.on('connect',function(){
         console.log('19/6/21 fetched:',MYROOM,myid,chance);
         StartTheGame();
     });
-    socket.emit('disconnectInfo', {
-        token: urlParams.get('token'), // Retrieve token from localStorage
-        game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
-    });
+   
 
 //To simulate dice
     if(chance === myid){    
@@ -332,8 +329,8 @@ socket.on('disconnect', function(){
     console.log('You are disconnected from the server');
     // Emit a custom event with token and game_id
     socket.emit('disconnectInfo', {
-        token: localStorage.getItem('token'), // Retrieve token from localStorage
-        game_id: localStorage.getItem('game_id') // Retrieve game_id from localStorage
+        token: urlParams.get('token'), // Retrieve token from localStorage
+        game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
     });
 });
 
