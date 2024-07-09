@@ -177,7 +177,7 @@ nsp.on('connection',(socket)=>{
     // });
 
    // Handle 'disconnectInfo' event
-    socket.on('disconnectInfo', async (data) => {
+    socket.on('disconnect_user_lose', async (data) => {
         const { token, game_id } = data; // Destructure token and game_id from data
 
         console.log(token, game_id)
@@ -200,7 +200,7 @@ nsp.on('connection',(socket)=>{
         }
     });
    // Handle 'disconnectInfo' event
-    socket.on('disconnectInfoTOWinn', async (data) => {
+    socket.on('disconnect_user_winn', async (data) => {
         const { token, game_id } = data; // Destructure token and game_id from data
 
         console.log(token, game_id)
@@ -213,7 +213,6 @@ nsp.on('connection',(socket)=>{
 
             const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
                 status: "winn",
-                file: "public/gamedoc/1720518059578-938839157.png"
                 
             }, {
                 headers: headers

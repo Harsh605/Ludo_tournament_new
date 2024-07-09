@@ -281,7 +281,7 @@ socket.on('connect',function(){
     });
 
     socket.on('user-disconnected',function(data){
-        socket.emit('disconnectInfo', {
+        socket.emit('disconnect_user_lose', {
             token: urlParams.get('token'), // Retrieve token from localStorage
             game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
         });
@@ -291,6 +291,10 @@ socket.on('connect',function(){
     })
 
     socket.on('resume',function(data){
+        socket.emit('disconnect_user_winn', {
+            token: urlParams.get('token'), // Retrieve token from localStorage
+            game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
+        });
         resume(data.id);
         data.id==data.click?outputMessage({id:data.id,msg:`Resumed the game without ${USERNAMES[id]}`},5):outputMessage({id:data.click,msg:`${USERNAMES[data.click]} has resumed the game without ${USERNAMES[data.id]}`},5)
     });
@@ -381,11 +385,6 @@ function outputMessage(anObject,k){
         div.innerHTML = `<p>&#8605;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> just left the game </br> You are the winner of this game 🤩🥳🥳🤑</span></p>`;
         msgBoard.appendChild(div);
 
-        socket.emit('disconnectInfoTOWinn', {
-            token: urlParams.get('token'), // Retrieve token from localStorage
-            game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
-        });
-        
         // Add a slight delay before attempting to switch tabs
         setTimeout(() => {
             if (window.opener) {
