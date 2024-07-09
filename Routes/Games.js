@@ -947,7 +947,7 @@ router.post('/challange/result/live/:id', Auth, async (req, res) => {
             
             else if (game.Creator_Status == 'cancelled' || game.Acceptor_status == 'cancelled') {
 
-                // game.Status = "cancelled";
+                 game.Status = "cancelled";
                 let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('running');
                 if (updateResult == null) {
                     updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('pending');
