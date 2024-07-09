@@ -176,55 +176,42 @@ nsp.on('connection',(socket)=>{
     //     console.log('A client just got disconnected');
     // });
 
-    socket.on('disconnect', async () => {
-        let roomKey = deleteThisid(socket.id);
-        if (roomKey != undefined) {
-            console.log(rooms[roomKey.room], socket.id);
-            socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
-   
-        //    const headers = {
-        //        Authorization: `Bearer ${token}`,
-        //        'Content-Type': 'application/json'  // Add this line
-        //    }
-   
-        //    const response = await axios({
-        //        method: "post",
-        //        url: `http://84.247.133.7:5010/challange/result/${gameDeltail._id}`,
-        //        data: JSON.stringify({
-        //            status: "lose"
-        //        }),
-        //        headers: headers,
-        //    });
-   
-        //    console.log(response.data); 
-            // Delete the room code
-            delete rooms[roomKey.room];
-            console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
-        }
-        console.log('A client just got disconnected');
-    });
+   // Handle general disconnect event
+socket.on('disconnect', async () => {
+    let roomKey = deleteThisid(socket.id);
+    if (roomKey != undefined) {
+        console.log(rooms[roomKey.room], socket.id);
+        socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
 
+        // Delete the room code
+        delete rooms[roomKey.room];
+        console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
+    }
+    console.log('A client just got disconnected');
+});
 
-    socket.on('disconnectInfo', async (data) => {
-        const { token, game_id } = data; // Destructure token and game_id from data
-    
-        try {
-            const headers = {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            };
-    
-            const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
-                status: "lose"
-            }, {
-                headers: headers
-            });
-    
-            console.log('POST request successful:', response.data);
-        } catch (error) {
-            console.error('POST request failed:', error.message);
-        }
-    });
+// Handle 'disconnectInfo' event
+socket.on('disconnectInfo', async (data) => {
+    const { token, game_id } = data; // Destructure token and game_id from data
+
+    try {
+        const headers = {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+
+        const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
+            status: "lose"
+        }, {
+            headers: headers
+        });
+
+        console.log('POST request successful:', response.data);
+    } catch (error) {
+        console.error('POST request failed:', error.message);
+    }
+});
+
     
 });
 
