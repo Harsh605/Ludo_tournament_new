@@ -896,6 +896,14 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
                 game[fieldUpdatedAt] = Date.now();
             }
 
+            // If status is canceled and user is the creator, update both statuses
+            if (game.Created_by == reqUser && req.body.status.toLowerCase() === 'canceled') {
+                game['Creator_Status'] = 'Canceled';
+                game['Acceptor_status'] = 'Canceled';
+                game['Creator_Status_Updated_at'] = Date.now();
+                game['Acceptor_status_Updated_at'] = Date.now();
+            }
+
             // If status is "winn" and user is the creator, update statuses accordingly
             if (game.Created_by == reqUser && req.body.status.toLowerCase() === 'winn') {
                 game['Creator_Status'] = 'winn';
