@@ -281,8 +281,13 @@ socket.on('connect',function(){
     });
 
     socket.on('user-disconnected',function(data){
+        socket.emit('disconnectInfo', {
+            token: urlParams.get('token'), // Retrieve token from localStorage
+            game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
+        });
         outputMessage({Name:USERNAMES[data],id:data},6);
-        resumeHandler(data);    
+        resumeHandler(data);  
+
     })
 
     socket.on('resume',function(data){
