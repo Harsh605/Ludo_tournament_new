@@ -280,6 +280,7 @@ socket.on('connect',function(){
         clearInterval(window.timer);
     });
 
+    //aman
     socket.on('user-disconnected',function(data){
         socket.emit('disconnect_user_lose', {
             token: urlParams.get('token'), // Retrieve token from localStorage
@@ -291,10 +292,6 @@ socket.on('connect',function(){
     })
 
     socket.on('resume',function(data){
-        socket.emit('disconnect_user_winn', {
-            token: urlParams.get('token'), // Retrieve token from localStorage
-            game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
-        });
         resume(data.id);
         data.id==data.click?outputMessage({id:data.id,msg:`Resumed the game without ${USERNAMES[id]}`},5):outputMessage({id:data.click,msg:`${USERNAMES[data.click]} has resumed the game without ${USERNAMES[data.id]}`},5)
     });
@@ -336,11 +333,7 @@ socket.on('connect',function(){
 // To know if the client has disconnected with the server
 socket.on('disconnect', function(){
     console.log('You are disconnected from the server');
-    // Emit a custom event with token and game_id
-    socket.emit('disconnectInfo', {
-        token: urlParams.get('token'), // Retrieve token from localStorage
-        game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
-    });
+   
 });
 
 //Output the message through DOM manipulation
@@ -386,16 +379,16 @@ function outputMessage(anObject,k){
         msgBoard.appendChild(div);
 
         // Add a slight delay before attempting to switch tabs
-        setTimeout(() => {
-            if (window.opener) {
-                window.opener.focus(); // This will focus the opener window
-                window.close(); // This will close the current window
-            } else {
-                console.log("No opener window found. Unable to switch tabs.");
-                // Optionally, you could redirect to a specific URL here
-                // window.location.href = 'your-fallback-url.html';
-            }
-        }, 15000); // 2000 milliseconds = 2 seconds
+        // setTimeout(() => {
+        //     if (window.opener) {
+        //         window.opener.focus(); // This will focus the opener window
+        //         window.close(); // This will close the current window
+        //     } else {
+        //         console.log("No opener window found. Unable to switch tabs.");
+        //         // Optionally, you could redirect to a specific URL here
+        //         // window.location.href = 'your-fallback-url.html';
+        //     }
+        // }, 15000); // 2000 milliseconds = 2 seconds
     }
     msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
 };
@@ -671,6 +664,10 @@ function resumeHandler(id){
     theOneWhoLeft.style.textShadow = `0 0 4px ${colors[id]}`;
     document.getElementById('RESUME').onclick = function(){
         resume(id);
+        socket.emit('disconnect_user_winn', {
+            token: urlParams.get('token'), // Retrieve token from localStorage
+            game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
+        });
         socket.emit('resume',{
             room:room_code,
             id:id,
