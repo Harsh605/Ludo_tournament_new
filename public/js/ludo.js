@@ -731,5 +731,29 @@ function wait(){
     butt.style.cursor = "not-allowed"
 }
 
+async function cancleGame(){
+    const headers = {
+        Authorization: `Bearer ${urlParams.get('token')}`,
+        'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
+    };
+
+    try {
+        const response = await fetch(`http://84.247.133.7:5010/challange/result/${urlParams.get('game_id')}`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                status: "lose"
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        console.log(response)
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 
 
