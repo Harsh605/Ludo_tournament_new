@@ -374,12 +374,41 @@ function outputMessage(anObject,k){
 
     else if (k === 6) {
 
-        socket.on('user_winn',function(data){
-            socket.emit('disconnect_user_winn', {
-                token: urlParams.get('token'), // Retrieve token from localStorage
-                game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
-            });
-        })
+        // socket.on('user_winn',function(data){
+        //     socket.emit('disconnect_user_winn', {
+        //         token: urlParams.get('token'), // Retrieve token from localStorage
+        //         game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
+        //     });
+        // })
+
+        alert("You are the winner of this game", {
+            
+            onClose: async () => {
+
+                const headers = {
+                    Authorization: `Bearer ${urlParams.get('token')}`
+                }
+
+                try {
+                    const response = await fetch(`http://84.247.133.7:5010/challange/result/${urlParams.get('game_id')}`, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({
+                            status: "winn"
+                        })
+                    });
+        
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+        
+                    window.location.reload();
+                } catch (e) {
+                   console.log(e)
+                }
+            }
+        });
+        
 
         const div = document.createElement('div');
         div.classList.add('messageFromServer');

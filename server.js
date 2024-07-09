@@ -189,7 +189,7 @@ nsp.on('connection',(socket)=>{
             };
 
             const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
-                status: "winn"
+                status: "lose"
             }, {
                 headers: headers
             });
