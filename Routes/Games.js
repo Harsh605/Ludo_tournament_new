@@ -875,7 +875,7 @@ router.post('/challange/result/:id', Auth, upload.array('file'), async (req, res
 })
 
 //live ludo onsite game api 
-router.post('/challange/result/live/:id', Auth, async (req, res) => {
+router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req, res) => {
     try {
         // if(InProcessSubmit==false)
 
@@ -886,22 +886,43 @@ router.post('/challange/result/live/:id', Auth, async (req, res) => {
             console.log('req comes');
             const reqUser = req.user.id;
 
-            //player status update
+            // Player status update
             const field = (game.Created_by == reqUser) ? 'Creator_Status' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status' : undefined);
             const fieldUpdatedAt = (game.Created_by == reqUser) ? 'Creator_Status_Updated_at' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status_Updated_at' : undefined);
-            game[field] = req.body.status;
-            game[fieldUpdatedAt] = Date.now();
+
+            // Update specific field
+            if (field && fieldUpdatedAt) {
+                game[field] = req.body.status;
+                game[fieldUpdatedAt] = Date.now();
+            }
+
+            // If status is "winn" and user is the creator, update statuses accordingly
+            if (game.Created_by == reqUser && req.body.status.toLowerCase() === 'winn') {
+                game['Creator_Status'] = 'winn';
+                game['Acceptor_status'] = 'lose';
+                game['Creator_Status_Updated_at'] = Date.now();
+                game['Acceptor_status_Updated_at'] = Date.now();
+            }
+
+            // If status is "lose" and user is the creator, update statuses accordingly
+            if (game.Created_by == reqUser && req.body.status.toLowerCase() === 'lose') {
+                game['Creator_Status'] = 'lose';
+                game['Acceptor_status'] = 'winn';
+                game['Creator_Status_Updated_at'] = Date.now();
+                game['Acceptor_status_Updated_at'] = Date.now();
+            }
+
 
             //if scrnshot comes with status
-            // if (req.files) {
-            //     const file = (game.Created_by == reqUser) ? 'Creator_Screenshot' : ((game.Accepetd_By == reqUser) ? 'Acceptor_screenshot' : undefined);
-            //     let path = "";
-            //     req.files.forEach(function (files) {
-            //         path = path + files.path + " , ";
-            //     });
-            //     path = path.substring(0, path.lastIndexOf(" , "));
-            //     game[file] = path;
-            // }
+            if (req.files) {
+                const file = (game.Created_by == reqUser) ? 'Creator_Screenshot' : ((game.Accepetd_By == reqUser) ? 'Acceptor_screenshot' : undefined);
+                let path = "";
+                req.files.forEach(function (files) {
+                    path = path + files.path + " , ";
+                });
+                path = path.substring(0, path.lastIndexOf(" , "));
+                game[file] = path;
+            }
 
             // if (req.files && typeof req.files[0] !== 'undefined') {
             //     const file = (game.Created_by == reqUser) ? 'Creator_Screenshot' : ((game.Accepetd_By == reqUser) ? 'Acceptor_screenshot' : undefined);
@@ -923,10 +944,10 @@ router.post('/challange/result/live/:id', Auth, async (req, res) => {
             // }
 
             // if game cancelled and reason comes
-            // if (req.body.status == 'cancelled') {
-            //     const reason = (game.Created_by == reqUser) ? 'Creator_Status_Reason' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status_reason' : undefined);
-            //     game[reason] = req.body.reason;
-            // }
+            if (req.body.status == 'cancelled') {
+                const reason = (game.Created_by == reqUser) ? 'Creator_Status_Reason' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status_reason' : undefined);
+                game[reason] = req.body.reason;
+            }
 
             if (game.Creator_Status == null || game.Acceptor_status == null) {
                 // game.Status = 'pending';
@@ -944,10 +965,75 @@ router.post('/challange/result/live/:id', Auth, async (req, res) => {
                     res.status(200).send(game)
                 }
             }
-            
-            else if (game.Creator_Status == 'cancelled' || game.Acceptor_status == 'cancelled') {
+            else if (game.Creator_Status == 'lose' && game.Acceptor_status == 'cancelled') {
+                // game.Status = "cancelled";
+                let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('running');
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('pending');
+                }
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('conflict');
+                }
+                if (updateResult != null) {
+                    // const { Winner_closingbalance, Loser_closingbalance } = await add_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount)
 
-                 game.Status = "cancelled";
+                    // add wallet start
+                    const user1 = await User.findById(game.Accepetd_By);
+                    const user2 = await User.findById(game.Created_by)
+                    user2.Wallet_balance += game.Game_Ammount;
+                    user1.Wallet_balance += game.Game_Ammount;
+                    // user2.withdrawAmount += game.Game_Ammount;
+                    // user1.withdrawAmount += game.Game_Ammount;
+                    user2.withdrawAmount += game.creatorWithdrawDeducted;
+                    user1.withdrawAmount += game.acceptorWithdrawDeducted;
+                    user1.hold_balance -= game.Game_Ammount;
+                    user2.hold_balance -= game.Game_Ammount;
+                    await user2.save();
+                    await user1.save();
+                    // add wallet end
+
+                    game.Winner_closingbalance += game.Game_Ammount;
+                    game.Loser_closingbalance += game.Game_Ammount;
+                    await game.save();
+                    res.status(200).send(game)
+                }
+
+            }
+            else if (game.Creator_Status == 'cancelled' && game.Acceptor_status == 'lose') {
+                // game.Status = "cancelled";
+                let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('running');
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('pending');
+                }
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('conflict');
+                }
+                if (updateResult != null) {
+                    // const { Winner_closingbalance, Loser_closingbalance } = await add_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount)
+                    // add wallet start
+                    const user1 = await User.findById(game.Accepetd_By);
+                    const user2 = await User.findById(game.Created_by)
+                    user2.Wallet_balance += game.Game_Ammount;
+                    user1.Wallet_balance += game.Game_Ammount;
+                    // user2.withdrawAmount += game.Game_Ammount;
+                    // user1.withdrawAmount += game.Game_Ammount;
+                    user2.withdrawAmount += game.creatorWithdrawDeducted;
+                    user1.withdrawAmount += game.acceptorWithdrawDeducted;
+                    user1.hold_balance -= game.Game_Ammount;
+                    user2.hold_balance -= game.Game_Ammount;
+                    await user2.save();
+                    await user1.save();
+                    // add wallet end
+
+                    game.Winner_closingbalance += game.Game_Ammount;
+                    game.Loser_closingbalance += game.Game_Ammount;
+                    await game.save();
+                    res.status(200).send(game)
+                }
+            }
+            else if (game.Creator_Status == 'cancelled' && game.Acceptor_status == 'cancelled') {
+
+                // game.Status = "cancelled";
                 let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('running');
                 if (updateResult == null) {
                     updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('pending');
@@ -975,13 +1061,49 @@ router.post('/challange/result/live/:id', Auth, async (req, res) => {
                     // add wallet end
                     game.Winner_closingbalance += game.Game_Ammount;
                     game.Loser_closingbalance += game.Game_Ammount;
-                    game.Creator_Status = "cancelled"
-                    game.Acceptor_status = "cancelled"
                     await game.save();
                     res.status(200).send(game)
                 }
             }
-            else if ((game.Creator_Status == 'winn' || game.Acceptor_status == 'lose') || (game.Creator_Status == 'lose' || game.Acceptor_status == 'winn')) {
+            else if (game.Creator_Status == 'lose' && game.Acceptor_status == 'lose') {
+                // console.log('cancled');
+                // game.Status = "cancelled";
+                let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('running');
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('pending');
+                }
+                if (updateResult == null) {
+                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('conflict');
+                }
+                if (updateResult != null) {
+                    // const { Winner_closingbalance, Loser_closingbalance } = await add_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount)
+                    // add wallet start
+                    const user1 = await User.findById(game.Accepetd_By);
+                    const user2 = await User.findById(game.Created_by)
+                    user2.Wallet_balance += game.Game_Ammount;
+                    user1.Wallet_balance += game.Game_Ammount;
+                    // user2.withdrawAmount += game.Game_Ammount;
+                    // user1.withdrawAmount += game.Game_Ammount;
+                    user2.withdrawAmount += game.creatorWithdrawDeducted;
+                    user1.withdrawAmount += game.acceptorWithdrawDeducted;
+                    user1.hold_balance -= game.Game_Ammount;
+                    user2.hold_balance -= game.Game_Ammount;
+                    await user2.save();
+                    await user1.save();
+                    // add wallet end
+                    game.Winner_closingbalance += game.Game_Ammount;
+                    game.Loser_closingbalance += game.Game_Ammount;
+                    await game.save();
+                    res.status(200).send(game)
+                }
+            }
+            else if ((game.Creator_Status == 'winn' && game.Acceptor_status == "winn") || (game.Creator_Status == 'cancelled' && game.Acceptor_status == "winn") || (game.Creator_Status == 'winn' && game.Acceptor_status == "cancelled")) {
+                game.Status = 'conflict';
+                // deduct_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount)
+                await game.save();
+                res.status(200).send(game)
+            }
+            else if ((game.Creator_Status == 'winn' && game.Acceptor_status == 'lose') || (game.Creator_Status == 'lose' && game.Acceptor_status == 'winn')) {
                 // console.log('completed');
                 // game.Status = 'completed';
                 let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'completed' }).where("Status").equals('running');
@@ -998,7 +1120,7 @@ router.post('/challange/result/live/:id', Auth, async (req, res) => {
 
                     //  const { winnAmount, earnAdmin } = adminProfit(game.Game_Ammount,winner);
 
-                    if (game.Creator_Status == 'winn') {
+                    if (game.Creator_Status == 'winn' && game.Acceptor_status == 'lose') {
                         const { winnAmount, earnAdmin } = await adminProfit(game.Game_Ammount, game.Created_by);
                         // const {Winner_closingbalance} =
                         // await update_wallet(game.Created_by, game.Accepetd_By, game.Game_Ammount, winnAmount);
@@ -1012,12 +1134,10 @@ router.post('/challange/result/live/:id', Auth, async (req, res) => {
                         const acceptor_closingbalance = game.Winner_closingbalance;
                         game.Winner_closingbalance = (creator_closingbalance + winnAmount + game.Game_Ammount);
                         game.Loser_closingbalance = acceptor_closingbalance;
-                        game.Creator_Status = "winn"
-                        game.Acceptor_status = "loss"
                         await game.save();
                         res.status(200).send(game)
                     }
-                    else if (game.Acceptor_status == 'winn') {
+                    else if (game.Acceptor_status == 'winn' && game.Creator_Status == 'lose') {
                         const { winnAmount, earnAdmin } = await adminProfit(game.Game_Ammount, game.Accepetd_By);
                         // const {Winner_closingbalance,Loser_closingbalance} =
                         // await update_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount, winnAmount)
@@ -1031,8 +1151,6 @@ router.post('/challange/result/live/:id', Auth, async (req, res) => {
 
                         game.Winner_closingbalance = (acceptor_closingbalance + winnAmount + game.Game_Ammount);
                         game.Loser_closingbalance = creator_closingbalance;
-                        game.Creator_Status = "lose"
-                        game.Acceptor_status = "winn"
                         await game.save();
                         res.status(200).send(game)
                     }
