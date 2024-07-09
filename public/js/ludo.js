@@ -337,7 +337,7 @@ socket.on('disconnect', function(){
 });
 
 //Output the message through DOM manipulation
-function outputMessage(anObject,k){
+async function outputMessage(anObject,k){
     let msgBoard = document.querySelector('.msgBoard');
 
     if(k===1 && !(anObject.Name.includes('<') || anObject.Name.includes('>') || anObject.Name.includes('/'))){    
@@ -381,33 +381,31 @@ function outputMessage(anObject,k){
         //     });
         // })
 
-        alert("You are the winner of this game", {
-            
-            onClose: async () => {
-
-                const headers = {
-                    Authorization: `Bearer ${urlParams.get('token')}`
-                }
-
-                try {
-                    const response = await fetch(`http://84.247.133.7:5010/challange/result/${urlParams.get('game_id')}`, {
-                        method: 'POST',
-                        headers: headers,
-                        body: JSON.stringify({
-                            status: "winn"
-                        })
-                    });
+        if (window.confirm("You are the winner of this game")) {
+            const headers = {
+                Authorization: `Bearer ${urlParams.get('token')}`,
+                'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
+            };
         
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
+            try {
+                const response = await fetch(`http://84.247.133.7:5010/challange/result/${urlParams.get('game_id')}`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({
+                        status: "winn"
+                    })
+                });
         
-                    window.location.reload();
-                } catch (e) {
-                   console.log(e)
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
+        
+                window.location.reload();
+            } catch (e) {
+                console.log(e);
             }
-        });
+        }
+        
         
 
         const div = document.createElement('div');
