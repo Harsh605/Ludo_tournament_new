@@ -281,7 +281,9 @@ socket.on('connect',function(){
     });
 
     //aman
-    socket.on('user-disconnected',function(data){
+    socket.on('user-disconnected', async function(data){
+
+        await userWinn()
         // socket.emit('disconnect_user_lose', {
         //     token: urlParams.get('token'), // Retrieve token from localStorage
         //     game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
@@ -768,6 +770,41 @@ async function cancelGame() {
     } else {
         console.log("Game cancellation aborted by user.");
     }
+}
+async function userWinn() {
+        const headers = {
+            Authorization: `Bearer ${urlParams.get('token')}`,
+            'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
+        };
+        try {
+            const response = await fetch(`http://84.247.133.7:5010/challange/result/live/${urlParams.get('game_id')}`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    status: "winn"
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            console.log(response);
+            alert("The game has been successfully cancelled.");
+            
+            if (window.opener) {
+                window.opener.focus(); // This will focus the opener window
+                window.close(); // This will close the current window
+            } else {
+                console.log("No opener window found. Unable to switch tabs.");
+                // Optionally, you could redirect to a specific URL here
+                // window.location.href = 'your-fallback-url.html';
+            }
+        } catch (e) {
+            console.log(e);
+            alert("There was an error cancelling the game.");
+        }
+   
 }
 
 
