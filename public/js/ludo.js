@@ -381,36 +381,6 @@ function outputMessage(anObject,k){
         //     });
         // })
 
-        alert("You are the winner of this game", {
-            
-            onClose: async () => {
-
-                const headers = {
-                    Authorization: `Bearer ${urlParams.get('token')}`,
-                    'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
-                };
-
-                try {
-                    const response = await fetch(`http://84.247.133.7:5010/challange/result/${urlParams.get('game_id')}`, {
-                        method: 'POST',
-                        headers: headers,
-                        body: JSON.stringify({
-                            status: "winn"
-                        })
-                    });
-        
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-        
-                    window.location.reload();
-                } catch (e) {
-                   console.log(e)
-                }
-            }
-        });
-        
-
         const div = document.createElement('div');
         div.classList.add('messageFromServer');
         div.innerHTML = `<p>&#8605;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> just left the game </br> You are the winner of this game 🤩🥳🥳🤑</span></p>`;
