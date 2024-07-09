@@ -738,6 +738,7 @@ async function cancelGame() {
             'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
         };
 
+        alert(urlParams.get('game_id'))
         try {
             const response = await fetch(`http://84.247.133.7:5010/challange/result/live/${urlParams.get('game_id')}`, {
                 method: 'POST',
