@@ -975,6 +975,8 @@ router.post('/challange/result/live/:id', async (req, res) => {
                     // add wallet end
                     game.Winner_closingbalance += game.Game_Ammount;
                     game.Loser_closingbalance += game.Game_Ammount;
+                    game.Creator_Status = "cancelled"
+                    game.Acceptor_status = "cancelled"
                     await game.save();
                     res.status(200).send(game)
                 }

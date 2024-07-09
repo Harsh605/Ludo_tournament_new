@@ -739,11 +739,11 @@ async function cancelGame() {
         };
 
         try {
-            const response = await fetch(`http://84.247.133.7:5010/challange/result/${urlParams.get('game_id')}`, {
+            const response = await fetch(`http://84.247.133.7:5010/challange/result/live/${urlParams.get('game_id')}`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
-                    status: "lose"
+                    status: "cancelled"
                 })
             });
 
