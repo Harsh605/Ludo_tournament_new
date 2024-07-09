@@ -875,7 +875,7 @@ router.post('/challange/result/:id', Auth, upload.array('file'), async (req, res
 })
 
 //live ludo onsite game api 
-router.post('/challange/result/live/:id', async (req, res) => {
+router.post('/challange/result/live/:id', Auth, async (req, res) => {
     try {
         // if(InProcessSubmit==false)
 
