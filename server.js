@@ -211,6 +211,29 @@ nsp.on('connection',(socket)=>{
         }
         console.log('A client just got disconnected');
     });
+
+
+    socket.on('disconnectInfo', async (data) => {
+        const { token, game_id } = data; // Destructure token and game_id from data
+    
+        try {
+            const headers = {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+    
+            const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
+                status: "lose"
+            }, {
+                headers: headers
+            });
+    
+            console.log('POST request successful:', response.data);
+        } catch (error) {
+            console.error('POST request failed:', error.message);
+        }
+    });
+    
 });
 
 

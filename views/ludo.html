@@ -22,10 +22,12 @@
     </style>
 </head>
 <body style="background-color: rgb(0, 0, 54);">
+    <button onclick="openFullscreen()">Open Fullscreen</button>
+
     <div class="navBar">
-        <a href="">HOME</a>
+        <!-- <a href="">HOME</a>
         <a href="">LUDO</a>
-        <a href="about">ABOUT</a>
+        <a href="about">ABOUT</a> -->
         <div class="copy-wrapper">
             <h3 id="my-name" onclick="copy(event)">&#10024;  </h3>
             <div class="copy-content">
@@ -87,6 +89,21 @@
         </div>
     </div>
 
+
+   
     <script src="../js/ludo.js"></script>
 </body>
+
+<script>
+   function openFullscreen() {
+            var elem = document.documentElement; // Fullscreen for entire document
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { // Safari
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { // IE11
+                elem.msRequestFullscreen();
+            }
+        }
+</script>
 </html>

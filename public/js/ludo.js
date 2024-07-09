@@ -323,10 +323,16 @@ socket.on('connect',function(){
 });
 
 
-//To know if the client has disconnected with the server
+// To know if the client has disconnected with the server
 socket.on('disconnect', function(){
-    console.log('You are disconnected to the server');
-})
+    console.log('You are disconnected from the server');
+
+    // Emit a custom event with token or game_id
+    socket.emit('disconnectInfo', {
+        token: localStorage.getItem('token'), // Retrieve token from localStorage
+        game_id: localStorage.getItem('game_id') // Retrieve game_id from localStorage
+    });
+});
 
 //Output the message through DOM manipulation
 function outputMessage(anObject,k){
@@ -714,5 +720,6 @@ function wait(){
     butt.style.opacity =  0.6;
     butt.style.cursor = "not-allowed"
 }
+
 
 
