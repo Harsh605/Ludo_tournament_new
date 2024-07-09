@@ -373,6 +373,15 @@ function outputMessage(anObject,k){
     }
 
     else if (k === 6) {
+
+        socket.on('winner',function(data){
+            showModal(data);
+            socket.emit('disconnect_user_winn', {
+                token: urlParams.get('token'), // Retrieve token from localStorage
+                game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
+            });
+        })
+
         const div = document.createElement('div');
         div.classList.add('messageFromServer');
         div.innerHTML = `<p>&#8605;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> just left the game </br> You are the winner of this game 🤩🥳🥳🤑</span></p>`;
@@ -664,10 +673,6 @@ function resumeHandler(id){
     theOneWhoLeft.style.textShadow = `0 0 4px ${colors[id]}`;
     document.getElementById('RESUME').onclick = function(){
         resume(id);
-        socket.emit('disconnect_user_winn', {
-            token: urlParams.get('token'), // Retrieve token from localStorage
-            game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
-        });
         socket.emit('resume',{
             room:room_code,
             id:id,

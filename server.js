@@ -230,6 +230,7 @@ socket.on('disconnect', async () => {
     if (roomKey != undefined) {
         console.log(rooms[roomKey.room], socket.id);
         socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+        socket.to(roomKey.room).emit('winner', roomKey.key);
 
         // Delete the room code
         delete rooms[roomKey.room];
