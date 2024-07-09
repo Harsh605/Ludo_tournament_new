@@ -177,52 +177,52 @@ nsp.on('connection',(socket)=>{
     // });
 
    // Handle 'disconnectInfo' event
-    socket.on('disconnect_user_lose', async (data) => {
-        const { token, game_id } = data; // Destructure token and game_id from data
+    // socket.on('disconnect_user_lose', async (data) => {
+    //     const { token, game_id } = data; // Destructure token and game_id from data
 
-        console.log(token, game_id)
+    //     console.log(token, game_id)
 
-        try {
-            const headers = {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            };
+    //     try {
+    //         const headers = {
+    //             Authorization: `Bearer ${token}`,
+    //             'Content-Type': 'application/json'
+    //         };
 
-            const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
-                status: "lose"
-            }, {
-                headers: headers
-            });
+    //         const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
+    //             status: "lose"
+    //         }, {
+    //             headers: headers
+    //         });
 
-            console.log('POST request successful:', response.data);
-        } catch (error) {
-            console.error('POST request failed:', error.message);
-        }
-    });
+    //         console.log('POST request successful:', response.data);
+    //     } catch (error) {
+    //         console.error('POST request failed:', error.message);
+    //     }
+    // });
    // Handle 'disconnectInfo' event
-    socket.on('disconnect_user_winn', async (data) => {
-        const { token, game_id } = data; // Destructure token and game_id from data
+    // socket.on('disconnect_user_winn', async (data) => {
+    //     const { token, game_id } = data; // Destructure token and game_id from data
 
-        console.log(token, game_id)
+    //     console.log(token, game_id)
 
-        try {
-            const headers = {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            };
+    //     try {
+    //         const headers = {
+    //             Authorization: `Bearer ${token}`,
+    //             'Content-Type': 'application/json'
+    //         };
 
-            const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
-                status: "winn",
+    //         const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
+    //             status: "winn",
                 
-            }, {
-                headers: headers
-            });
+    //         }, {
+    //             headers: headers
+    //         });
 
-            console.log('POST request successful:', response.data);
-        } catch (error) {
-            console.error('POST request failed:', error.message);
-        }
-    });
+    //         console.log('POST request successful:', response.data);
+    //     } catch (error) {
+    //         console.error('POST request failed:', error.message);
+    //     }
+    // });
 
 // Handle general disconnect event
 socket.on('disconnect', async () => {

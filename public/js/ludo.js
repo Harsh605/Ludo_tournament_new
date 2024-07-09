@@ -282,10 +282,10 @@ socket.on('connect',function(){
 
     //aman
     socket.on('user-disconnected',function(data){
-        socket.emit('disconnect_user_lose', {
-            token: urlParams.get('token'), // Retrieve token from localStorage
-            game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
-        });
+        // socket.emit('disconnect_user_lose', {
+        //     token: urlParams.get('token'), // Retrieve token from localStorage
+        //     game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
+        // });
         outputMessage({Name:USERNAMES[data],id:data},6);
         resumeHandler(data);  
 
