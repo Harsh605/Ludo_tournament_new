@@ -181,14 +181,6 @@ nsp.on('connection',(socket)=>{
         if (roomKey != undefined) {
             console.log(rooms[roomKey.room], socket.id);
             socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
-            
-        //    // Retrieve token and game_id from cookies
-        //    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Njg4ZjA3OWNiOWRhOGQyMTY0Njc4YTMiLCJpYXQiOjE3MjA0MTcwMjksImV4cCI6MTcyMTI4MTAyOX0.IA6Okf7h8kwBginR3KZySruT7vjaitgXiYJY8QxEOLc";
-        //    const gameDeltail = await Game.findOne({Room_code: roomKey.room});
-   
-        //    if (!token || !gameDeltail) {
-        //        return res.status(400).json({ error: 'Token or gameDeltail not found' });
-        //    }
    
         //    const headers = {
         //        Authorization: `Bearer ${token}`,

@@ -326,8 +326,7 @@ socket.on('connect',function(){
 // To know if the client has disconnected with the server
 socket.on('disconnect', function(){
     console.log('You are disconnected from the server');
-
-    // Emit a custom event with token or game_id
+    // Emit a custom event with token and game_id
     socket.emit('disconnectInfo', {
         token: localStorage.getItem('token'), // Retrieve token from localStorage
         game_id: localStorage.getItem('game_id') // Retrieve game_id from localStorage
