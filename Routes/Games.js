@@ -897,9 +897,9 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
             }
 
             // If status is canceled and user is the creator, update both statuses
-            if (game.Created_by == reqUser && req.body.status.toLowerCase() === 'canceled') {
-                game['Creator_Status'] = 'Canceled';
-                game['Acceptor_status'] = 'Canceled';
+            if (game.Created_by == reqUser && req.body.status.toLowerCase() === 'cancelled') {
+                game['Creator_Status'] = 'cancelled';
+                game['Acceptor_status'] = 'cancelled';
                 game['Creator_Status_Updated_at'] = Date.now();
                 game['Acceptor_status_Updated_at'] = Date.now();
             }
@@ -919,126 +919,7 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
                 game['Creator_Status_Updated_at'] = Date.now();
                 game['Acceptor_status_Updated_at'] = Date.now();
             }
-
-
-            //if scrnshot comes with status
-            if (req.files) {
-                const file = (game.Created_by == reqUser) ? 'Creator_Screenshot' : ((game.Accepetd_By == reqUser) ? 'Acceptor_screenshot' : undefined);
-                let path = "";
-                req.files.forEach(function (files) {
-                    path = path + files.path + " , ";
-                });
-                path = path.substring(0, path.lastIndexOf(" , "));
-                game[file] = path;
-            }
-
-            // if (req.files && typeof req.files[0] !== 'undefined') {
-            //     const file = (game.Created_by == reqUser) ? 'Creator_Screenshot' : ((game.Accepetd_By == reqUser) ? 'Acceptor_screenshot' : undefined);
-
-            //     fs.access("./public/gamedoc/", (error) => {
-            //         if (error) {
-            //           fs.mkdirSync("./public/gamedoc/");
-            //         }
-            //       });
-            //       const { buffer, originalname } = req.files[0];
-            //       const uniqueSuffix = Date.now() + "-1-" + Math.round(Math.random() * 1e9);
-
-            //       const ref = `${uniqueSuffix}.webp`;
-            //     //   console.log(buffer);
-            //       await sharp(buffer)
-            //         .webp({ quality: 20 })
-            //         .toFile("./public/gamedoc/" + ref);
-            //         game[file]= "./public/gamedoc/" + ref
-            // }
-
-            // if game cancelled and reason comes
-            if (req.body.status == 'cancelled') {
-                const reason = (game.Created_by == reqUser) ? 'Creator_Status_Reason' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status_reason' : undefined);
-                game[reason] = req.body.reason;
-            }
-
-            if (game.Creator_Status == null || game.Acceptor_status == null) {
-                // game.Status = 'pending';
-                const updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'pending' }).where("Status").equals('running');
-                if (updateResult != null) {
-                    setTimeout(async (GameID) => {
-                        const game = await Game.findById(GameID)
-                        if (game != null)
-                            if (game.Status == 'pending') {
-                                game.Status = 'conflict';
-                                await game.save();
-                            }
-                    }, 300000, req.params.id);
-                    await game.save();
-                    res.status(200).send(game)
-                }
-            }
-            else if (game.Creator_Status == 'lose' && game.Acceptor_status == 'cancelled') {
-                // game.Status = "cancelled";
-                let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('running');
-                if (updateResult == null) {
-                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('pending');
-                }
-                if (updateResult == null) {
-                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('conflict');
-                }
-                if (updateResult != null) {
-                    // const { Winner_closingbalance, Loser_closingbalance } = await add_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount)
-
-                    // add wallet start
-                    const user1 = await User.findById(game.Accepetd_By);
-                    const user2 = await User.findById(game.Created_by)
-                    user2.Wallet_balance += game.Game_Ammount;
-                    user1.Wallet_balance += game.Game_Ammount;
-                    // user2.withdrawAmount += game.Game_Ammount;
-                    // user1.withdrawAmount += game.Game_Ammount;
-                    user2.withdrawAmount += game.creatorWithdrawDeducted;
-                    user1.withdrawAmount += game.acceptorWithdrawDeducted;
-                    user1.hold_balance -= game.Game_Ammount;
-                    user2.hold_balance -= game.Game_Ammount;
-                    await user2.save();
-                    await user1.save();
-                    // add wallet end
-
-                    game.Winner_closingbalance += game.Game_Ammount;
-                    game.Loser_closingbalance += game.Game_Ammount;
-                    await game.save();
-                    res.status(200).send(game)
-                }
-
-            }
-            else if (game.Creator_Status == 'cancelled' && game.Acceptor_status == 'lose') {
-                // game.Status = "cancelled";
-                let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('running');
-                if (updateResult == null) {
-                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('pending');
-                }
-                if (updateResult == null) {
-                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('conflict');
-                }
-                if (updateResult != null) {
-                    // const { Winner_closingbalance, Loser_closingbalance } = await add_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount)
-                    // add wallet start
-                    const user1 = await User.findById(game.Accepetd_By);
-                    const user2 = await User.findById(game.Created_by)
-                    user2.Wallet_balance += game.Game_Ammount;
-                    user1.Wallet_balance += game.Game_Ammount;
-                    // user2.withdrawAmount += game.Game_Ammount;
-                    // user1.withdrawAmount += game.Game_Ammount;
-                    user2.withdrawAmount += game.creatorWithdrawDeducted;
-                    user1.withdrawAmount += game.acceptorWithdrawDeducted;
-                    user1.hold_balance -= game.Game_Ammount;
-                    user2.hold_balance -= game.Game_Ammount;
-                    await user2.save();
-                    await user1.save();
-                    // add wallet end
-
-                    game.Winner_closingbalance += game.Game_Ammount;
-                    game.Loser_closingbalance += game.Game_Ammount;
-                    await game.save();
-                    res.status(200).send(game)
-                }
-            }
+           
             else if (game.Creator_Status == 'cancelled' && game.Acceptor_status == 'cancelled') {
 
                 // game.Status = "cancelled";
@@ -1073,44 +954,7 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
                     res.status(200).send(game)
                 }
             }
-            else if (game.Creator_Status == 'lose' && game.Acceptor_status == 'lose') {
-                // console.log('cancled');
-                // game.Status = "cancelled";
-                let updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('running');
-                if (updateResult == null) {
-                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('pending');
-                }
-                if (updateResult == null) {
-                    updateResult = await Game.findByIdAndUpdate(req.params.id, { Status: 'cancelled' }).where("Status").equals('conflict');
-                }
-                if (updateResult != null) {
-                    // const { Winner_closingbalance, Loser_closingbalance } = await add_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount)
-                    // add wallet start
-                    const user1 = await User.findById(game.Accepetd_By);
-                    const user2 = await User.findById(game.Created_by)
-                    user2.Wallet_balance += game.Game_Ammount;
-                    user1.Wallet_balance += game.Game_Ammount;
-                    // user2.withdrawAmount += game.Game_Ammount;
-                    // user1.withdrawAmount += game.Game_Ammount;
-                    user2.withdrawAmount += game.creatorWithdrawDeducted;
-                    user1.withdrawAmount += game.acceptorWithdrawDeducted;
-                    user1.hold_balance -= game.Game_Ammount;
-                    user2.hold_balance -= game.Game_Ammount;
-                    await user2.save();
-                    await user1.save();
-                    // add wallet end
-                    game.Winner_closingbalance += game.Game_Ammount;
-                    game.Loser_closingbalance += game.Game_Ammount;
-                    await game.save();
-                    res.status(200).send(game)
-                }
-            }
-            else if ((game.Creator_Status == 'winn' && game.Acceptor_status == "winn") || (game.Creator_Status == 'cancelled' && game.Acceptor_status == "winn") || (game.Creator_Status == 'winn' && game.Acceptor_status == "cancelled")) {
-                game.Status = 'conflict';
-                // deduct_wallet(game.Accepetd_By, game.Created_by, game.Game_Ammount)
-                await game.save();
-                res.status(200).send(game)
-            }
+           
             else if ((game.Creator_Status == 'winn' && game.Acceptor_status == 'lose') || (game.Creator_Status == 'lose' && game.Acceptor_status == 'winn')) {
                 // console.log('completed');
                 // game.Status = 'completed';
