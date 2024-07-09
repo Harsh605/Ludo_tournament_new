@@ -241,6 +241,10 @@ socket.on('connect',function(){
         console.log('19/6/21 fetched:',MYROOM,myid,chance);
         StartTheGame();
     });
+    socket.emit('disconnectInfo', {
+        token: localStorage.getItem('token'), // Retrieve token from localStorage
+        game_id: localStorage.getItem('game_id') // Retrieve game_id from localStorage
+    });
 
 //To simulate dice
     if(chance === myid){    
