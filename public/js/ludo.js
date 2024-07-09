@@ -790,7 +790,7 @@ async function userWinn() {
             }
 
             console.log(response);
-            alert("The game has been successfully cancelled.");
+            alert("You are ths winner of this game opponent left the game.");
             
             if (window.opener) {
                 window.opener.focus(); // This will focus the opener window
