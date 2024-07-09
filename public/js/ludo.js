@@ -1,6 +1,23 @@
-let socket = io(window.location.href.substring(0,window.location.href.length-7));
+// let socket = io(window.location.href.substring(0,window.location.href.length-7));
 
-const room_code = window.location.href.substring(window.location.href.length-6);
+const urlParams = new URLSearchParams(window.location.search);
+
+const token = urlParams.get('token');
+const gameId = urlParams.get('game_id');
+
+
+const url = window.location.href;
+const ludoIndex = url.indexOf('/ludo');
+const path = url.substring(ludoIndex, ludoIndex + 5); // "/ludo"
+
+let socket = io(path)
+
+// const room_code = window.location.href.substring(window.location.href.length-6);
+
+const roomCodeStartIndex = url.indexOf('/ludo/') + '/ludo/'.length;
+const roomCodeEndIndex = url.indexOf('?', roomCodeStartIndex); // find the first '?' after the room code
+const room_code = roomCodeEndIndex !== -1 ? url.substring(roomCodeStartIndex, roomCodeEndIndex) : url.substring(roomCodeStartIndex);
+
 const USERNAMES = ['Green Warrior', 'Red Fire', 'Blue Fox', 'Yellow Rhino'];
 const PIECES = [];
 const colors = ["green","red","blue","yellow"];
@@ -487,6 +504,9 @@ function loadAllPieces(){
                 }else{
                     window.localStorage.clear();
                     window.localStorage.setItem('room', room_code);
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('game_id', gameId);
+
                     allPlayerHandler();
                 }
             }
@@ -594,6 +614,9 @@ function showModal(id){
     window.localStorage.clear();
     document.getElementById("myModal-1").style.display = "block";
     document.getElementById("win-win").innerHTML = `The winner is ${USERNAMES[id]}`
+    localStorage.setItem('token', token);
+    localStorage.setItem('game_id', gameId);
+
 
 }
 
@@ -691,3 +714,5 @@ function wait(){
     butt.style.opacity =  0.6;
     butt.style.cursor = "not-allowed"
 }
+
+
