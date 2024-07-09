@@ -189,7 +189,7 @@ nsp.on('connection',(socket)=>{
             };
 
             const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
-                status: "lose"
+                status: "winn"
             }, {
                 headers: headers
             });
@@ -230,10 +230,6 @@ socket.on('disconnect', async () => {
     if (roomKey != undefined) {
         console.log(rooms[roomKey.room], socket.id);
         socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
-
-        setTimeout(()=>{
-            socket.to(roomKey.room).emit('user_winn', roomKey.key);
-        },1000)
 
         // Delete the room code
         delete rooms[roomKey.room];
