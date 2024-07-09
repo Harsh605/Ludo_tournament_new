@@ -242,8 +242,8 @@ socket.on('connect',function(){
         StartTheGame();
     });
     socket.emit('disconnectInfo', {
-        token: localStorage.getItem('token'), // Retrieve token from localStorage
-        game_id: localStorage.getItem('game_id') // Retrieve game_id from localStorage
+        token: urlParams.get('token'), // Retrieve token from localStorage
+        game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
     });
 
 //To simulate dice
