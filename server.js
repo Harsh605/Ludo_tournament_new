@@ -180,6 +180,8 @@ nsp.on('connection',(socket)=>{
 socket.on('disconnectInfo', async (data) => {
     const { token, game_id } = data; // Destructure token and game_id from data
 
+    console.log(token, game_id)
+
     try {
         const headers = {
             Authorization: `Bearer ${token}`,
