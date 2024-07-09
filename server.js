@@ -176,21 +176,7 @@ nsp.on('connection',(socket)=>{
     //     console.log('A client just got disconnected');
     // });
 
-   // Handle general disconnect event
-socket.on('disconnect', async () => {
-    let roomKey = deleteThisid(socket.id);
-    if (roomKey != undefined) {
-        console.log(rooms[roomKey.room], socket.id);
-        socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
-
-        // Delete the room code
-        delete rooms[roomKey.room];
-        console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
-    }
-    console.log('A client just got disconnected');
-});
-
-// Handle 'disconnectInfo' event
+   // Handle 'disconnectInfo' event
 socket.on('disconnectInfo', async (data) => {
     const { token, game_id } = data; // Destructure token and game_id from data
 
@@ -210,6 +196,20 @@ socket.on('disconnectInfo', async (data) => {
     } catch (error) {
         console.error('POST request failed:', error.message);
     }
+});
+
+// Handle general disconnect event
+socket.on('disconnect', async () => {
+    let roomKey = deleteThisid(socket.id);
+    if (roomKey != undefined) {
+        console.log(rooms[roomKey.room], socket.id);
+        socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+
+        // Delete the room code
+        delete rooms[roomKey.room];
+        console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
+    }
+    console.log('A client just got disconnected');
 });
 
     
