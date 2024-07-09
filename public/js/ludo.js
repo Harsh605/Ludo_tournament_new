@@ -375,7 +375,6 @@ function outputMessage(anObject,k){
     else if (k === 6) {
 
         socket.on('user_winn',function(data){
-            showModal(data);
             socket.emit('disconnect_user_winn', {
                 token: urlParams.get('token'), // Retrieve token from localStorage
                 game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
