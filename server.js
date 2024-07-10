@@ -322,6 +322,12 @@ wss.on('connection', function (ws) {
         break;
 
     }
+
+    case 'pageReloadSocketCall': {
+        broadcastEvent("pageReloadSocketReceive");
+        break;
+    }
+
     case 'pong':{
         ws.isAlive = true;
         break;
