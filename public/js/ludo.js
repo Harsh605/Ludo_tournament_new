@@ -809,7 +809,7 @@ async function cancelGame() {
     if (window.confirm("Are you sure you want to cancel this game?")) {
         const headers = {
             Authorization: `Bearer ${urlParams.get('token')}`,
-            'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
+            'Content-Type': 'application/json'
         };
         try {
             const response = await fetch(`http://84.247.133.7:5010/challange/result/live/${urlParams.get('game_id')}`, {
@@ -824,26 +824,28 @@ async function cancelGame() {
                 throw new Error('Network response was not ok');
             }
 
-            sendWebSocketMessage('pageReloadSocketCall');
-            console.log(response);
+            const responseData = await response.json();
+            console.log(responseData);
+
+            await sendWebSocketMessage('pageReloadSocketCall');
             alert("The game has been successfully cancelled.");
             
             if (window.opener) {
-                window.opener.focus(); // This will focus the opener window
-                window.close(); // This will close the current window
+                window.opener.focus();
+                window.close();
             } else {
                 console.log("No opener window found. Unable to switch tabs.");
-                // Optionally, you could redirect to a specific URL here
                 // window.location.href = 'your-fallback-url.html';
             }
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.error("Error cancelling the game:", error);
             alert("There was an error cancelling the game.");
         }
     } else {
         console.log("Game cancellation aborted by user.");
     }
 }
+
 async function userWinn() {
         const headers = {
             Authorization: `Bearer ${urlParams.get('token')}`,
@@ -862,7 +864,7 @@ async function userWinn() {
                 throw new Error('Network response was not ok');
             }
 
-            sendWebSocketMessage('pageReloadSocketCall');
+            await sendWebSocketMessage('pageReloadSocketCall');
             console.log(response);
             alert("You are ths winner of this game opponent left the game.");
             
@@ -880,6 +882,20 @@ async function userWinn() {
         }
    
 }
+
+window.addEventListener('beforeunload', function() {
+    // Clear all cookies
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
+  
+    // Clear localStorage
+    localStorage.clear();
+  });
 
 
 

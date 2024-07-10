@@ -23,7 +23,8 @@ exports.room = (req,res)=>{
             res.sendFile('ludo.html', { root: views });
         } else{
             res.statusCode = 404;
-            res.end('404!:(\nThis is either not a valid Room Code or The room is filled up, Go to home and create a room!');
+            res.sendFile('endludo.html', { root: views });
+            // res.end('404!:(\nThis is either not a valid Room Code or The room is filled up, Go to home and create a room!');
         }
 
     }catch(e){

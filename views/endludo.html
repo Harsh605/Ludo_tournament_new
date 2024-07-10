@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            background-color: #f4f4f4;
+            padding: 1rem;
+            text-align: center;
+        }
+        main {
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>This is either not a valid Room Code or The room is filled up, Go to home and create a new game!</h1>
+        <button onclick="back()">back</button>
+    </header>
+   
+</body>
+
+<script>
+    function back(){
+        window.opener = self;
+        window.close();
+        }
+</script>
+</html>

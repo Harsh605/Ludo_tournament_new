@@ -879,6 +879,10 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
     try {
         // if(InProcessSubmit==false)
 
+        console.log(Auth)
+
+        console.log(req.params.id)
+
         // InProcessSubmit=true;
         const game = await Game.findById(req.params.id)
         if (game.Status != "cancelled" && game.Status != "completed") {
