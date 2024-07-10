@@ -890,6 +890,8 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
             console.log('req comes');
             const reqUser = req.user.id;
 
+            console.log(req.user.id)
+
             // Player status update
             const field = (game.Created_by == reqUser) ? 'Creator_Status' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status' : undefined);
             const fieldUpdatedAt = (game.Created_by == reqUser) ? 'Creator_Status_Updated_at' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status_Updated_at' : undefined);
@@ -955,7 +957,7 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
                     game.Winner_closingbalance += game.Game_Ammount;
                     game.Loser_closingbalance += game.Game_Ammount;
                     await game.save();
-                    res.status(200).send(game)
+                   return res.status(200).send(game)
                 }
             }
            
@@ -991,7 +993,7 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
                         game.Winner_closingbalance = (creator_closingbalance + winnAmount + game.Game_Ammount);
                         game.Loser_closingbalance = acceptor_closingbalance;
                         await game.save();
-                        res.status(200).send(game)
+                       return  res.status(200).send(game)
                     }
                     else if (game.Acceptor_status == 'winn' && game.Creator_Status == 'lose') {
                         const { winnAmount, earnAdmin } = await adminProfit(game.Game_Ammount, game.Accepetd_By);
@@ -1008,7 +1010,8 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
                         game.Winner_closingbalance = (acceptor_closingbalance + winnAmount + game.Game_Ammount);
                         game.Loser_closingbalance = creator_closingbalance;
                         await game.save();
-                        res.status(200).send(game)
+                        return res.status(200).send(game)
+
                     }
                 }
 

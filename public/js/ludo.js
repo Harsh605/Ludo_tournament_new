@@ -812,7 +812,7 @@ async function cancelGame() {
             'Content-Type': 'application/json'
         };
         try {
-            const response = await fetch(`http://84.247.133.7:5010/challange/result/live/${urlParams.get('game_id')}`, {
+            const response = await fetch(`http:///challange/result/live/${urlParams.get('game_id')}`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
@@ -852,7 +852,7 @@ async function userWinn() {
             'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
         };
         try {
-            const response = await fetch(`http://84.247.133.7:5010/challange/result/live/${urlParams.get('game_id')}`, {
+            const response = await fetch(`/challange/result/live/${urlParams.get('game_id')}`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
