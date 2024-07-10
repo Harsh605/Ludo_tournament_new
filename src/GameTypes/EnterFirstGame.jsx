@@ -781,7 +781,7 @@ function EnterFirstGame(props) {
                                         <div className='text-center'>
                                             <div>Room Code</div>
                                             {
-                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <a href={`http://localhost:5010/ludo/${Game?.Room_code}?token=${access_token}&game_id=${path}`} target="_blank">{`http://84.247.133.7:5010/ludo/${Game?.Room_code}`}</a>
+                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <a href={`http://84.247.133.7/:5010/ludo/${Game?.Room_code}?token=${access_token}&game_id=${path}`} target="_blank">{`http://84.247.133.7:5010/ludo/${Game?.Room_code}`}</a>
                                             }
                                             {/* <span>{Game?.Room_code}</span> */}
                                             
