@@ -232,7 +232,7 @@ socket.on('disconnect', async () => {
         socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
 
         // Delete the room code
-        delete rooms[roomKey.room];
+        // delete rooms[roomKey.room];
         console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
     }
     console.log('A client just got disconnected');

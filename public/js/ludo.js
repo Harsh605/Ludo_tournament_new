@@ -10,7 +10,79 @@ const url = window.location.href;
 const ludoIndex = url.indexOf('/ludo');
 const path = url.substring(ludoIndex, ludoIndex + 5); // "/ludo"
 
-let socket = io(path)
+let socket = io(path); // This is your existing socket connection
+
+let sockets; // This will be our WebSocket connection
+
+function initializeSocket() {
+    sockets = new WebSocket("ws://84.247.133.7:7001");
+
+    function openFunc() {
+        sockets.onopen = () => {
+            console.log('WebSocket is connected 👍');
+            // Set ping timeout
+            sockets.pingTimeout = setTimeout(() => {
+                sockets.close();
+            }, 31000);
+        };
+    }
+
+    function listenFunc() {
+        sockets.onmessage = (event) => {
+            try {
+                const { event: eventName, data } = JSON.parse(event.data);
+                
+                if (eventName === 'ping') {
+                    sockets.send(JSON.stringify({ event: 'pong', data: 2 }));
+                    clearTimeout(sockets.pingTimeout);
+                    sockets.pingTimeout = setTimeout(() => {
+                        sockets.close();
+                    }, 31000);
+                }
+
+                console.log(`Received event: ${eventName}`, data);
+            } catch (error) {
+                console.error("Error processing message:", error);
+            }
+        };
+    }
+
+    function closeFunc() {
+        sockets.onclose = () => {
+            console.log('WebSocket disconnected wow 😡');
+            clearTimeout(sockets.pingTimeout);
+            // Attempt to reconnect
+            setTimeout(initializeSocket, 1000);
+        };
+    }
+
+    openFunc();
+    listenFunc();
+    closeFunc();
+}
+
+// Initialize the WebSocket connection
+initializeSocket();
+
+// Clean up function (call this when you want to disconnect)
+function cleanup() {
+    if (sockets) {
+        clearTimeout(sockets.pingTimeout);
+        sockets.close();
+    }
+}
+
+// Function to send messages through the WebSocket
+function sendWebSocketMessage(eventName, data = null) {
+    if (sockets && sockets.readyState === WebSocket.OPEN) {
+        const message = JSON.stringify({ event: eventName, data });
+        sockets.send(message);
+        console.log(`Sent WebSocket message: ${message}`);
+    } else {
+        console.error(`WebSocket is not open. Unable to send message: ${eventName}`);
+        console.log(`WebSocket readyState: ${sockets ? sockets.readyState : 'undefined'}`);
+    }
+}
 
 // const room_code = window.location.href.substring(window.location.href.length-6);
 
@@ -752,6 +824,7 @@ async function cancelGame() {
                 throw new Error('Network response was not ok');
             }
 
+            sendWebSocketMessage('pageReloadSocketCall');
             console.log(response);
             alert("The game has been successfully cancelled.");
             
@@ -789,6 +862,7 @@ async function userWinn() {
                 throw new Error('Network response was not ok');
             }
 
+            sendWebSocketMessage('pageReloadSocketCall');
             console.log(response);
             alert("You are ths winner of this game opponent left the game.");
             
