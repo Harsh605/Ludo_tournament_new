@@ -514,6 +514,10 @@ function EnterFirstGame(props) {
                     setSocket(undefined);
                 }, 30000 + 1000);
             })
+
+            socket.listen("pageReloadSocketReceive", (data) => {
+               window.location.reload();
+            });
         }
         function closeFunc() {
             socket.onclose = () => {
