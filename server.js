@@ -282,26 +282,58 @@ function deleteThisid(id){
 }
 
 //to validate a winner, by comparing the data provided by all 4
-function validateWinner(OBJ,socket){
-    win[OBJ.room][OBJ.player] = {o:OBJ,s:socket.id};
-    if(()=>{
-        if(Object.keys(win[OBJ.room]).length == 4){
-            for(let i=0;i<4;i++){
-                if(win[OBJ.room][String(i)]['s']==rooms[OBJ.room][String(i)]['sid']){
-                    continue;
-                }else{return false}
-            }
-            return true;
-        }else{return false;}
-    }){
-        for(let i=0;i<3;i++){
-            if(win[OBJ.room][String(i)]['o'].id == win[OBJ.room][String(i+1)]['o'].id){
-                continue;
-            }else{return false}
-        }
-        return true;
-    }else{return false;}
+// function validateWinner(OBJ,socket){
+//     win[OBJ.room][OBJ.player] = {o:OBJ,s:socket.id};
+//     if(()=>{
+//         if(Object.keys(win[OBJ.room]).length == 4){
+//             for(let i=0;i<4;i++){
+//                 if(win[OBJ.room][String(i)]['s']==rooms[OBJ.room][String(i)]['sid']){
+//                     continue;
+//                 }else{return false}
+//             }
+//             return true;
+//         }else{return false;}
+//     }){
+//         for(let i=0;i<3;i++){
+//             if(win[OBJ.room][String(i)]['o'].id == win[OBJ.room][String(i+1)]['o'].id){
+//                 continue;
+//             }else{return false}
+//         }
+//         return true;
+//     }else{return false;}
     
+// }
+
+
+//to validate a winner, by comparing the data provided by all 4
+function validateWinner(OBJ, socket) {
+    win[OBJ.room] = win[OBJ.room] || {}; // Ensure the room object exists in the win object
+    win[OBJ.room][OBJ.player] = { o: OBJ, s: socket.id };
+
+    const roomWinData = win[OBJ.room];
+    const roomPlayerData = rooms[OBJ.room];
+
+    // Check if we have at least 2 players' data
+    if (Object.keys(roomWinData).length < 2) {
+        return false;
+    }
+
+    // Validate that all recorded socket IDs match the room socket IDs
+    for (let player in roomWinData) {
+        if (roomWinData[player].s !== roomPlayerData[player].sid) {
+            return false;
+        }
+    }
+
+    // Check if all recorded player IDs are the same
+    const firstPlayerId = roomWinData[Object.keys(roomWinData)[0]].o.id;
+    for (let player in roomWinData) {
+        if (roomWinData[player].o.id !== firstPlayerId) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 //

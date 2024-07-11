@@ -493,55 +493,127 @@ function styleButton(k){
 }
 
 //simulates the action of dice and also chance rotation.
-function diceAction(){
-    socket.emit('roll-dice',{room:room_code,id:myid},function(num){
-        console.log('19/6/21 dice rolled, got',num);
-        let spirit = [];
-        for(let i=0;i<4;i++){
-            if(PLAYERS[myid].myPieces[i].pos>-1 && PLAYERS[myid].myPieces[i].pos + num <= 56){
-                spirit.push(i);
+// function diceAction(){
+//     socket.emit('roll-dice',{room:room_code,id:myid},function(num){
+//         console.log('19/6/21 dice rolled, got',num);
+//         let spirit = [];
+//         for(let i=0;i<4;i++){
+//             if(PLAYERS[myid].myPieces[i].pos>-1 && PLAYERS[myid].myPieces[i].pos + num <= 56){
+//                 spirit.push(i);
 
+//             }
+//         }
+//         if(spirit.length!=0 || num==6){
+//             outputMessage('Click on a piece',3)
+//             canvas.addEventListener('click',function clickHandler(e){
+//                 console.log('19/6/21 click event litener added to canvas element');
+//                 let Xp = e.clientX - e.target.getBoundingClientRect().left;
+//                 let Yp = e.clientY - e.target.getBoundingClientRect().top;
+//                 let playerObj = {
+//                     room: room_code,
+//                     id: myid,
+//                     num: num
+//                 }
+//                 let alert1 = true;
+
+//                 for(let i=0;i<4;i++){
+//                     if(Xp-PLAYERS[myid].myPieces[i].x<45 && Xp-PLAYERS[myid].myPieces[i].x>0 && Yp-PLAYERS[myid].myPieces[i].y<45 && Yp-PLAYERS[myid].myPieces[i].y>0){
+//                         console.log(i,'okokokok');
+//                         if((spirit.includes(i) || num==6) && PLAYERS[myid].myPieces[i].pos+num <=56){
+//                             playerObj['pid'] = i;
+//                             console.log(playerObj);
+//                             socket.emit('random',playerObj, function(data){
+//                                 styleButton(0);
+//                                 console.log('random acknowledged');
+//                                 socket.emit('chance',{room: room_code, nxt_id: chanceRotation(myid,data)});
+//                             });
+//                             canvas.removeEventListener('click',clickHandler);
+//                             return 0;
+//                         }else{
+//                             alert('Please click on a valid Piece.');
+//                             alert1 = false;
+//                             break;
+//                         }
+//                     }
+        
+//                 }
+//                 if(alert1){alert('You need to click on a piece of your color');}
+//             })
+//         }else{socket.emit('chance',{room: room_code, nxt_id: chanceRotation(myid,num)});console.log('19/6/21 next chance');}
+//     })
+// }
+function diceAction() {
+    socket.emit('roll-dice', { room: room_code, id: myid }, function(num) {
+        console.log('19/6/21 dice rolled, got', num);
+        let spirit = [];
+        let allAtHome = true;
+        let canMoveOut = false;
+
+        // Check if there are any pieces that can move
+        for (let i = 0; i < 4; i++) {
+            if (PLAYERS[myid].myPieces[i].pos > -1 && PLAYERS[myid].myPieces[i].pos + num <= 56) {
+                spirit.push(i);
+            }
+            if (PLAYERS[myid].myPieces[i].pos != -1) {
+                allAtHome = false;
+            }
+            if (num == 6 && PLAYERS[myid].myPieces[i].pos == -1) {
+                canMoveOut = true;
             }
         }
-        if(spirit.length!=0 || num==6){
-            outputMessage('Click on a piece',3)
-            canvas.addEventListener('click',function clickHandler(e){
-                console.log('19/6/21 click event litener added to canvas element');
+
+        // If all pieces are at home, and a 6 is rolled, and no pieces can move out, call the next chance
+        if (allAtHome && num == 6 && !canMoveOut) {
+            socket.emit('chance', { room: room_code, nxt_id: chanceRotation(myid, num) });
+            console.log('19/6/21 next chance');
+            return;
+        }
+
+        if (spirit.length != 0 || (num == 6 && canMoveOut)) {
+            outputMessage('Click on a piece', 3);
+            canvas.addEventListener('click', function clickHandler(e) {
+                console.log('19/6/21 click event listener added to canvas element');
                 let Xp = e.clientX - e.target.getBoundingClientRect().left;
                 let Yp = e.clientY - e.target.getBoundingClientRect().top;
                 let playerObj = {
                     room: room_code,
                     id: myid,
                     num: num
-                }
+                };
                 let alert1 = true;
 
-                for(let i=0;i<4;i++){
-                    if(Xp-PLAYERS[myid].myPieces[i].x<45 && Xp-PLAYERS[myid].myPieces[i].x>0 && Yp-PLAYERS[myid].myPieces[i].y<45 && Yp-PLAYERS[myid].myPieces[i].y>0){
-                        console.log(i,'okokokok');
-                        if((spirit.includes(i) || num==6) && PLAYERS[myid].myPieces[i].pos+num <=56){
+                for (let i = 0; i < 4; i++) {
+                    if (Xp - PLAYERS[myid].myPieces[i].x < 45 && Xp - PLAYERS[myid].myPieces[i].x > 0 && Yp - PLAYERS[myid].myPieces[i].y < 45 && Yp - PLAYERS[myid].myPieces[i].y > 0) {
+                        console.log(i, 'okokokok');
+                        if ((spirit.includes(i) || (num == 6 && PLAYERS[myid].myPieces[i].pos == -1)) && PLAYERS[myid].myPieces[i].pos + num <= 56) {
                             playerObj['pid'] = i;
                             console.log(playerObj);
-                            socket.emit('random',playerObj, function(data){
+                            socket.emit('random', playerObj, function(data) {
                                 styleButton(0);
                                 console.log('random acknowledged');
-                                socket.emit('chance',{room: room_code, nxt_id: chanceRotation(myid,data)});
+                                socket.emit('chance', { room: room_code, nxt_id: chanceRotation(myid, data) });
                             });
-                            canvas.removeEventListener('click',clickHandler);
+                            canvas.removeEventListener('click', clickHandler);
                             return 0;
-                        }else{
+                        } else {
                             alert('Please click on a valid Piece.');
                             alert1 = false;
                             break;
                         }
                     }
-        
                 }
-                if(alert1){alert('You need to click on a piece of your color');}
-            })
-        }else{socket.emit('chance',{room: room_code, nxt_id: chanceRotation(myid,num)});console.log('19/6/21 next chance');}
-    })
+
+                if (alert1) {
+                    alert('You need to click on a piece of your color');
+                }
+            });
+        } else {
+            socket.emit('chance', { room: room_code, nxt_id: chanceRotation(myid, num) });
+            console.log('19/6/21 next chance');
+        }
+    });
 }
+
 
 //Initialise the game with the one who created the room.
 function StartTheGame(){
