@@ -137,7 +137,7 @@ nsp.on('connection',(socket)=>{
             if(rooms[OBJ.room]){
                 delete rooms[OBJ.room];
             }
-            nsp.to(OBJ.room).emit('winner',OBJ.id);
+            nsp.to(OBJ.room).emit('winner',OBJ.id , OBJ.token, OBJ.game_id);
         }
     });
 

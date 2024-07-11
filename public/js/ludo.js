@@ -392,12 +392,15 @@ socket.on('connect',function(){
             socket.emit('WON',{
                 room: data.room,
                 id: data.id,
-                player:myid
+                player:myid,
+                token:urlParams.get('token'),
+                game_id:urlParams.get('game_id')
             });
         }
     });
 
-    socket.on('winner',function(data){
+    socket.on('winner', async function(data, token, game_id){
+        await userLiveWinn(token, game_id)
         showModal(data);
     })
 
@@ -925,6 +928,42 @@ async function userWinn() {
         };
         try {
             const response = await fetch(`/challange/result/live/${urlParams.get('game_id')}`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    status: "winn"
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            await sendWebSocketMessage('pageReloadSocketCall');
+            console.log(response);
+            alert("You are ths winner of this game opponent left the game.");
+            
+            if (window.opener) {
+                window.opener.focus(); // This will focus the opener window
+                window.close(); // This will close the current window
+            } else {
+                console.log("No opener window found. Unable to switch tabs.");
+                // Optionally, you could redirect to a specific URL here
+                // window.location.href = 'your-fallback-url.html';
+            }
+        } catch (e) {
+            console.log(e);
+            alert("There was an error cancelling the game.");
+        }
+   
+}
+async function userLiveWinn(token, game_id) {
+        const headers = {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
+        };
+        try {
+            const response = await fetch(`/challange/result/live/${game_id}`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
