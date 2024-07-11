@@ -148,6 +148,7 @@ nsp.on('connection',(socket)=>{
             if (rooms[OBJ.room]) {
                 delete rooms[OBJ.room];
             }
+            console.log(OBJ)
             nsp.to(OBJ.room).emit('winner', OBJ); // Emitting OBJ directly to frontend
         }
     });
