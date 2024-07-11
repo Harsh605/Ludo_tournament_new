@@ -396,6 +396,7 @@ socket.on('connect',function(){
                 token:urlParams.get('token'),
                 game_id:urlParams.get('game_id')
             });
+            return
         }
     });
 
@@ -406,13 +407,13 @@ socket.on('connect',function(){
     });
 
 
-    async function userLiveWinn(token, game_id) {
+    async function userLiveWinn(t, g) {
         const headers = {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${t}`,
             'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
         };
         try {
-            const response = await fetch(`/challange/result/live/${game_id}`, {
+            const response = await fetch(`/challange/result/live/${g}`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
@@ -427,14 +428,9 @@ socket.on('connect',function(){
             await sendWebSocketMessage('pageReloadSocketCall');
             console.log(response);
             
-            if (window.opener) {
-                window.opener.focus(); // This will focus the opener window
-                window.close(); // This will close the current window
-            } else {
-                console.log("No opener window found. Unable to switch tabs.");
-                // Optionally, you could redirect to a specific URL here
-                // window.location.href = 'your-fallback-url.html';
-            }
+            window.opener = self;
+            window.close();
+
         } catch (e) {
             console.log(e);
             alert("There was an error winning the game.");
@@ -814,12 +810,8 @@ function inAhomeTile(id,pid){
 }
 
 function showModal(id){
-    window.localStorage.clear();
     document.getElementById("myModal-1").style.display = "block";
     document.getElementById("win-win").innerHTML = `The winner is ${USERNAMES[id]}`
-    localStorage.setItem('token', token);
-    localStorage.setItem('game_id', gameId);
-
 
 }
 
