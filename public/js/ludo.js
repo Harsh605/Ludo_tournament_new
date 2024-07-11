@@ -402,7 +402,7 @@ socket.on('connect',function(){
     socket.on('winner', async function(data) {
         showModal(data.id);
         console.log(data)
-        // await userLiveWinn(data.token, data.game_id);
+        await userLiveWinn(data.token, data.game_id);
         
     });
     
@@ -980,7 +980,6 @@ async function userLiveWinn(token, game_id) {
 
             await sendWebSocketMessage('pageReloadSocketCall');
             console.log(response);
-            alert("You are ths winner of this game opponent left the game.");
             
             if (window.opener) {
                 window.opener.focus(); // This will focus the opener window
@@ -992,7 +991,7 @@ async function userLiveWinn(token, game_id) {
             }
         } catch (e) {
             console.log(e);
-            alert("There was an error cancelling the game.");
+            alert("There was an error winning the game.");
         }
    
 }
