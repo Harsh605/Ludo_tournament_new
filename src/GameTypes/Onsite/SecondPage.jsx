@@ -693,7 +693,7 @@ function SecondPage({ walletUpdate }) {
     // const [roomCode, setRoomCode] = useState()
 
     const getPost = async (Id) => {
-        if (game_type === 'Ludo Classics' || game_type === 'Ludo 1 Goti' || game_type === 'Ludo Ulta' || game_type === "Ludo Snake" || game_type === "Ludo Classics Live") {
+        if (game_type === 'Ludo Classics' || game_type === 'Ludo 1 Goti' || game_type === 'Ludo Ulta' || game_type === "Ludo Snake") {
             socket.emit('roomCode', { game_id: Id, status: 'running' })
 
         }
@@ -733,7 +733,7 @@ function SecondPage({ walletUpdate }) {
                             <HeaderComponent userData={userAllData} />
                         </div>
                         <div className="col-12 my-3">
-                            {/* <div className="row align-items-center my-2 px-2">
+                            <div className="row align-items-center my-2 px-2">
                                 <div className="my-auto col-6 text-white">
                                     <h4>Games Mode</h4>
                                 </div>
@@ -753,7 +753,7 @@ function SecondPage({ walletUpdate }) {
                                     </div>
                                 </div>
 
-                            </div> */}
+                            </div>
                             <button type="button" className="btn btn-primary d-flex "
                                 onClick={() => navigate('/PlayPage')}
                             ><span className="material-symbols-outlined mb-0" >arrow_back</span>Back</button>

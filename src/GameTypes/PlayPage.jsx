@@ -57,7 +57,24 @@ function PlayPage() {
         // return () => clearInterval(intervalId);
     }, [])
 
-   
+     const [selectedMode, setSelectedMode] = useState("");
+
+    useEffect(() => {
+        // Get the gameMode from localStorage when the component mounts
+        const savedGameMode = localStorage.getItem("gameMode") || "offSite";
+        if (savedGameMode) {
+            setSelectedMode(savedGameMode);
+        }
+    }, []);
+
+    const handleChange = (e) => {
+        const selectedMode = e.target.value;
+        if (selectedMode === "onSite" || selectedMode === "offSite") {
+            localStorage.setItem("gameMode", selectedMode);
+            setSelectedMode(selectedMode);
+            window.location.reload();
+        }
+    };
 
 
     return (
@@ -84,12 +101,13 @@ function PlayPage() {
 
                         </div>
                         <div className="col-12">
-                            {/* <div className="row align-items-center my-2">
+                            
+                            <div className="row align-items-center my-2">
                                 <div className="my-auto col-6 text-white">
-                                    <h4>Games Mode</h4>
+                                    <h2>Games</h2>
                                 </div>
                                 <div className="col-6 d-flex justify-content-end">
-                                    <div className='row d-flex'>
+                                <div className='mr-2'>
                                         <select 
                                             name="" 
                                             className='form-control' 
@@ -102,14 +120,6 @@ function PlayPage() {
                                             <option value="offSite">Off site play</option>
                                         </select>
                                     </div>
-                                </div>
-
-                            </div> */}
-                            <div className="row align-items-center my-2">
-                                <div className="my-auto col-6 text-white">
-                                    <h2>Games</h2>
-                                </div>
-                                <div className="col-6 d-flex justify-content-end">
                                     <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2" id="guide-btn" className="btn btn-outline-primary bg-light">Guide</button>
                                     {/* Modal */}
                                     <div className="modal fade" id="exampleModal2" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -130,7 +140,9 @@ function PlayPage() {
                         </div>
                         <div className="col-12">
                             <div className="row">
-                                <div className="col-6 " style={{ background: commision.isLandingImage1 ? 'black' : null, opacity: commision.isLandingImage1 ? null : '50%', cursor: commision.isLandingImage1 ? 'pointer' : 'not-allowed' }}>
+                                {
+                                    selectedMode === "offSite" ? (<>
+                                    <div className="col-6 " style={{ background: commision.isLandingImage1 ? 'black' : null, opacity: commision.isLandingImage1 ? null : '50%', cursor: commision.isLandingImage1 ? 'pointer' : 'not-allowed' }}>
                                     <div className="card gamecard card-body" onClick={() => commision.isLandingImage1 && navigateToComponent('quick', 'Ludo Classics')}>
                                         {/* <img src="./images/classic.jpeg" alt /> */}
                                         <img src={baseURL + '/' + commision?.LandingImage1} alt />
@@ -145,18 +157,34 @@ function PlayPage() {
                                 </div>
                                 <div className="col-6" style={{ background: commision.isLandingImage3 ? 'black' : null, opacity: commision.isLandingImage3 ? null : '50%', cursor: commision.isLandingImage3 ? 'pointer' : 'not-allowed' }}>
 
-                                    <div className="card gamecard card-body" onClick={() => commision.isLandingImage3 && navigateToComponent('rich', 'Ludo Popular')}>
-                                        <img src={baseURL + '/' + commision?.LandingImage3} alt />
-                                    </div>
+                                <div className="card gamecard card-body" onClick={() => commision.isLandingImage3 && navigateToComponent('rich', 'Ludo Popular')}>
+                                    <img src={baseURL + '/' + commision?.LandingImage3} alt />
+                                </div>
 
                                 </div>
                                 <div className="col-6" style={{ background: commision.isLandingImage4 ? 'black' : null, opacity: commision.isLandingImage4 ? null : '50%', cursor: commision.isLandingImage4 ? 'pointer' : 'not-allowed' }}>
 
-                                    <div className="card gamecard card-body" onClick={() => commision.isLandingImage4 && navigateToComponent('rich', 'Quick Ludo')}>
-                                        <img src={baseURL + '/' + commision?.LandingImage4} alt />
-                                    </div>
-
+                                <div className="card gamecard card-body" onClick={() => commision.isLandingImage4 && navigateToComponent('rich', 'Quick Ludo')}>
+                                    <img src={baseURL + '/' + commision?.LandingImage4} alt />
                                 </div>
+
+                                </div></>)
+                                : (<> <div className="col-6 " style={{ background: commision.isLandingImage1 ? 'black' : null, opacity: commision.isLandingImage1 ? null : '50%', cursor: commision.isLandingImage1 ? 'pointer' : 'not-allowed' }}>
+                                    <div className="card gamecard card-body" onClick={() => commision.isLandingImage1 && navigateToComponent('quick', 'Ludo Classics Live')}>
+                                        {/* <img src="./images/classic.jpeg" alt /> */}
+                                        <img src={baseURL + '/' + commision?.LandingImage1} alt />
+                                    </div>
+                                </div>
+                                <div className="col-6" style={{ background: commision.isLandingImage2 ? 'black' : null, opacity: commision.isLandingImage2 ? null : '50%', cursor: commision.isLandingImage2 ? 'pointer' : 'not-allowed' }}>
+                                    <div className="card gamecard card-body" onClick={() => commision.isLandingImage2 && navigateToComponent('rich', 'Ludo Snake')}>
+                                        {/* <img src="./images/snakemode.jpeg" alt height="200px" /> */}
+                                        <img src={baseURL + '/' + commision?.LandingImage2} alt height="200px" />
+                                        {/* <img style={{ height: "13.2em" }} src="./images/snakemode.jpeg" alt /> */}
+                                    </div>
+                                </div></>)
+                                }
+                                
+                               
                                 {/* <div className="col-6" style={{ background: commision.isLandingImage1 ? 'black' : null, opacity: commision.isLandingImage1 ? null : '50%', cursor: commision.isLandingImage1 ? 'pointer' : 'not-allowed' }}>
 
                                     <div style={{ background: 'black', opacity: '50%', cursor: "not-allowed" }} className="card gamecard card-body" >
