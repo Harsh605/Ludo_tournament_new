@@ -399,10 +399,11 @@ socket.on('connect',function(){
         }
     });
 
-    socket.on('winner', async function(data, token, game_id){
-        await userLiveWinn(token, game_id)
-        showModal(data);
-    })
+    socket.on('winner', async function(OBJ) {
+        await userLiveWinn(OBJ.token, OBJ.game_id);
+        showModal(OBJ.id);
+    });
+    
 
 });
 

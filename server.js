@@ -130,16 +130,28 @@ nsp.on('connection',(socket)=>{
         cb(playerObj['num']);
     });
 
-    socket.on('WON',(OBJ)=>{
-        if(validateWinner(OBJ,socket)){
+    // socket.on('WON',(OBJ)=>{
+    //     if(validateWinner(OBJ,socket)){
+    //         delete win[OBJ.room];
+    //         delete NumberOfMembers[OBJ.room];
+    //         if(rooms[OBJ.room]){
+    //             delete rooms[OBJ.room];
+    //         }
+    //         nsp.to(OBJ.room).emit('winner',OBJ.id);
+    //     }
+    // });
+
+    socket.on('WON', async function(OBJ) {
+        if (validateWinner(OBJ, socket)) {
             delete win[OBJ.room];
             delete NumberOfMembers[OBJ.room];
-            if(rooms[OBJ.room]){
+            if (rooms[OBJ.room]) {
                 delete rooms[OBJ.room];
             }
-            nsp.to(OBJ.room).emit('winner',OBJ.id , OBJ.token, OBJ.game_id);
+            nsp.to(OBJ.room).emit('winner', OBJ); // Emitting OBJ directly to frontend
         }
     });
+    
 
     socket.on('resume',(data,cb)=>{
         socket.to(data.room).emit('resume',data);
