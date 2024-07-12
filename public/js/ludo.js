@@ -100,22 +100,41 @@ var PLAYERS = {};
 
 var canvas = document.getElementById('theCanvas');
 var ctx = canvas.getContext('2d');
-canvas.height = 750;
-canvas.width = 750;
+
+// Get the dimensions from the style
+var styleWidth = parseInt(window.getComputedStyle(canvas).width);
+var styleHeight = parseInt(window.getComputedStyle(canvas).height);
+
+// Set the canvas dimensions to match the style dimensions
+canvas.width = styleWidth;
+canvas.height = styleHeight;
+
+// Scale factor
+var scaleX = styleWidth / 750;
+var scaleY = styleHeight / 750;
+
+// Function to scale positions
+function scalePosition(position) {
+    return {
+        x: position.x * scaleX,
+        y: position.y * scaleY
+    };
+}
 
 let allPiecesePos = {
-    0:[{x: 50,y:125},{x:125,y: 50},{x:200,y:125},{x:125,y:200}],
-    1:[{x:500,y:125},{x:575,y: 50},{x:650,y:125},{x:575,y:200}],
-    2:[{x:500,y:575},{x:575,y:500},{x:650,y:575},{x:575,y:650}],
-    3:[{x: 50,y:575},{x:125,y:500},{x:200,y:575},{x:125,y:650}]
-}
+    0: [scalePosition({x: 50, y: 125}), scalePosition({x: 125, y: 50}), scalePosition({x: 200, y: 125}), scalePosition({x: 125, y: 200})],
+    1: [scalePosition({x: 500, y: 125}), scalePosition({x: 575, y: 50}), scalePosition({x: 650, y: 125}), scalePosition({x: 575, y: 200})],
+    2: [scalePosition({x: 500, y: 575}), scalePosition({x: 575, y: 500}), scalePosition({x: 650, y: 575}), scalePosition({x: 575, y: 650})],
+    3: [scalePosition({x: 50, y: 575}), scalePosition({x: 125, y: 500}), scalePosition({x: 200, y: 575}), scalePosition({x: 125, y: 650})]
+};
 
 let homeTilePos = {
-    0:{0:{x: 50,y:300},1:{x:300,y:100}},
-    1:{0:{x:400,y: 50},1:{x:600,y:300}},
-    2:{0:{x:650,y:400},1:{x:400,y:600}},
-    3:{0:{x:300,y:650},1:{x:100,y:400}}
-}
+    0: {0: scalePosition({x: 50, y: 300}), 1: scalePosition({x: 300, y: 100})},
+    1: {0: scalePosition({x: 400, y: 50}), 1: scalePosition({x: 600, y: 300})},
+    2: {0: scalePosition({x: 650, y: 400}), 1: scalePosition({x: 400, y: 600})},
+    3: {0: scalePosition({x: 300, y: 650}), 1: scalePosition({x: 100, y: 400})}
+};
+
 
 class Player{
     constructor(id){
@@ -231,7 +250,7 @@ class Piece{
     }
 
     draw(){
-        ctx.drawImage(this.image, this.x, this.y, 50, 50);
+        ctx.drawImage(this.image, this.x, this.y, 23.342, 23.342);
     }
 
     update(num){
@@ -253,46 +272,46 @@ class Piece{
     }
 
     oneStepToRight(id,pid){
-        window.PLAYERS[id].myPieces[pid].x += 50;
+        window.PLAYERS[id].myPieces[pid].x += 23.342;
         console.log('to r',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepToLeft(id,pid){
-        window.PLAYERS[id].myPieces[pid].x -= 50;
+        window.PLAYERS[id].myPieces[pid].x -= 23.342;
         console.log('to l',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepToTop(id,pid){
-        window.PLAYERS[id].myPieces[pid].y -= 50;
+        window.PLAYERS[id].myPieces[pid].y -= 23.342;
         console.log('to t',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepToBottom(id,pid){
-        window.PLAYERS[id].myPieces[pid].y += 50;
+        window.PLAYERS[id].myPieces[pid].y += 23.342;
         console.log('to b',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepTowards45(id,pid){
-        window.PLAYERS[id].myPieces[pid].x += 50;
-        window.PLAYERS[id].myPieces[pid].y -= 50;
+        window.PLAYERS[id].myPieces[pid].x += 23.342;
+        window.PLAYERS[id].myPieces[pid].y -= 23.342;
         console.log('to 45',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepTowards135(id,pid){
-        window.PLAYERS[id].myPieces[pid].x -= 50;
-        window.PLAYERS[id].myPieces[pid].y -= 50;
+        window.PLAYERS[id].myPieces[pid].x -= 23.342;
+        window.PLAYERS[id].myPieces[pid].y -= 23.342;
         console.log('to 135',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepTowards225(id,pid){
-        window.PLAYERS[id].myPieces[pid].x -= 50;
-        window.PLAYERS[id].myPieces[pid].y += 50;
+        window.PLAYERS[id].myPieces[pid].x -= 23.342;
+        window.PLAYERS[id].myPieces[pid].y += 23.342;
         console.log('to 225',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepTowards315(id,pid){
-        window.PLAYERS[id].myPieces[pid].x += 50;
-        window.PLAYERS[id].myPieces[pid].y += 50;
+        window.PLAYERS[id].myPieces[pid].x += 23.342;
+        window.PLAYERS[id].myPieces[pid].y += 23.342;
         console.log('to 315',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
