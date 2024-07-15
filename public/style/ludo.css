@@ -3,8 +3,35 @@
 }
 
 body {
+    cursor: default;
+    padding: 0;
     border: 0;
-}
+    margin: auto;
+    height: 99.5vh;
+    overflow: hidden;
+    text-align: center;
+    background-image: url("../images/lk_h5_bg.jpg");
+    background-size: contain;
+    background-repeat:initial;
+    font-family: Helvetica, Verdana, Arial, sans-serif;
+  }
+
+  
+  
+
+  canvas {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  div {
+    outline: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
 
 /*/// navbar ///*/
 .navBar{
@@ -204,7 +231,7 @@ body {
     top: 5%;
 }
 
-.gameBoard {
+/* .gameBoard {
     float: left;
     align-content: center;
     position: relative;
@@ -218,13 +245,13 @@ body {
     left: 25px;
     border: 2px solid;
     z-index: 1;
-}
+} */
 
 #green, #blue, #red, #yellow {
     z-index: 2;
 }
 
-.gameCanvas {
+/* .gameCanvas {
     width: 350px;
     height: 350px;
     position: absolute;
@@ -239,9 +266,9 @@ body {
     left: 0px;
     right: 0px;
     background-color: white;
-}
+} */
 
-.msgBoard {
+/* .msgBoard {
     float: top;
     width: 350px;
     height: 150px;
@@ -252,21 +279,21 @@ body {
     overflow-y: auto;
     font-family: sans-serif;
     
-}
+} */
 
-.goButt {
+/* .goButt {
     text-align: center;
     margin-top: 20px;
-}
+} */
 
 #randomButt, #copy-btn, #RESUME, #WAIT {
-    background-image: linear-gradient(to bottom right, red, yellow);
-    color: white;
-    font-size: 20px;
-    padding: 2px 20px;
-    border-radius: 6px;
+    /* background-image: linear-gradient(to bottom right, red, yellow); */
+    /* color: white; */
+    /* font-size: 20px; */
+    /* padding: 2px 20px; */
+    /* border-radius: 6px; */
     transition-duration: 0.4s;
-    box-shadow: 0 6px 8px 0 rgba(0,0,0,0.14), 0 17px 50px 0 rgba(0,0,0,0.09);
+    /* box-shadow: 0 6px 8px 0 rgba(0,0,0,0.14), 0 17px 50px 0 rgba(0,0,0,0.09); */
 }
 
 #randomButt:hover, #copy-btn:hover, #RESUME:hover, #WAIT {
@@ -293,3 +320,4 @@ body {
 #color-message-span2{
     font-family: 'Roboto Slab', serif;
 }
+

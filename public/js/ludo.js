@@ -90,9 +90,10 @@ const roomCodeStartIndex = url.indexOf('/ludo/') + '/ludo/'.length;
 const roomCodeEndIndex = url.indexOf('?', roomCodeStartIndex); // find the first '?' after the room code
 const room_code = roomCodeEndIndex !== -1 ? url.substring(roomCodeStartIndex, roomCodeEndIndex) : url.substring(roomCodeStartIndex);
 
-const USERNAMES = ['Green Warrior', 'Red Fire', 'Blue Fox', 'Yellow Rhino'];
+const USERNAMES = ['Green', 'Red', 'Blue', 'Yellow'];
 const PIECES = [];
 const colors = ["green","red","blue","yellow"];
+const dice = ["one","two","three","four","five","six"];
 let MYROOM = [];
 let myid = -1;
 let chance = Number(-1);
@@ -122,10 +123,10 @@ function scalePosition(position) {
 }
 
 let allPiecesePos = {
-    0: [scalePosition({x: 50, y: 125}), scalePosition({x: 125, y: 50}), scalePosition({x: 200, y: 125}), scalePosition({x: 125, y: 200})],
-    1: [scalePosition({x: 500, y: 125}), scalePosition({x: 575, y: 50}), scalePosition({x: 650, y: 125}), scalePosition({x: 575, y: 200})],
-    2: [scalePosition({x: 500, y: 575}), scalePosition({x: 575, y: 500}), scalePosition({x: 650, y: 575}), scalePosition({x: 575, y: 650})],
-    3: [scalePosition({x: 50, y: 575}), scalePosition({x: 125, y: 500}), scalePosition({x: 200, y: 575}), scalePosition({x: 125, y: 650})]
+    0: [scalePosition({x: 82, y: 80}), scalePosition({x: 172, y: 80}), scalePosition({x: 172, y: 170}), scalePosition({x: 82, y: 170})],
+    1: [scalePosition({x: 532, y: 80}), scalePosition({x: 625, y: 80}), scalePosition({x: 533, y: 175}), scalePosition({x: 625, y: 175})],
+    2: [scalePosition({x: 533, y: 533}), scalePosition({x: 625, y: 533}), scalePosition({x: 624, y: 625}), scalePosition({x: 535, y: 624})],
+    3: [scalePosition({x: 82, y: 530}), scalePosition({x: 172, y: 530}), scalePosition({x: 173, y: 620}), scalePosition({x: 80, y: 620})]
 };
 
 let homeTilePos = {
@@ -331,8 +332,8 @@ socket.on('connect',function(){
         myid = id;
         console.log('19/6/21 fetched:',MYROOM,myid,chance);
         StartTheGame();
+        
     });
-   
 
 //To simulate dice
     if(chance === myid){    
@@ -344,15 +345,19 @@ socket.on('connect',function(){
         });
     }
     
-    socket.on('imposter',()=>{window.location.replace("/error-imposter");});
+    socket.on('imposter',()=>{window.localStorage.clear(); window.location.replace("/");});
 
-    socket.on('is-it-your-chance',function(data){
-        if(data===myid){
+    socket.on('is-it-your-chance', function(data) {
+        if (data === myid) {
+            togglePlayerTurn(true);
             styleButton(1);
-            outputMessage({Name:'your',id:data},4)
-        }else{outputMessage({Name:USERNAMES[data]+"'s",id:data},4)}
+            outputMessage({ Name: 'your', id: data }, 4);
+        } else {
+            outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
+            togglePlayerTurn(false);
+        }
         chance = Number(data);
-        window.localStorage.setItem('chance',chance.toString());
+        window.localStorage.setItem('chance', chance.toString());
     });
 
     socket.on('new-user-joined',function(data){
@@ -371,17 +376,9 @@ socket.on('connect',function(){
         clearInterval(window.timer);
     });
 
-    //aman
-    socket.on('user-disconnected', async function(data){
-
-        await userWinn()
-        // socket.emit('disconnect_user_lose', {
-        //     token: urlParams.get('token'), // Retrieve token from localStorage
-        //     game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
-        // });
+    socket.on('user-disconnected',function(data){
         outputMessage({Name:USERNAMES[data],id:data},6);
-        resumeHandler(data);  
-
+        resumeHandler(data);    
     })
 
     socket.on('resume',function(data){
@@ -411,52 +408,15 @@ socket.on('connect',function(){
             socket.emit('WON',{
                 room: data.room,
                 id: data.id,
-                player:myid,
-                token:urlParams.get('token'),
-                game_id:urlParams.get('game_id')
+                player:myid
             });
-            return
         }
     });
 
-    socket.on('winner', async function(data) {
-        showModal(data.id);
-        console.log(data)
-        await userLiveWinn(data.token, data.game_id);
-    });
+    socket.on('winner',function(data){
+        showModal(data);
+    })
 
-
-    async function userLiveWinn(t, g) {
-        const headers = {
-            Authorization: `Bearer ${t}`,
-            'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
-        };
-        try {
-            const response = await fetch(`/challange/result/live/${g}`, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({
-                    status: "winn"
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            await sendWebSocketMessage('pageReloadSocketCall');
-            console.log(response);
-            
-            window.opener = self;
-            window.close();
-
-        } catch (e) {
-            console.log(e);
-            alert("There was an error winning the game.");
-        }
-   
-    }
-    
 });
 
 
@@ -466,86 +426,104 @@ socket.on('disconnect', function(){
    
 });
 
+var randomPiceNumber;
 //Output the message through DOM manipulation
-function outputMessage(anObject,k){
+var randomPiceNumber;
+var player1Set = false;  // Track if player1 is set
+
+//Output the message through DOM manipulation
+function outputMessage(anObject, k) {
     let msgBoard = document.querySelector('.msgBoard');
 
-    if(k===1 && !(anObject.Name.includes('<') || anObject.Name.includes('>') || anObject.Name.includes('/'))){    
+    if (k === 1 && !(anObject.Name.includes('<') || anObject.Name.includes('>') || anObject.Name.includes('/'))) {
         const div = document.createElement('div');
-        div.classList.add('message')
-        div.innerHTML = `<p><strong>&#9733;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span></strong><span id="color-message-span2"> got a ${anObject.Num}</span></p>`;
+        div.classList.add('message');
+        div.innerHTML = `<p><strong>&#9733;  <span id="color-message-span1" style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span></strong><span id="color-message-span2"> got a ${anObject.Num}</span></p>`;
+        randomPiceNumber = anObject.Num;
         msgBoard.appendChild(div);
-    }
-    else if(k===0 && !(anObject.Name.includes('<') || anObject.Name.includes('>') || anObject.Name.includes('/'))){
-        const div = document.createElement('div');
-        div.classList.add('messageFromServer');
-        div.innerHTML = `<p>&#8605;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> entered the game</span></p>`;
-        msgBoard.appendChild(div);
-    }
-    else if(k===3){
+    } else if (k === 0 && !(anObject.Name.includes('<') || anObject.Name.includes('>') || anObject.Name.includes('/'))) {
         const div = document.createElement('div');
         div.classList.add('messageFromServer');
-        div.innerHTML = `<span id="color-message-span2" style="text-shadow: 0 0 4px ${colors[myid]};">${anObject}!!</span>`
+        div.innerHTML = `<p>&#8605;  <span id="color-message-span1" style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> entered the game</span></p>`;
+        
+        if (!player1Set) {
+            document.getElementById("player1").innerHTML = `
+            <img class="AvatarSize" id="isPlayer1" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar2.png" alt="">
+                <p>  
+                    <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${colors[anObject.id]};">
+                        ${anObject.Name}
+                    </span>
+                    <span id="color-message-span2"></span>
+                    <img style="hight: 15px; width: 15px" src="../images/pieces/${colors[anObject.id]}.png" alt="${anObject.Name} Piece">
+                </p>`;
+            player1Set = true;
+        } else {
+            document.getElementById("player2").innerHTML = `
+            <img class="AvatarSize" id="isPlayer2" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar2.png" alt="">
+                <p>
+                    <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${colors[anObject.id]};">
+                        ${anObject.Name}
+                    </span>
+                    <span id="color-message-span2"></span>
+                    <img style="hight: 15px; width: 15px" src="../images/pieces/${colors[anObject.id]}.png" alt="${anObject.Name} Piece">
+                </p>`;
+        }
+        
+        
         msgBoard.appendChild(div);
-    }
-    else if(k===4){
+    } else if (k === 3) {
         const div = document.createElement('div');
         div.classList.add('messageFromServer');
-        div.innerHTML = `<p><span id="color-message-span2">Its </span><span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> chance!!</span></p>`
+        div.innerHTML = `<span id="color-message-span2" style="text-shadow: 0 0 4px ${colors[myid]};">${anObject}!!</span>`;
         msgBoard.appendChild(div);
-    }
-
-    else if(k===5){
+    } else if (k === 4) {
         const div = document.createElement('div');
         div.classList.add('messageFromServer');
-        div.innerHTML = `<span id="color-message-span2" style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.msg}!!</span>`
+        div.innerHTML = `<p><span id="color-message-span2">Its </span><span id="color-message-span1" style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> chance!!</span></p>`;
         msgBoard.appendChild(div);
-    }
-
-    else if (k === 6) {
-
-        // socket.on('user_winn',function(data){
-        //     socket.emit('disconnect_user_winn', {
-        //         token: urlParams.get('token'), // Retrieve token from localStorage
-        //         game_id: urlParams.get('game_id') // Retrieve game_id from localStorage
-        //     });
-        // })
-
+    } else if (k === 5) {
         const div = document.createElement('div');
         div.classList.add('messageFromServer');
-        div.innerHTML = `<p>&#8605;  <span id="color-message-span1"style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> just left the game </br> You are the winner of this game 🤩🥳🥳🤑</span></p>`;
+        div.innerHTML = `<span id="color-message-span2" style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.msg}!!</span>`;
         msgBoard.appendChild(div);
-
-        // Add a slight delay before attempting to switch tabs
-        // setTimeout(() => {
-        //     if (window.opener) {
-        //         window.opener.focus(); // This will focus the opener window
-        //         window.close(); // This will close the current window
-        //     } else {
-        //         console.log("No opener window found. Unable to switch tabs.");
-        //         // Optionally, you could redirect to a specific URL here
-        //         // window.location.href = 'your-fallback-url.html';
-        //     }
-        // }, 15000); // 2000 milliseconds = 2 seconds
+    } else if (k === 6) {
+        const div = document.createElement('div');
+        div.classList.add('messageFromServer');
+        div.innerHTML = `<p>&#8605;  <span id="color-message-span1" style="text-shadow: 0 0 4px ${colors[anObject.id]};">${anObject.Name}</span><span id="color-message-span2"> just left the game</span></p>`;
+        msgBoard.appendChild(div);
     }
     msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
 };
 
+
 //button disabling-enabling
-function styleButton(k){
-    let butt = document.getElementById("randomButt")
-    if(k===0){
-        butt.disabled = true;
-        butt.style.opacity =  0.6;
-        butt.style.cursor = "not-allowed"
-        butt.style.backgroundImage = "linear-gradient(to bottom right, red, yellow)"
-    }
-    else if(k===1){
-        butt.disabled = false;
+function styleButton(k) {
+    let butt = document.getElementById("randomButt");
+    let overlay = document.getElementById("overlay");
+    if (k === 0) {
+        butt.style.opacity = 0.6;
+        overlay.style.display = 'block';
+    } else if (k === 1) {
         butt.style.opacity = 1;
-        butt.style.cursor = "pointer";
-        butt.style.backgroundImage = "linear-gradient(to bottom right, red, yellow)"
+        overlay.style.display = 'none';
     }
+}
+
+
+function rollDice() {
+    const dice = document.getElementById('randomButt');
+    var dicesoundMusic = document.getElementById('dicesoundMusic');
+    dicesoundMusic.play();
+
+    dice.classList.add('rolling');
+
+    let imgName = ["one", "two", "three", "four", "five", "six"];
+
+    setTimeout(() => {
+        // const randomNumber = Math.floor(Math.random() * 6) + 1;
+        dice.src = `../images/dice/${imgName[randomPiceNumber - 1]}.png`;
+        dice.classList.remove('rolling');
+    }, 200);
 }
 
 //simulates the action of dice and also chance rotation.
@@ -598,6 +576,8 @@ function styleButton(k){
 //         }else{socket.emit('chance',{room: room_code, nxt_id: chanceRotation(myid,num)});console.log('19/6/21 next chance');}
 //     })
 // }
+
+
 function diceAction() {
     socket.emit('roll-dice', { room: room_code, id: myid }, function(num) {
         console.log('19/6/21 dice rolled, got', num);
@@ -628,6 +608,8 @@ function diceAction() {
         if (spirit.length != 0 || (num == 6 && canMoveOut)) {
             outputMessage('Click on a piece', 3);
             canvas.addEventListener('click', function clickHandler(e) {
+                var piceSound = document.getElementById('piceSound');
+                piceSound.play();
                 console.log('19/6/21 click event listener added to canvas element');
                 let Xp = e.clientX - e.target.getBoundingClientRect().left;
                 let Yp = e.clientY - e.target.getBoundingClientRect().top;
@@ -652,7 +634,8 @@ function diceAction() {
                             canvas.removeEventListener('click', clickHandler);
                             return 0;
                         } else {
-                            alert('Please click on a valid Piece.');
+                            showToast('Please click on a valid Piece.'); 
+                            // swal("Error!", "Please click on a valid Piece.!", "error");
                             alert1 = false;
                             break;
                         }
@@ -660,7 +643,7 @@ function diceAction() {
                 }
 
                 if (alert1) {
-                    alert('You need to click on a piece of your color');
+                    showToast('You need to click on a piece of your color');
                 }
             });
         } else {
@@ -668,6 +651,19 @@ function diceAction() {
             console.log('19/6/21 next chance');
         }
     });
+}
+
+function togglePlayerTurn(isPlayer1Turn) {
+    const player1 = document.getElementById('isPlayer1');
+    const player2 = document.getElementById('isPlayer2');
+    
+    if (isPlayer1Turn) {
+        player1.style.border = '3px solid yellow';
+        player2.style.border = 'none';
+    } else {
+        player1.style.border = 'none';
+        player2.style.border = '3px solid yellow';
+    }
 }
 
 
@@ -722,9 +718,6 @@ function loadAllPieces(){
                 }else{
                     window.localStorage.clear();
                     window.localStorage.setItem('room', room_code);
-                    localStorage.setItem('token', token);
-                    localStorage.setItem('game_id', gameId);
-
                     allPlayerHandler();
                 }
             }
@@ -834,31 +827,6 @@ function showModal(id){
 
 }
 
-async function copyhandler() {
-    var copyText = document.getElementById("copy").innerHTML;
-    await navigator.clipboard.writeText(copyText);
-    
-    var tooltip = document.getElementById("myTooltip");
-    tooltip.innerHTML = "Copied!!";
-}
-  
-function outFunc() {
-    var tooltip = document.getElementById("myTooltip");
-    tooltip.innerHTML = "Copy to clipboard";
-}
-
-async function copyhandlerLink() {
-    var copyText = window.location.href;
-    await navigator.clipboard.writeText(copyText);
-    
-    var tooltip = document.getElementById("myTooltipLink");
-    tooltip.innerHTML = "Copied!!";
-}
-  
-function outFuncLink() {
-    var tooltip = document.getElementById("myTooltipLink");
-    tooltip.innerHTML = "Copy room link to clipboard";
-}
 
 function resumeHandler(id){
     document.getElementById("myModal-2").style.display = "block";
@@ -928,6 +896,15 @@ function wait(){
     butt.style.opacity =  0.6;
     butt.style.cursor = "not-allowed"
 }
+
+function showToast(message) {
+    var toast = document.getElementById('toast');
+    toast.textContent = message; // Set the message content
+    toast.classList.add('show');
+    setTimeout(function() {
+      toast.classList.remove('show');
+    }, 3000); // Adjust the timeout as needed
+  }
 
 async function cancelGame() {
     if (window.confirm("Are you sure you want to cancel this game?")) {
