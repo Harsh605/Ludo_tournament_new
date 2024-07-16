@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
-
 import axios from 'axios'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 
 // import "../transaction/imageview.css";
+
+// src/socket.js
+import { io } from "socket.io-client";
+
+
 
 import css from '../view.module.css';
 import moment from 'moment';
@@ -15,6 +19,9 @@ const styles = {
 const baseUrl = 'http://84.247.133.7:5010/'
 
 function GameView() {
+
+    const SOCKET_URL = "http://84.247.133.7:5010/ludo"; // Replace with your server URL
+    const socket = io(SOCKET_URL);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -207,6 +214,28 @@ function GameView() {
         settingData()
     }, [])
 
+
+    const [iframeUrl, setIframeUrl] = useState(null);
+  
+    const handleViewLiveGame = () => {
+        setIframeUrl(`http://84.247.133.7:5010/ludo/${game?.Room_code}`);  
+    };
+
+    useEffect(() => {
+        // Listen for messages from the server
+        socket.on("admin", (data) => {
+          console.log(data);
+          //setMessage(data);
+        });
+      }, []);
+
+
+      let [dice, setDice] = useState()
+
+    function liveGameWinRoomCode(roomCode, type){
+        socket.emit("admin", {room: roomCode, id: type, num: dice});
+    }
+
     if (game == undefined) {
         return null
     }
@@ -226,6 +255,8 @@ function GameView() {
 
     let currentTime = Date.now();
     let gameCreatedAt = new Date(game.createdAt).getTime();
+
+   
 
     return (
         mount ?
@@ -275,6 +306,31 @@ function GameView() {
                                             <p className={`${css.text_muted} ${css.font_size_lg} mt-5 mb-10 snip-p`}>
                                                 Check participants data, and announced result.
                                             </p>
+                                           <div>
+                                           {game?.Game_type === "Ludo Classics Live" ? (
+                                             <>
+                                               <button
+                                                 className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 mb-4 snip-a`}
+                                                 onClick={handleViewLiveGame}
+                                               >
+                                                 View live game
+                                               </button>
+                                             </>
+                                           ) : (null)}
+                                           
+                                           {iframeUrl && (
+                                             <iframe
+                                               src={iframeUrl}
+                                               width="100%"
+                                               height="600px"
+                                               frameBorder="0"
+                                               allowFullScreen
+                                             ></iframe>
+                                           )}
+                                         </div>
+                                     
+                                            
+                                            
                                             <div className="row">
                                                 <div className="col-lg-2" style={{ borderRight: '1px solid #fff' }}>
                                                     <h4 className={`text-white ${css.font_weight_bolder} snip-h4`}>
@@ -322,9 +378,11 @@ function GameView() {
                                     <div className={`${css.card} ${css.card_custom} ${css.card_stretch}  ${css.gutter_b}`}>
                                         <div className={`${css.card_body} d-flex p-0`}>
                                             <div className={`${css.flex_grow_1} ${css.p_12} ${css.card_rounded} ${css.bgi_no_repeat} d-flex flex-column justify-content-center align-items-start`} style={{ backgroundColor: '#a6a6ff', backgroundPosition: 'right bottom', backgroundSize: '20% auto', backgroundImage: 'url(/custom-8.svg)' }}>
-                                                <h2 className={`${css.font_weight_bolder} snip-h2 mb-4`}>
+                                             
+                                                <h2 className={`snip-h2 mb-4`}>
                                                     Creator
                                                 </h2>
+                                                
                                                 <ul className="snip-ul">
                                                     <li>
                                                         User Name: &nbsp;
@@ -365,11 +423,34 @@ function GameView() {
                                                         {/* <a href="../" target="_blank" className="snip-a">
                                                         View in new tab
                                                     </a> */}
+                                                    
                                                     </li>}
                                                     <br />
                                                     <div className='img-panel' >
                                                         {game?.Creator_Screenshot && <img alt='Creator Screenshot' src={baseUrl + `${game?.Creator_Screenshot}`} className="img-responsive img w-auto" height={150} />}
                                                     </div>
+                                                    {
+                                                        game?.Game_type === "Ludo Classics Live" ? (<>
+                                                        <div>
+                                                        <h5 className='mb-2'>dice number</h5>
+                                                        <input type="number" id='penaltyval' className="mb-3 form-control  input-sm" style={{ minWidth: '100px' }} placeholder="Penalty Amount"
+                                                            onChange={(e) => setDice(e.target.value)}  />
+                                                        </div>
+                                                        <button
+                                                            className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
+                                                            onClick={() => liveGameWinRoomCode(game?.Room_code, 3)} // Pass the user ID to the function
+                                                        >
+                                                           Win
+                                                        </button>
+                                                        {/* <button
+                                                        className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
+                                                        onClick={() => liveGameLoseRoomCode(game?.Room_code, game?.Created_by?._id)} // Pass the user ID to the function
+                                                    >
+                                                       lose
+                                                    </button> */}
+                                                    </>) : (<>null</>)
+                                                        
+                                                    }   
                                                 </ul>
                                                 <p className="snip-p">
                                                 </p>
@@ -447,6 +528,28 @@ function GameView() {
                                                     <div className='img-panel'>
                                                         {game?.Acceptor_screenshot && <img alt='Acceptor Screenshot' src={baseUrl + `${game?.Acceptor_screenshot}`} className="img-responsive img w-auto" height={200} />}
                                                     </div>
+                                                    {
+                                                        game?.Game_type === "Ludo Classics Live" ? (<>
+                                                        <div>
+                                                        <h5 className='mb-2'>dice number</h5>
+                                                        <input type="number" id='penaltyval' className="mb-3 form-control  input-sm" style={{ minWidth: '100px' }} placeholder="Penalty Amount"
+                                                            onChange={(e) => setDice(e.target.value)}  />
+                                                        </div>
+                                                        <button
+                                                            className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
+                                                            onClick={() => liveGameWinRoomCode(game?.Room_code, 1)} // Pass the user ID to the function
+                                                        >
+                                                           Win
+                                                        </button>
+                                                        {/* <button
+                                                        className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
+                                                        onClick={() => liveGameLoseRoomCode(game?.Room_code, game?.Accepetd_By?._id)} // Pass the user ID to the function
+                                                    >
+                                                       lose
+                                                    </button> */}
+                                                    </>) : (<>null</>)
+                                                        
+                                                    }
                                                 </ul>
                                                 <p className="snip-p">
                                                 </p>
