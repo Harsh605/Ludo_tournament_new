@@ -104,6 +104,12 @@ nsp.on('connection',(socket)=>{
         }
     });
 
+    socket.on('admin',(adminAction)=>{
+        console.log("message from client:", adminAction);
+        // Send a message back to the client
+        socket.emit("admin", "Hello from server!");
+    });
+
     socket.on('roll-dice',(data,cb)=>{
         rooms[data.room][data.id]['num'] = Math.floor((Math.random()*6) + 1);
         data['num'] = rooms[data.room][data.id]['num']
@@ -239,18 +245,18 @@ nsp.on('connection',(socket)=>{
     // });
 
 // Handle general disconnect event
-socket.on('disconnect', async () => {
-    let roomKey = deleteThisid(socket.id);
-    if (roomKey != undefined) {
-        console.log(rooms[roomKey.room], socket.id);
-        socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+    socket.on('disconnect', async () => {
+        let roomKey = deleteThisid(socket.id);
+        if (roomKey != undefined) {
+            console.log(rooms[roomKey.room], socket.id);
+            socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
 
-        // Delete the room code
-        delete rooms[roomKey.room];
-        console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
-    }
-    console.log('A client just got disconnected');
-});
+            // Delete the room code
+            delete rooms[roomKey.room];
+            console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
+        }
+        console.log('A client just got disconnected');
+    });
 
     
 });

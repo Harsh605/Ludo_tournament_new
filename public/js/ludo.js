@@ -346,12 +346,6 @@ socket.on('connect',function(){
     
     socket.on('imposter',()=>{window.localStorage.clear(); window.location.replace("/");});
 
-    socket.on('admin',(adminAction)=>{
-        console.log("message from client:", adminAction);
-        // Send a message back to the client
-        socket.emit("admin", "Hello from server!");
-    });
-
     socket.on('is-it-your-chance', function(data) {
         if (data === myid) {
             togglePlayerTurn(true);
