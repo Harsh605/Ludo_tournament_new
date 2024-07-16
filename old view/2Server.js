@@ -10,6 +10,8 @@ const mongoose = require("mongoose");
 const Game = require("./Model/Games");
 const morgan = require('morgan')
 const axios = require('axios');
+const Redis = require('ioredis');
+
 
 const cookieParser = require('cookie-parser');
 
@@ -82,7 +84,9 @@ app.enable('trust proxy');
 //
 let nsp = io.of('/ludo');
 
+
 nsp.on('connection',(socket)=>{
+
     console.log('A User has connected to the game');
     socket.on('fetch',(data,cb)=>{
         try{
@@ -104,12 +108,87 @@ nsp.on('connection',(socket)=>{
         }
     });
 
-    socket.on('roll-dice',(data,cb)=>{
-        rooms[data.room][data.id]['num'] = Math.floor((Math.random()*6) + 1);
-        data['num'] = rooms[data.room][data.id]['num']
-        nsp.to(data.room).emit('rolled-dice',data);
-        cb(rooms[data.room][data.id]['num']);
-    })
+    // socket.on('admin',(adminActionControl)=>{
+    //     console.log("Actoin from admin:", adminActionControl);
+    //     nsp.emit("admin", adminActionControl);
+    // });
+
+    // socket.on('roll-dice',(data,cb)=>{
+    //     rooms[data.room][data.id]['num'] = Math.floor((Math.random()*6) + 1);
+    //     data['num'] = rooms[data.room][data.id]['num']
+    //     nsp.to(data.room).emit('rolled-dice',data);
+    //     cb(rooms[data.room][data.id]['num']);
+    // })
+
+    // Handle admin actions
+    // socket.on('admin', (adminActionControl) => {
+    //     console.log("Action from admin:", adminActionControl);
+    //     nsp.emit("admin", adminActionControl);
+    // });
+
+    
+    // Allow admin to set dice roll numbers for specific users
+    // socket.on('set-dice-roll', (data) => {
+    //     const { room, id, num } = data;
+    //     if (!adminSetRolls[room]) {
+    //         adminSetRolls[room] = {};
+    //     }
+    //     adminSetRolls[room][id] = num;
+    //     nsp.to(room).emit('admin-set-dice-roll', data);
+    // });
+
+
+    // Stores admin-set dice roll numbers
+       
+
+        // // Handle admin actions
+        // socket.on('admin', (adminActionControl) => {
+        //     const { room, id, num } = adminActionControl;
+
+        //     if (!adminSetRolls[room]) {
+        //         adminSetRolls[room] = {};
+        //     }
+        //     adminSetRolls[room][id] = num;
+        //     nsp.emit("admin", adminActionControl);
+
+        //     console.log("Admin set rolls:", adminSetRolls);
+        // });
+
+        const redis = new Redis(); // Configure as needed
+        const adminSetRolls = {};
+        
+        socket.on('admin', async (adminActionControl) => {
+            const { room, id, num } = adminActionControl;
+            let ioredis = await redis.hset(`adminSetRolls:${room}`, id, num);
+            nsp.emit("admin", ioredis);
+        });
+
+
+        // Handle dice roll event
+        socket.on('roll-dice', async (data, cb) => {
+            const { room, id } = data;
+
+            const adminSetRoll = await redis.hget(`adminSetRolls:${room}`, id);
+            console.log("Roll-dice data:", data);
+            console.log("Entire adminSetRolls object:", adminSetRoll);
+            // console.log("Admin set rolls for room:", adminSetRoll[room]);
+
+            // Check if the admin has set a roll number for this user
+            if (adminSetRoll) {
+                rooms[room][id]['num'] = adminSetRoll;
+                console.log("Using admin set roll number:", adminSetRoll);
+                await redis.hdel(`adminSetRolls:${room}`, id); // Remove after using
+            } else {
+                rooms[room][id]['num'] = Math.floor((Math.random() * 6) + 1);
+            }
+
+            data['num'] = rooms[room][id]['num'];
+            console.log("Final dice roll number:", rooms[room][id]['num']);
+            nsp.to(room).emit('rolled-dice', data);
+            cb(rooms[room][id]['num']);
+        });
+
+
 
     socket.on('chance',(data)=>{
         nsp.to(data.room).emit('is-it-your-chance',data.nxt_id);
@@ -238,19 +317,21 @@ nsp.on('connection',(socket)=>{
     //     }
     // });
 
-// Handle general disconnect event
-socket.on('disconnect', async () => {
-    let roomKey = deleteThisid(socket.id);
-    if (roomKey != undefined) {
-        console.log(rooms[roomKey.room], socket.id);
-        socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
 
-        // Delete the room code
-        delete rooms[roomKey.room];
-        console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
-    }
-    console.log('A client just got disconnected');
-});
+
+// Handle general disconnect event
+    socket.on('disconnect', async () => {
+        let roomKey = deleteThisid(socket.id);
+        if (roomKey != undefined) {
+            console.log(rooms[roomKey.room], socket.id);
+            socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+
+            // Delete the room code
+            delete rooms[roomKey.room];
+            console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
+        }
+        console.log('A client just got disconnected');
+    });
 
     
 });
@@ -277,27 +358,76 @@ socket.on('disconnect', async () => {
 //     }
 // }
 
+// function generate_member_id(s_id, rc) {
+//     // Generate a random member ID between 0 and 3
+//     let m_id = Math.floor(Math.random() * 2);
+//     // Get all current member IDs in the room
+//     let m_r = Object.keys(rooms[rc]);
+    
+//     // Check if the number of members in the room is less than or equal to 4
+//     if (m_r.length < 2) {
+//         // If the generated member ID already exists, recursively call the function to generate a new one
+//         if (m_r.includes(m_id.toString())) {
+//             return generate_member_id(s_id, rc);
+//         } else {
+//             // Otherwise, assign the new member ID to the room
+//             rooms[rc][m_id] = { sid: s_id, num: 0 };
+//             return m_id;
+//         }
+//     } else {
+//         // If there are already 4 members, return -1 to indicate no more members can be added
+//         return -1;
+//     }
+// }
+
+// function generate_member_id(s_id, rc) {
+//     // Generate a random member ID between 0 and 3
+//     let m_id = Math.floor(Math.random() * 4);
+//     // Get all current member IDs in the room
+//     let m_r = Object.keys(rooms[rc]);
+    
+//     // Check if the number of members in the room is less than or equal to 4
+//     if (m_r.length < 2) {
+//         // If the generated member ID already exists, recursively call the function to generate a new one
+//         if (m_r.includes(m_id.toString())) {
+//             return generate_member_id(s_id, rc);
+//         } else {
+//             // Otherwise, assign the new member ID to the room
+//             rooms[rc][m_id] = { sid: s_id, num: 0 };
+//             return m_id;
+//         }
+//     } else {
+//         // If there are already 4 members, return -1 to indicate no more members can be added
+//         return -1;
+//     }
+// }
+
 function generate_member_id(s_id, rc) {
-    // Generate a random member ID between 0 and 3
-    let m_id = Math.floor(Math.random() * 4);
+    // Check if the room exists
+    if (!rooms[rc]) {
+        // Initialize the room if it doesn't exist
+        rooms[rc] = {};
+    }
+
     // Get all current member IDs in the room
     let m_r = Object.keys(rooms[rc]);
     
-    // Check if the number of members in the room is less than or equal to 4
-    if (m_r.length < 2) {
-        // If the generated member ID already exists, recursively call the function to generate a new one
-        if (m_r.includes(m_id.toString())) {
-            return generate_member_id(s_id, rc);
-        } else {
-            // Otherwise, assign the new member ID to the room
-            rooms[rc][m_id] = { sid: s_id, num: 0 };
-            return m_id;
-        }
+    // Check if the room is empty
+    if (m_r.length === 0) {
+        // Assign the first member ID as 3
+        rooms[rc][3] = { sid: s_id, num: 0 };
+        return 3;
+    } else if (m_r.length === 1 && !m_r.includes("1")) {
+        // Assign the second member ID as 1
+        rooms[rc][1] = { sid: s_id, num: 0 };
+        return 1;
     } else {
-        // If there are already 4 members, return -1 to indicate no more members can be added
+        // If there are already 2 members, return -1 to indicate no more members can be added
         return -1;
     }
 }
+
+
 //to delete the extra place when (only one) user refreshes.
 function deleteThisid(id){
     for(var roomcd in rooms){
