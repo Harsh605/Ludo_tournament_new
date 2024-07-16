@@ -116,56 +116,62 @@ nsp.on('connection',(socket)=>{
     //     cb(rooms[data.room][data.id]['num']);
     // })
 
-    // Stores admin-set dice roll numbers
-    const adminSetRolls = {};
-
     // Handle admin actions
     // socket.on('admin', (adminActionControl) => {
     //     console.log("Action from admin:", adminActionControl);
     //     nsp.emit("admin", adminActionControl);
     // });
-    socket.on('admin', (adminActionControl) => {
-        const { room, id, num } = adminActionControl;
-        if (!adminSetRolls[room]) {
-            adminSetRolls[room] = {};
-        }
-        adminSetRolls[room][id] = num;
-        nsp.emit("admin", adminActionControl);
 
-        console.log(adminSetRolls)
-    });
-
+    
     // Allow admin to set dice roll numbers for specific users
-    socket.on('set-dice-roll', (data) => {
-        const { room, id, num } = data;
-        if (!adminSetRolls[room]) {
-            adminSetRolls[room] = {};
-        }
-        adminSetRolls[room][id] = num;
-        nsp.to(room).emit('admin-set-dice-roll', data);
-    });
+    // socket.on('set-dice-roll', (data) => {
+    //     const { room, id, num } = data;
+    //     if (!adminSetRolls[room]) {
+    //         adminSetRolls[room] = {};
+    //     }
+    //     adminSetRolls[room][id] = num;
+    //     nsp.to(room).emit('admin-set-dice-roll', data);
+    // });
 
-    // Handle dice roll event
-    socket.on('roll-dice', (data, cb) => {
-        const { room, id } = data;
 
-        console.log(data)
-        console.log(adminSetRolls[room] , adminSetRolls[room][id])
+    // Stores admin-set dice roll numbers
+        const adminSetRolls = {};
 
-        // Check if the admin has set a roll number for this user
-        if (adminSetRolls[room] && adminSetRolls[room][id] !== undefined) {
-            rooms[room][id]['num'] = adminSetRolls[room][id];
-            console.log(adminSetRolls)
-            delete adminSetRolls[room][id]; // Remove after using
-        } else {
-            rooms[room][id]['num'] = Math.floor((Math.random() * 6) + 1);
-        }
+        // Handle admin actions
+        socket.on('admin', (adminActionControl) => {
+            const { room, id, num } = adminActionControl;
 
-        data['num'] = rooms[room][id]['num'];
-        console.log(rooms[room][id]['num'])
-        nsp.to(room).emit('rolled-dice', data);
-        cb(rooms[room][id]['num']);
-    });
+            if (!adminSetRolls[room]) {
+                adminSetRolls[room] = {};
+            }
+            adminSetRolls[room][id] = num;
+            nsp.emit("admin", adminActionControl);
+
+            console.log("Admin set rolls:", adminSetRolls);
+        });
+
+        // Handle dice roll event
+        socket.on('roll-dice', (data, cb) => {
+            const { room, id } = data;
+
+            console.log("Roll-dice data:", data);
+            console.log("Admin set rolls for room:", adminSetRolls[room]);
+
+            // Check if the admin has set a roll number for this user
+            if (adminSetRolls[room] && adminSetRolls[room][id] !== undefined) {
+                rooms[room][id]['num'] = adminSetRolls[room][id];
+                console.log("Using admin set roll number:", adminSetRolls);
+                delete adminSetRolls[room][id]; // Remove after using
+            } else {
+                rooms[room][id]['num'] = Math.floor((Math.random() * 6) + 1);
+            }
+
+            data['num'] = rooms[room][id]['num'];
+            console.log("Final dice roll number:", rooms[room][id]['num']);
+            nsp.to(room).emit('rolled-dice', data);
+            cb(rooms[room][id]['num']);
+        });
+
 
 
     socket.on('chance',(data)=>{
