@@ -345,27 +345,53 @@ nsp.on('connection',(socket)=>{
 //     }
 // }
 
+// function generate_member_id(s_id, rc) {
+//     // Generate a random member ID between 0 and 3
+//     let m_id = Math.floor(Math.random() * 4);
+//     // Get all current member IDs in the room
+//     let m_r = Object.keys(rooms[rc]);
+    
+//     // Check if the number of members in the room is less than or equal to 4
+//     if (m_r.length < 2) {
+//         // If the generated member ID already exists, recursively call the function to generate a new one
+//         if (m_r.includes(m_id.toString())) {
+//             return generate_member_id(s_id, rc);
+//         } else {
+//             // Otherwise, assign the new member ID to the room
+//             rooms[rc][m_id] = { sid: s_id, num: 0 };
+//             return m_id;
+//         }
+//     } else {
+//         // If there are already 4 members, return -1 to indicate no more members can be added
+//         return -1;
+//     }
+// }
+
 function generate_member_id(s_id, rc) {
-    // Generate a random member ID between 0 and 3
-    let m_id = Math.floor(Math.random() * 4);
+    // Check if the room exists
+    if (!rooms[rc]) {
+        // Initialize the room if it doesn't exist
+        rooms[rc] = {};
+    }
+
     // Get all current member IDs in the room
     let m_r = Object.keys(rooms[rc]);
     
-    // Check if the number of members in the room is less than or equal to 4
-    if (m_r.length < 2) {
-        // If the generated member ID already exists, recursively call the function to generate a new one
-        if (m_r.includes(m_id.toString())) {
-            return generate_member_id(s_id, rc);
-        } else {
-            // Otherwise, assign the new member ID to the room
-            rooms[rc][m_id] = { sid: s_id, num: 0 };
-            return m_id;
-        }
+    // Check if the room is empty
+    if (m_r.length === 0) {
+        // Assign the first member ID as 3
+        rooms[rc][3] = { sid: s_id, num: 0 };
+        return 3;
+    } else if (m_r.length === 1 && !m_r.includes("1")) {
+        // Assign the second member ID as 1
+        rooms[rc][1] = { sid: s_id, num: 0 };
+        return 1;
     } else {
-        // If there are already 4 members, return -1 to indicate no more members can be added
+        // If there are already 2 members, return -1 to indicate no more members can be added
         return -1;
     }
 }
+
 
 //to delete the extra place when (only one) user refreshes.
 function deleteThisid(id){
