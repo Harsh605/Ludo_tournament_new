@@ -1,5 +1,7 @@
 // let socket = io(window.location.href.substring(0,window.location.href.length-7));
 
+window.localStorage.clear()
+
 const urlParams = new URLSearchParams(window.location.search);
 
 const token = urlParams.get('token');
