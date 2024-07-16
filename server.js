@@ -107,7 +107,7 @@ nsp.on('connection',(socket)=>{
     socket.on('admin',(adminAction)=>{
         console.log("message from client:", adminAction);
         // Send a message back to the client
-        socket.emit("admin", "Hello from server!");
+        nsp.emit("admin", "Hello from server!");
     });
 
     socket.on('roll-dice',(data,cb)=>{
