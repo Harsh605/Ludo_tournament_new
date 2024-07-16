@@ -150,6 +150,7 @@ nsp.on('connection',(socket)=>{
         const { room, id } = data;
 
         console.log(data)
+        console.log(adminSetRolls[room] , adminSetRolls[room][id])
 
         // Check if the admin has set a roll number for this user
         if (adminSetRolls[room] && adminSetRolls[room][id] !== undefined) {
@@ -161,7 +162,7 @@ nsp.on('connection',(socket)=>{
         }
 
         data['num'] = rooms[room][id]['num'];
-        consoel.log(rooms[room][id]['num'])
+        console.log(rooms[room][id]['num'])
         nsp.to(room).emit('rolled-dice', data);
         cb(rooms[room][id]['num']);
     });
