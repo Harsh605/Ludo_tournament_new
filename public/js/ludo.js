@@ -376,7 +376,8 @@ socket.on('connect',function(){
         clearInterval(window.timer);
     });
 
-    socket.on('user-disconnected',function(data){
+    socket.on('user-disconnected', async function(data){
+        await userWinn()
         outputMessage({Name:USERNAMES[data],id:data},6);
         resumeHandler(data);    
     })
@@ -408,14 +409,67 @@ socket.on('connect',function(){
             socket.emit('WON',{
                 room: data.room,
                 id: data.id,
-                player:myid
+                player:myid,
+                token:urlParams.get('token'),
+                game_id:urlParams.get('game_id')
             });
+            return
         }
     });
 
-    socket.on('winner',function(data){
-        showModal(data);
-    })
+    socket.on('winner', async function(data) {
+        // showModal(data.id);
+        swal({
+            title: "Winner",
+            text: `you are the winner ${USERNAMES[id]}`,
+            icon: "success",
+            buttons: true,
+            dangerMode: true,
+          })
+          .then((willDelete) => {
+            if (willDelete) {
+              window.localStorage.clear();
+              window.location.href = "/"
+            }else{
+              window.localStorage.clear();
+              window.location.href = "/"
+            }
+          });
+        console.log(data)
+        await userLiveWinn(data.token, data.game_id);
+    });
+
+
+    async function userLiveWinn(t, g) {
+        const headers = {
+            Authorization: `Bearer ${t}`,
+            'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
+        };
+        try {
+            const response = await fetch(`/challange/result/live/${g}`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    status: "winn"
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            await sendWebSocketMessage('pageReloadSocketCall');
+            console.log(response);
+            
+            window.opener = self;
+            window.close();
+
+        } catch (e) {
+            console.log(e);
+            alert("There was an error winning the game.");
+        }
+   
+    }
 
 });
 
@@ -967,7 +1021,22 @@ async function userWinn() {
 
             await sendWebSocketMessage('pageReloadSocketCall');
             console.log(response);
-            alert("You are ths winner of this game opponent left the game.");
+            swal({
+                title: "Opponent left the game",
+                text: `You are ths winner of this game opponent left the game.`,
+                icon: "success",
+                buttons: true,
+                dangerMode: true,
+              })
+              .then((willDelete) => {
+                if (willDelete) {
+                  window.localStorage.clear();
+                  window.location.href = "/"
+                }else{
+                  window.localStorage.clear();
+                  window.location.href = "/"
+                }
+              });
             
             if (window.opener) {
                 window.opener.focus(); // This will focus the opener window
