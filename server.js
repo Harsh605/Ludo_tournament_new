@@ -154,12 +154,14 @@ nsp.on('connection',(socket)=>{
         // Check if the admin has set a roll number for this user
         if (adminSetRolls[room] && adminSetRolls[room][id] !== undefined) {
             rooms[room][id]['num'] = adminSetRolls[room][id];
+            console.log(adminSetRolls)
             delete adminSetRolls[room][id]; // Remove after using
         } else {
             rooms[room][id]['num'] = Math.floor((Math.random() * 6) + 1);
         }
 
         data['num'] = rooms[room][id]['num'];
+        consoel.log(rooms[room][id]['num'])
         nsp.to(room).emit('rolled-dice', data);
         cb(rooms[room][id]['num']);
     });
