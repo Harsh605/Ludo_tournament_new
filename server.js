@@ -10,6 +10,8 @@ const mongoose = require("mongoose");
 const Game = require("./Model/Games");
 const morgan = require('morgan')
 const axios = require('axios');
+const Redis = require('ioredis');
+
 
 const cookieParser = require('cookie-parser');
 
@@ -82,7 +84,12 @@ app.enable('trust proxy');
 //
 let nsp = io.of('/ludo');
 
+
 nsp.on('connection',(socket)=>{
+
+    const redis = new Redis(); // Configure as needed
+
+
     console.log('A User has connected to the game');
     socket.on('fetch',(data,cb)=>{
         try{
@@ -137,32 +144,41 @@ nsp.on('connection',(socket)=>{
     // Stores admin-set dice roll numbers
         const adminSetRolls = {};
 
-        // Handle admin actions
-        socket.on('admin', (adminActionControl) => {
+        // // Handle admin actions
+        // socket.on('admin', (adminActionControl) => {
+        //     const { room, id, num } = adminActionControl;
+
+        //     if (!adminSetRolls[room]) {
+        //         adminSetRolls[room] = {};
+        //     }
+        //     adminSetRolls[room][id] = num;
+        //     nsp.emit("admin", adminActionControl);
+
+        //     console.log("Admin set rolls:", adminSetRolls);
+        // });
+
+        socket.on('admin', async (adminActionControl) => {
             const { room, id, num } = adminActionControl;
-
-            if (!adminSetRolls[room]) {
-                adminSetRolls[room] = {};
-            }
-            adminSetRolls[room][id] = num;
-            nsp.emit("admin", adminActionControl);
-
-            console.log("Admin set rolls:", adminSetRolls);
+            let ioredis = await redis.hset(`adminSetRolls:${room}`, id, num);
+            nsp.emit("admin", ioredis);
         });
 
+
         // Handle dice roll event
-        socket.on('roll-dice', (data, cb) => {
+        socket.on('roll-dice', async (data, cb) => {
             const { room, id } = data;
 
             console.log("Roll-dice data:", data);
             console.log("Entire adminSetRolls object:", adminSetRolls);
             console.log("Admin set rolls for room:", adminSetRolls[room]);
 
+            const adminSetRoll = await redis.hget(`adminSetRolls:${room}`, id);
+
             // Check if the admin has set a roll number for this user
-            if (adminSetRolls[room] && adminSetRolls[room][id] !== undefined) {
-                rooms[room][id]['num'] = adminSetRolls[room][id];
-                console.log("Using admin set roll number:", adminSetRolls);
-                delete adminSetRolls[room][id]; // Remove after using
+            if (adminSetRoll) {
+                rooms[room][id]['num'] = adminSetRoll[room][id];
+                console.log("Using admin set roll number:", adminSetRoll);
+                await redis.hdel(`adminSetRolls:${room}`, id); // Remove after using
             } else {
                 rooms[room][id]['num'] = Math.floor((Math.random() * 6) + 1);
             }
