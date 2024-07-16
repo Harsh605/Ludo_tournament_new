@@ -131,6 +131,8 @@ nsp.on('connection',(socket)=>{
         }
         adminSetRolls[room][id] = num;
         nsp.emit("admin", adminActionControl);
+
+        console.log(adminSetRolls)
     });
 
     // Allow admin to set dice roll numbers for specific users
