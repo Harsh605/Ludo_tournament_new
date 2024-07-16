@@ -171,7 +171,7 @@ nsp.on('connection',(socket)=>{
             const adminSetRoll = await redis.hget(`adminSetRolls:${room}`, id);
             console.log("Roll-dice data:", data);
             console.log("Entire adminSetRolls object:", adminSetRoll);
-            console.log("Admin set rolls for room:", adminSetRoll[room]);
+            // console.log("Admin set rolls for room:", adminSetRoll[room]);
 
             // Check if the admin has set a roll number for this user
             if (adminSetRoll) {
