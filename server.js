@@ -120,8 +120,16 @@ nsp.on('connection',(socket)=>{
     const adminSetRolls = {};
 
     // Handle admin actions
+    // socket.on('admin', (adminActionControl) => {
+    //     console.log("Action from admin:", adminActionControl);
+    //     nsp.emit("admin", adminActionControl);
+    // });
     socket.on('admin', (adminActionControl) => {
-        console.log("Action from admin:", adminActionControl);
+        const { room, id, num } = adminActionControl;
+        if (!adminSetRolls[room]) {
+            adminSetRolls[room] = {};
+        }
+        adminSetRolls[room][id] = num;
         nsp.emit("admin", adminActionControl);
     });
 
