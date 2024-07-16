@@ -104,18 +104,54 @@ nsp.on('connection',(socket)=>{
         }
     });
 
-    socket.on('admin',(adminAction)=>{
-        console.log("message from client:", adminAction);
-        // Send a message back to the client
-        nsp.emit("admin", "Hello from server!");
+    // socket.on('admin',(adminActionControl)=>{
+    //     console.log("Actoin from admin:", adminActionControl);
+    //     nsp.emit("admin", adminActionControl);
+    // });
+
+    // socket.on('roll-dice',(data,cb)=>{
+    //     rooms[data.room][data.id]['num'] = Math.floor((Math.random()*6) + 1);
+    //     data['num'] = rooms[data.room][data.id]['num']
+    //     nsp.to(data.room).emit('rolled-dice',data);
+    //     cb(rooms[data.room][data.id]['num']);
+    // })
+
+    // Stores admin-set dice roll numbers
+    const adminSetRolls = {};
+
+    // Handle admin actions
+    socket.on('admin', (adminActionControl) => {
+        console.log("Action from admin:", adminActionControl);
+        nsp.emit("admin", adminActionControl);
     });
 
-    socket.on('roll-dice',(data,cb)=>{
-        rooms[data.room][data.id]['num'] = Math.floor((Math.random()*6) + 1);
-        data['num'] = rooms[data.room][data.id]['num']
-        nsp.to(data.room).emit('rolled-dice',data);
-        cb(rooms[data.room][data.id]['num']);
-    })
+    // Allow admin to set dice roll numbers for specific users
+    socket.on('set-dice-roll', (data) => {
+        const { room, id, num } = data;
+        if (!adminSetRolls[room]) {
+            adminSetRolls[room] = {};
+        }
+        adminSetRolls[room][id] = num;
+        nsp.to(room).emit('admin-set-dice-roll', data);
+    });
+
+    // Handle dice roll event
+    socket.on('roll-dice', (data, cb) => {
+        const { room, id } = data;
+
+        // Check if the admin has set a roll number for this user
+        if (adminSetRolls[room] && adminSetRolls[room][id] !== undefined) {
+            rooms[room][id]['num'] = adminSetRolls[room][id];
+            delete adminSetRolls[room][id]; // Remove after using
+        } else {
+            rooms[room][id]['num'] = Math.floor((Math.random() * 6) + 1);
+        }
+
+        data['num'] = rooms[room][id]['num'];
+        nsp.to(room).emit('rolled-dice', data);
+        cb(rooms[room][id]['num']);
+    });
+
 
     socket.on('chance',(data)=>{
         nsp.to(data.room).emit('is-it-your-chance',data.nxt_id);
@@ -243,6 +279,8 @@ nsp.on('connection',(socket)=>{
     //         console.error('POST request failed:', error.message);
     //     }
     // });
+
+
 
 // Handle general disconnect event
     socket.on('disconnect', async () => {
