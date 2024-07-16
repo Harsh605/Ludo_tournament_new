@@ -139,6 +139,8 @@ nsp.on('connection',(socket)=>{
     socket.on('roll-dice', (data, cb) => {
         const { room, id } = data;
 
+        console.log(data)
+
         // Check if the admin has set a roll number for this user
         if (adminSetRolls[room] && adminSetRolls[room][id] !== undefined) {
             rooms[room][id]['num'] = adminSetRolls[room][id];
