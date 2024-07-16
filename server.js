@@ -166,6 +166,11 @@ nsp.on('connection',(socket)=>{
         cb();
     });
 
+    socket.on("admin",(data) =>{
+        console.log(data)
+        nsp.emit("admin", data)
+    })
+
     // socket.on('disconnect',()=>{
     //     let roomKey = deleteThisid(socket.id);
     //     if(roomKey != undefined){
