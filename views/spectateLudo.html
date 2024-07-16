@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ludo Spectator View</title>
+    <style>
+        /* Add your styles here */
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Game UI for spectators -->
+    </div>
+
+    <script>
+        const roomCode = window.location.pathname.split('/')[2];
+        // Set up WebSocket or other real-time connection to get the game state
+        const socket = new WebSocket(`ws://84.247.133.7:5010/ws/ludo/${roomCode}`);
+
+        socket.onmessage = (event) => {
+            const gameState = JSON.parse(event.data);
+            // Update the UI with the game state
+        };
+
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+    </script>
+</body>
+</html>

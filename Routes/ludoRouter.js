@@ -9,4 +9,8 @@ router
     .route('/:ROOMCODE')
     .get(ludoController.room);
 
+router.get('/ludo/:ROOMCODE/spectate', ludoController.spectateRoom);
+
+    
+
 module.exports = router;

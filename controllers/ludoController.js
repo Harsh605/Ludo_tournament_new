@@ -26,6 +26,24 @@ exports.room = (req, res) => {
     }
 }
 
+
+exports.spectateRoom = (req, res) => {
+    console.log(rooms);
+    try {
+        const roomCode = req.params.ROOMCODE;
+        
+        if (Object.keys(rooms).includes(roomCode)) {
+            res.sendFile('spectateLudo.html', { root: views });
+        } else {
+            res.status(404).sendFile('endludo.html', { root: views });
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+
 // exports.room = (req,res)=>{
 //     console.log(rooms)
 //     try{
