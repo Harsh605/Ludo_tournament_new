@@ -155,6 +155,7 @@ nsp.on('connection',(socket)=>{
             const { room, id } = data;
 
             console.log("Roll-dice data:", data);
+            console.log("Entire adminSetRolls object:", adminSetRolls);
             console.log("Admin set rolls for room:", adminSetRolls[room]);
 
             // Check if the admin has set a roll number for this user
