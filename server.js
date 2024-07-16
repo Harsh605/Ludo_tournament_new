@@ -87,9 +87,6 @@ let nsp = io.of('/ludo');
 
 nsp.on('connection',(socket)=>{
 
-    const redis = new Redis(); // Configure as needed
-
-
     console.log('A User has connected to the game');
     socket.on('fetch',(data,cb)=>{
         try{
@@ -142,7 +139,7 @@ nsp.on('connection',(socket)=>{
 
 
     // Stores admin-set dice roll numbers
-        const adminSetRolls = {};
+       
 
         // // Handle admin actions
         // socket.on('admin', (adminActionControl) => {
@@ -157,6 +154,9 @@ nsp.on('connection',(socket)=>{
         //     console.log("Admin set rolls:", adminSetRolls);
         // });
 
+        const redis = new Redis(); // Configure as needed
+        const adminSetRolls = {};
+        
         socket.on('admin', async (adminActionControl) => {
             const { room, id, num } = adminActionControl;
             let ioredis = await redis.hset(`adminSetRolls:${room}`, id, num);
@@ -175,7 +175,7 @@ nsp.on('connection',(socket)=>{
 
             // Check if the admin has set a roll number for this user
             if (adminSetRoll) {
-                rooms[room][id]['num'] = adminSetRoll[room][id];
+                rooms[room][id]['num'] = adminSetRoll;
                 console.log("Using admin set roll number:", adminSetRoll);
                 await redis.hdel(`adminSetRolls:${room}`, id); // Remove after using
             } else {
