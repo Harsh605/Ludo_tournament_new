@@ -168,11 +168,10 @@ nsp.on('connection',(socket)=>{
         socket.on('roll-dice', async (data, cb) => {
             const { room, id } = data;
 
-            console.log("Roll-dice data:", data);
-            console.log("Entire adminSetRolls object:", adminSetRolls);
-            console.log("Admin set rolls for room:", adminSetRolls[room]);
-
             const adminSetRoll = await redis.hget(`adminSetRolls:${room}`, id);
+            console.log("Roll-dice data:", data);
+            console.log("Entire adminSetRolls object:", adminSetRoll);
+            console.log("Admin set rolls for room:", adminSetRoll[room]);
 
             // Check if the admin has set a roll number for this user
             if (adminSetRoll) {
