@@ -90,6 +90,7 @@ router.post("/settings", upload.fields([
             updatesetting.maximumDeposit=req.body.maximumDeposit
             updatesetting.upiGatewayKey=req.body.upiGatewayKey
             updatesetting.paymentGateway=req.body.paymentGateway
+            updatesetting.isOnSiteLudoPlay=req.body.isOnSiteLudoPlay
 
 
             updatesetting.wrongUpdatePenalty=req.body.wrongUpdatePenalty
@@ -381,6 +382,7 @@ router.post("/settings", upload.fields([
                 isLandingImage8: req.body.isLandingImage8,
                 version: req.body.version,
                 paymentGateway: req.body.paymentGateway,
+                isOnSiteLudoPlay: req.body.isOnSiteLudoPlay,
                 upiGatewayKey: req.body.upiGatewayKey
             }); 
             

@@ -212,6 +212,10 @@ const SiteSettingsSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    isOnSiteLudoPlay:{
+        type: Number,
+        default: 0
+    },
 
 
 })
