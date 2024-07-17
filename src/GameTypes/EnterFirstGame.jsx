@@ -767,21 +767,21 @@ function EnterFirstGame(props) {
                     {/* {type === "openbattle" ? */}
                     <div className='row'>
                         <div className="col-12 card mt-3 walletcard pt-2 px-0 mx-auto text-white">
-                            <div className="text-center">Room Code</div>
+                            <div className="text-center">{selectedMode === "offSite" ? "Room Code" : "Live ludo game play"}</div>
                             <div className="card-body walletbody mt-2">
                                 {Game?.Room_code == null &&
                                     <div className='roomCode cxy flex-column text-center'>
-                                        Waiting for Room Code...
-                                        <h6>रूम कोड का इंतजार है।</h6>
+                                        {selectedMode === "offSite" ? "Waiting for Room Code..." : null}
+                                        <h6>{selectedMode === "offSite" ? "रूम कोड का इंतजार है।" : "Wait for joning link"}</h6>
                                         <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                                     </div>
                                     || Game?.Room_code != 0 &&
                                     <div className='roomCode cxy flex-column text-center'>
 
                                         <div className='text-center'>
-                                            <div>Room Code</div>
+                                            <div>{selectedMode === "offSite" ? "Room Code" : null}</div>
                                             {
-                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <a href={`http://84.247.133.7:5010/ludo/${Game?.Room_code}?token=${access_token}&game_id=${path}`} target="_blank">{`http://84.247.133.7:5010/ludo/${Game?.Room_code}`}</a>
+                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }}><a href={`http://84.247.133.7:5010/ludo/${Game?.Room_code}?token=${access_token}&game_id=${path}`} target="_blank" className='text-white no-underline'>Play game</a></button>
                                             }
                                             {/* <span>{Game?.Room_code}</span> */}
                                             
@@ -802,18 +802,17 @@ function EnterFirstGame(props) {
                                                 <h6>लूडो किंग से रूम कोड अपलोड करें</h6>
                                                 <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} />
                                                 <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => getPost()}>Set Room code</button>
-                                               </>)  :  (<>Create game on site
+                                               </>)  :  (<>
                                             {/* <h6>लूडो किंग से रूम कोड अपलोड करें</h6> */}
-                                            <br />
                                             {/* <input type='number' className="form-control mt-1 w-75 text-center" style={{ backgroundColor: '#e8eeee', border: '1px solid #47a44780', marginLeft: '4rem' }} value={roomcode} onChange={(e) => setRoomcode(e.target.value)} /> */}
-                                            <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => createLudoOnSiteGame()}>Create ludo Game</button>
+                                            <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} type="button " onClick={() => createLudoOnSiteGame()}>Play</button>
                                            </>)
                                         }
                                        
                                     </div> || (Game?.Accepetd_By._id == user) &&
                                         <div className='roomCode cxy flex-column text-center'>
-                                            Waiting for Room Code
-                                            <h6>रूम कोड का इंतजार है।</h6>
+                                           {selectedMode === "offSite" ? "Waiting for Room Code..." : null}
+                                           <h6>{selectedMode === "offSite" ? "रूम कोड का इंतजार है।" : null}</h6>
                                             <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 
                                         </div>)
@@ -830,11 +829,12 @@ function EnterFirstGame(props) {
                                     <button className="col-12 btn  my-auto btn-danger">Game Rules Updated</button>
                                 </a> */}
 
-                                <div className="col-12 py-2 ">
+                                {selectedMode === "offSite" ? (<><div className="col-12 py-2 ">
                                     <p className="text-center text-light">
                                         After completion of your game select the status of the game and post your screenshot below.
                                     </p>
-                                </div>
+                                </div></>) : null}
+                                
                                 {/* Modal */}
                                 <div className="modal fade" id="exampleModal3" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div className="modal-dialog">
@@ -905,8 +905,10 @@ function EnterFirstGame(props) {
                                         {fecthStatus !== null && fecthStatus !== undefined && <p>You have already updated your battle result for <h6 className='d-inline-block text-uppercase'><b>{fecthStatus}</b></h6></p>}
                                         {/* {console.log('fecthStatusfecthStatusfecthStatusfecthStatus >> ', fecthStatus)} */}
                                         {fecthStatus === null && <> <p>
+                                        {selectedMode === "offSite" ? `After completion of your game, select the status of the game and post your screenshot below.
                                             After completion of your game, select the status of the game
-                                            and post your screenshot below.
+                                            and post your screenshot below.` : null}
+                                        
                                         </p>
                                             <div
                                                 className='MuiFormGroup-root radios mt-1'
@@ -936,6 +938,9 @@ function EnterFirstGame(props) {
                                                         (Disabled option)
                                                     </span>
                                                 </label>
+                                                {
+
+                                                  selectedMode === "offSite" ? (<>
                                                 <label className='MuiFormControlLabel-root'>
                                                     <span
                                                         className='MuiButtonBase-root MuiIconButton-root jss1 MuiRadio-root jss8'
@@ -1005,6 +1010,30 @@ function EnterFirstGame(props) {
                                                         Cancel
                                                     </span>
                                                 </label>
+                                                </>) : (<><label className='MuiFormControlLabel-root ml-3'>
+                                                    <span
+                                                        className='MuiButtonBase-root MuiIconButton-root jss1 MuiRadio-root'
+                                                        aria-disabled='false'
+                                                    >
+                                                        <span className='MuiIconButton-label'>
+                                                            <input
+                                                                className='jss4 mr-2'
+                                                                name='battleResult'
+                                                                type='radio'
+                                                                defaultValue='cancelled'
+                                                                onClick={(e) => setStatus("cancelled")}
+                                                                style={{ transform: 'scale(1.5)' }}
+
+                                                            />
+                                                        </span>
+                                                        <span className='MuiTouchRipple-root' />
+                                                    </span>
+                                                    <span className='MuiTypography-root MuiFormControlLabel-label MuiTypography-body1' style={{ marginTop: '3px' }}>
+                                                        Cancel
+                                                    </span>
+                                                </label></>)
+                                                }
+                                                
                                             </div></>}
 
                                         {status !== null && status !== 'cancelled' && status !== 'lose' && <div className={`doc_upload mt-3`} >
