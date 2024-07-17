@@ -253,7 +253,7 @@ class Piece{
     }
 
     draw(){
-        ctx.drawImage(this.image, this.x, this.y, 23.342, 23.342);
+        ctx.drawImage(this.image, this.x, this.y, (50 / (750 / styleHeight)), (50 / (750 / styleHeight)));
     }
 
     update(num){
@@ -275,46 +275,46 @@ class Piece{
     }
 
     oneStepToRight(id,pid){
-        window.PLAYERS[id].myPieces[pid].x += 23.342;
+        window.PLAYERS[id].myPieces[pid].x += (50 / (750 / styleHeight));
         console.log('to r',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepToLeft(id,pid){
-        window.PLAYERS[id].myPieces[pid].x -= 23.342;
+        window.PLAYERS[id].myPieces[pid].x -= (50 / (750 / styleHeight));
         console.log('to l',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepToTop(id,pid){
-        window.PLAYERS[id].myPieces[pid].y -= 23.342;
+        window.PLAYERS[id].myPieces[pid].y -= (50 / (750 / styleHeight));
         console.log('to t',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepToBottom(id,pid){
-        window.PLAYERS[id].myPieces[pid].y += 23.342;
+        window.PLAYERS[id].myPieces[pid].y += (50 / (750 / styleHeight));
         console.log('to b',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepTowards45(id,pid){
-        window.PLAYERS[id].myPieces[pid].x += 23.342;
-        window.PLAYERS[id].myPieces[pid].y -= 23.342;
+        window.PLAYERS[id].myPieces[pid].x += (50 / (750 / styleHeight));
+        window.PLAYERS[id].myPieces[pid].y -= (50 / (750 / styleHeight));
         console.log('to 45',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepTowards135(id,pid){
-        window.PLAYERS[id].myPieces[pid].x -= 23.342;
-        window.PLAYERS[id].myPieces[pid].y -= 23.342;
+        window.PLAYERS[id].myPieces[pid].x -= (50 / (750 / styleHeight));
+        window.PLAYERS[id].myPieces[pid].y -= (50 / (750 / styleHeight));
         console.log('to 135',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepTowards225(id,pid){
-        window.PLAYERS[id].myPieces[pid].x -= 23.342;
-        window.PLAYERS[id].myPieces[pid].y += 23.342;
+        window.PLAYERS[id].myPieces[pid].x -= (50 / (750 / styleHeight));
+        window.PLAYERS[id].myPieces[pid].y += (50 / (750 / styleHeight));
         console.log('to 225',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
     oneStepTowards315(id,pid){
-        window.PLAYERS[id].myPieces[pid].x += 23.342;
-        window.PLAYERS[id].myPieces[pid].y += 23.342;
+        window.PLAYERS[id].myPieces[pid].x += (50 / (750 / styleHeight));
+        window.PLAYERS[id].myPieces[pid].y += (50 / (750 / styleHeight));
         console.log('to 315',this.x,this.y,typeof(this.x),typeof(this.y));
     }
 
@@ -420,6 +420,8 @@ socket.on('connect',function(){
 
     socket.on('winner', async function(data) {
         // showModal(data.id);
+        console.log(data)
+        await userLiveWinn(data.token, data.game_id);
         swal({
             title: "Winner",
             text: `you are the winner ${USERNAMES[id]}`,
@@ -436,8 +438,7 @@ socket.on('connect',function(){
               window.location.href = "/"
             }
           });
-        console.log(data)
-        await userLiveWinn(data.token, data.game_id);
+        
     });
 
 
@@ -884,55 +885,71 @@ function showModal(id){
 
 
 function resumeHandler(id){
-    document.getElementById("myModal-2").style.display = "block";
-    //who left+timer!
-    let theOneWhoLeft = document.getElementById('theOneWhoLeft');
-    let seconds = document.getElementById('seconds');
-    let i = 10
-    theOneWhoLeft.innerHTML = USERNAMES[id]
-    theOneWhoLeft.style.textShadow = `0 0 4px ${colors[id]}`;
-    document.getElementById('RESUME').onclick = function(){
-        resume(id);
-        socket.emit('resume',{
-            room:room_code,
-            id:id,
-            click:myid
-        },function(){
-            outputMessage({id:myid,msg:`You have resumed the game without ${USERNAMES[id]}`},5);
-            if(chance==id){
-                socket.emit('chance',{room: room_code, nxt_id: chanceRotation(id,0)});
-            }
-        });
+    // document.getElementById("myModal-2").style.display = "block";
+    // //who left+timer!
+    // let theOneWhoLeft = document.getElementById('theOneWhoLeft');
+    // let seconds = document.getElementById('seconds');
+    // let i = 10
+    // theOneWhoLeft.innerHTML = USERNAMES[id]
+    // theOneWhoLeft.style.textShadow = `0 0 4px ${colors[id]}`;
+    // document.getElementById('RESUME').onclick = function(){
+    //     resume(id);
+    //     socket.emit('resume',{
+    //         room:room_code,
+    //         id:id,
+    //         click:myid
+    //     },function(){
+    //         outputMessage({id:myid,msg:`You have resumed the game without ${USERNAMES[id]}`},5);
+    //         if(chance==id){
+    //             socket.emit('chance',{room: room_code, nxt_id: chanceRotation(id,0)});
+    //         }
+    //     });
 
-    };
-    document.getElementById('WAIT').onclick = function(){
-        wait();
-        socket.emit('wait',{
-            room:room_code,
-            click:myid
-        },function(){
-            outputMessage({id:myid,msg:`You have decided to wait`},5)
-        });
+    // };
+    // document.getElementById('WAIT').onclick = function(){
+    //     wait();
+    //     socket.emit('wait',{
+    //         room:room_code,
+    //         click:myid
+    //     },function(){
+    //         outputMessage({id:myid,msg:`You have decided to wait`},5)
+    //     });
 
-    };
-    window.timer = setInterval(function(){
-        i-=1;
-        seconds.innerHTML = ` in ${i}`;
-        if(i==0){
-            resume(id);
-            socket.emit('resume',{
-                room:room_code,
-                id:id,
-                click:id
-            },function(){
-                outputMessage({id:id,msg:`Resumed the game without ${USERNAMES[id]}`},5);
-                if(chance==id){
-                    socket.emit('chance',{room: room_code, nxt_id: chanceRotation(id,0)});
-                }
-            });
+    // };
+    // window.timer = setInterval(function(){
+    //     i-=1;
+    //     seconds.innerHTML = ` in ${i}`;
+    //     if(i==0){
+    //         resume(id);
+    //         socket.emit('resume',{
+    //             room:room_code,
+    //             id:id,
+    //             click:id
+    //         },function(){
+    //             outputMessage({id:id,msg:`Resumed the game without ${USERNAMES[id]}`},5);
+    //             if(chance==id){
+    //                 socket.emit('chance',{room: room_code, nxt_id: chanceRotation(id,0)});
+    //             }
+    //         });
 
+    //     }
+    // }, 1000)
+    swal({
+        title: "Opponent has left the game",
+        text: `you are the winner ${USERNAMES[id]}`,
+        icon: "success",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          window.localStorage.clear();
+          window.location.href = "/"
+        }else{
+          window.localStorage.clear();
+          window.location.href = "/"
         }
-    }, 1000)
+      });
 }
 
 function resume(id){

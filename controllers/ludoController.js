@@ -8,13 +8,13 @@ exports.root = (_req,res)=>{
 }
 
 exports.room = (req, res) => {
-    console.log(rooms);
+    console.log(rooms,NumberOfMembers);
     try {
         const roomCode = req.params.ROOMCODE;
         
         if (
             Object.keys(rooms).includes(roomCode) &&
-            Object.keys(rooms[roomCode]).length < 3
+            Object.keys(rooms[roomCode]).length < 2
         ) {
             res.sendFile('ludo.html', { root: views });
         } else {
