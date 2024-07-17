@@ -226,6 +226,10 @@ router.post("/settings", upload.fields([
             updatesetting.isLandingImage2 = req.body.isLandingImage2
             updatesetting.isLandingImage3 = req.body.isLandingImage3
             updatesetting.isLandingImage4 = req.body.isLandingImage4
+            updatesetting.isLandingImage5 = req.body.isLandingImage5
+            updatesetting.isLandingImage6 = req.body.isLandingImage6
+            updatesetting.isLandingImage7 = req.body.isLandingImage7
+            updatesetting.isLandingImage8 = req.body.isLandingImage8
             updatesetting.version = req.body.version
             let xxx=await updatesetting.save();
             res.send({status:'success', data:updatesetting});
@@ -279,6 +283,10 @@ router.post("/settings", upload.fields([
                 isLandingImage2: req.body.isLandingImage2,
                 isLandingImage3: req.body.isLandingImage3,
                 isLandingImage4: req.body.isLandingImage4,
+                isLandingImage5: req.body.isLandingImage5,
+                isLandingImage6: req.body.isLandingImage6,
+                isLandingImage7: req.body.isLandingImage7,
+                isLandingImage8: req.body.isLandingImage8,
                 version: req.body.version,
                 paymentGateway: req.body.paymentGateway,
                 upiGatewayKey: req.body.upiGatewayKey
