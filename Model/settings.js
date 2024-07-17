@@ -53,6 +53,22 @@ const SiteSettingsSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    LandingImage5: {
+        type: String,
+        default: null
+    },
+    LandingImage6: {
+        type: String,
+        default: null
+    },
+    LandingImage7: {
+        type: String,
+        default: null
+    },
+    LandingImage8: {
+        type: String,
+        default: null
+    },
     isLandingImage1: {
         type: Boolean,
         default: false

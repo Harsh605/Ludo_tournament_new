@@ -49,6 +49,10 @@ router.post("/settings", upload.fields([
     { name: 'LandingImage2', maxCount: 1 },
     { name: 'LandingImage3', maxCount: 1 },
     { name: 'LandingImage4', maxCount: 1 },
+    { name: 'LandingImage5', maxCount: 1 }, 
+    { name: 'LandingImage6', maxCount: 1 },
+    { name: 'LandingImage7', maxCount: 1 },
+    { name: 'LandingImage8', maxCount: 1 },
     { name: 'qrCodeImage', maxCount: 1 }
     
     ]), async (req, res) => {
@@ -221,6 +225,74 @@ router.post("/settings", upload.fields([
 
                 //updatesetting.LandingImage4 = req.files.LandingImage4[0].path
             }
+            if(typeof req.files.LandingImage5 !== 'undefined'){
+                fs.access("./public/icon", (error) => {
+                    if (error) {
+                      fs.mkdirSync("./public/icon");
+                    }
+                  });
+                  const { buffer, originalname } = req.files.LandingImage5[0];
+                   const uniqueSuffix3 = Date.now() + "-3-" + Math.round(Math.random() * 1e9);
+                       
+                  const ref3 = `${uniqueSuffix3}.webp`;
+                  //console.log(buffer);
+                  await sharp(buffer)
+                    .webp({ quality: 20 })
+                    .toFile("./public/icon/" + ref3);
+                updatesetting.LandingImage5 = "public/icon/" + ref3
+            }
+            if(typeof req.files.LandingImage6 !== 'undefined'){
+                fs.access("./public/icon", (error) => {
+                    if (error) {
+                      fs.mkdirSync("./public/icon");
+                    }
+                  });
+                  const { buffer, originalname } = req.files.LandingImage6[0];
+                   const uniqueSuffix4 = Date.now() + "-4-" + Math.round(Math.random() * 1e9);
+                       
+                  const ref4 = `${uniqueSuffix4}.webp`;
+                  //console.log(buffer);
+                  await sharp(buffer)
+                    .webp({ quality: 20 })
+                    .toFile("./public/icon/" + ref4);
+                updatesetting.LandingImage6 = "public/icon/" + ref4
+            }
+            if(typeof req.files.LandingImage7 !== 'undefined'){
+                fs.access("./public/icon", (error) => {
+                    if (error) {
+                      fs.mkdirSync("./public/icon");
+                    }
+                  });
+                  const { buffer, originalname } = req.files.LandingImage7[0];
+                   const uniqueSuffix5 = Date.now() + "-5-" + Math.round(Math.random() * 1e9);
+                       
+                  const ref5 = `${uniqueSuffix5}.webp`;
+                  //console.log(buffer);
+                  await sharp(buffer)
+                    .webp({ quality: 20 })
+                    .toFile("./public/icon/" + ref5);
+                updatesetting.LandingImage7 = "public/icon/" + ref5
+
+                //updatesetting.LandingImage3 = req.files.LandingImage3[0].path
+            }
+            if(typeof req.files.LandingImage8 !== 'undefined'){
+                fs.access("./public/icon", (error) => {
+                    if (error) {
+                      fs.mkdirSync("./public/icon");
+                    }
+                  });
+                  const { buffer, originalname } = req.files.LandingImage8[0];
+                   const uniqueSuffix6 = Date.now() + "-6-" + Math.round(Math.random() * 1e9);
+                       
+                  const ref6 = `${uniqueSuffix6}.webp`;
+                  //console.log(buffer);
+                  await sharp(buffer)
+                    .webp({ quality: 20 })
+                    .toFile("./public/icon/" + ref6);
+                updatesetting.LandingImage8 = "public/icon/" + ref6
+
+                //updatesetting.LandingImage4 = req.files.LandingImage4[0].path
+            }
 
             updatesetting.isLandingImage1 = req.body.isLandingImage1
             updatesetting.isLandingImage2 = req.body.isLandingImage2
@@ -241,6 +313,10 @@ router.post("/settings", upload.fields([
             let LandingImage2;
             let LandingImage3;
             let LandingImage4;
+            let LandingImage5;
+            let LandingImage6;
+            let LandingImage7;
+            let LandingImage8;
             let qrCodeImage;
             if(typeof req.files.Logo !== 'undefined'){
                 mLogo = req.files.Logo[0].path
@@ -260,6 +336,18 @@ router.post("/settings", upload.fields([
             if(typeof req.files.LandingImage4 !== 'undefined'){
                 LandingImage4 = req.files.LandingImage4[0].path
             }
+            if(typeof req.files.LandingImage5 !== 'undefined'){
+                LandingImage5 = req.files.LandingImage5[0].path
+            }
+            if(typeof req.files.LandingImage6 !== 'undefined'){
+                LandingImage6 = req.files.LandingImage6[0].path
+            }
+            if(typeof req.files.LandingImage7 !== 'undefined'){
+                LandingImage7 = req.files.LandingImage7[0].path
+            }
+            if(typeof req.files.LandingImage8 !== 'undefined'){
+                LandingImage8 = req.files.LandingImage8[0].path
+            }
             if(typeof req.files.qrCodeImage !== 'undefined'){
                 qrCodeImage=req.files.qrCodeImage[0].path
             }
@@ -276,6 +364,10 @@ router.post("/settings", upload.fields([
                 LandingImage2: LandingImage2,
                 LandingImage3: LandingImage3,
                 LandingImage4: LandingImage4,
+                LandingImage5: LandingImage5,
+                LandingImage6: LandingImage6,
+                LandingImage7: LandingImage7,
+                LandingImage8: LandingImage8,
                 msg:req.body.msg,
                 qrCodeImage,
                 qrCode :req.body.qrCode ,
