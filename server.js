@@ -98,7 +98,6 @@ nsp.on('connection',(socket)=>{
         catch(err){
             if(err.name === 'TypeError'){
                 socket.emit('imposter');
-                return
             }
             console.log("hello",err,rooms);
         }
@@ -244,18 +243,18 @@ nsp.on('connection',(socket)=>{
     // });
 
 // Handle general disconnect event
-socket.on('disconnect', async () => {
-    let roomKey = deleteThisid(socket.id);
-    if (roomKey != undefined) {
-        console.log(rooms[roomKey.room], socket.id);
-        socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+    socket.on('disconnect', async () => {
+        let roomKey = deleteThisid(socket.id);
+        if (roomKey != undefined) {
+            console.log(rooms[roomKey.room], socket.id);
+            socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
 
-        // Delete the room code
-        delete rooms[roomKey.room];
-        console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
-    }
-    console.log('A client just got disconnected');
-});
+            // Delete the room code
+            delete rooms[roomKey.room];
+            console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
+        }
+        console.log('A client just got disconnected');
+    });
 
     
 });
@@ -282,24 +281,39 @@ socket.on('disconnect', async () => {
 //     }
 // }
 
-function generate_member_id(s_id, rc) {
-    // Generate a random member ID between 0 and 3
-    let m_id = Math.floor(Math.random() * 4);
-    // Get all current member IDs in the room
-    let m_r = Object.keys(rooms[rc]);
+// function generate_member_id(s_id, rc) {
+//     // Generate a random member ID between 0 and 3
+//     let m_id = Math.floor(Math.random() * 4);
+//     // Get all current member IDs in the room
+//     let m_r = Object.keys(rooms[rc]);
     
-    // Check if the number of members in the room is less than or equal to 4
-    if (m_r.length < 2) {
-        // If the generated member ID already exists, recursively call the function to generate a new one
-        if (m_r.includes(m_id.toString())) {
-            return generate_member_id(s_id, rc);
-        } else {
-            // Otherwise, assign the new member ID to the room
-            rooms[rc][m_id] = { sid: s_id, num: 0 };
+//     // Check if the number of members in the room is less than or equal to 4
+//     if (m_r.length < 2) {
+//         // If the generated member ID already exists, recursively call the function to generate a new one
+//         if (m_r.includes(m_id.toString())) {
+//             return generate_member_id(s_id, rc);
+//         } else {
+//             // Otherwise, assign the new member ID to the room
+//             rooms[rc][m_id] = { sid: s_id, num: 0 };
+//             return m_id;
+//         }
+//     } else {
+//         // If there are already 4 members, return -1 to indicate no more members can be added
+//         return -1;
+//     }
+// }
+
+function generate_member_id(s_id,rc){
+    let m_id = Math.floor(Math.random()*4);
+    let m_r = Object.keys(rooms[rc]);
+    if(m_r.length <= 4){
+        if(m_r.includes(m_id.toString())){
+            return generate_member_id(s_id,rc)
+        }else{
+            rooms[rc][m_id] = {sid:s_id,num:0};
             return m_id;
         }
-    } else {
-        // If there are already 4 members, return -1 to indicate no more members can be added
+    } else{
         return -1;
     }
 }
