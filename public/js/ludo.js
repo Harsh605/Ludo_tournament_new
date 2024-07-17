@@ -979,44 +979,58 @@ function showToast(message) {
   }
 
 async function cancelGame() {
-    if (window.confirm("Are you sure you want to cancel this game?")) {
-        const headers = {
-            Authorization: `Bearer ${urlParams.get('token')}`,
-            'Content-Type': 'application/json'
-        };
-        try {
-            const response = await fetch(`http:///challange/result/live/${urlParams.get('game_id')}`, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({
-                    status: "cancelled"
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+    swal({
+            title: "Are you sure?",
+            text: "Once exist, you will lose this match!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          })
+          .then( async (willDelete) => {
+            if (willDelete) {
+                const headers = {
+                    Authorization: `Bearer ${urlParams.get('token')}`,
+                    'Content-Type': 'application/json'
+                };
+                try {
+                    const response = await fetch(`/challange/result/live/${urlParams.get('game_id')}`, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({
+                            status: "cancelled"
+                        })
+                    });
+        
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+        
+                    const responseData = await response.json();
+                    console.log(responseData);
+        
+                    await sendWebSocketMessage('pageReloadSocketCall');
+                    alert("The game has been successfully cancelled.");
+                    
+                    if (window.opener) {
+                        window.opener.focus();
+                        window.close();
+                    } else {
+                        console.log("No opener window found. Unable to switch tabs.");
+                        // window.location.href = 'your-fallback-url.html';
+                    }
+                } catch (error) {
+                    console.error("Error cancelling the game:", error);
+                    alert("There was an error cancelling the game.");
+                    window.close();
+                }
+            }else{
+              return
             }
+          });
 
-            const responseData = await response.json();
-            console.log(responseData);
-
-            await sendWebSocketMessage('pageReloadSocketCall');
-            alert("The game has been successfully cancelled.");
-            
-            if (window.opener) {
-                window.opener.focus();
-                window.close();
-            } else {
-                console.log("No opener window found. Unable to switch tabs.");
-                // window.location.href = 'your-fallback-url.html';
-            }
-        } catch (error) {
-            console.error("Error cancelling the game:", error);
-            alert("There was an error cancelling the game.");
-        }
-    } else {
-        console.log("Game cancellation aborted by user.");
-    }
+   
+       
+    
 }
 
 async function userWinn() {

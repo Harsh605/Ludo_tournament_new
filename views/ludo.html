@@ -237,7 +237,7 @@
         <div class="col-12 col-md-4">       
           <div class="container-relative">
             <div class="d-flex justify-content-between mt-5 mb-3">
-              <svg xmlns="http://www.w3.org/2000/svg" onclick="existGame()" viewBox="0 0 24 24" fill="currentColor" class="sizeSVG">
+              <svg xmlns="http://www.w3.org/2000/svg" onclick="cancelGame()" viewBox="0 0 24 24" fill="currentColor" class="sizeSVG">
                 <path d="M9.195 18.44c1.25.714 2.805-.189 2.805-1.629v-2.34l6.945 3.968c1.25.715 2.805-.188 2.805-1.628V8.69c0-1.44-1.555-2.343-2.805-1.628L12 11.029v-2.34c0-1.44-1.555-2.343-2.805-1.628l-7.108 4.061c-1.26.72-1.26 2.536 0 3.256l7.108 4.061Z"/>
               </svg>
               <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" onclick="toggleMusic()" viewBox="0 0 24 24" fill="currentColor" class="sizeSVG">
@@ -310,23 +310,24 @@
           backgroundMusic.pause();
         }
       }
-      function existGame() {
-        swal({
-          title: "Are you sure?",
-          text: "Once exist, you will lose this match!",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        })
-        .then((willDelete) => {
-          if (willDelete) {
-            window.localStorage.clear();
-            window.location.href = "/"
-          }else{
-            return
-          }
-        });
-      }
+      // function existGame() {
+      //   swal({
+      //     title: "Are you sure?",
+      //     text: "Once exist, you will lose this match!",
+      //     icon: "warning",
+      //     buttons: true,
+      //     dangerMode: true,
+      //   })
+      //   .then((willDelete) => {
+      //     if (willDelete) {
+      //       window.localStorage.clear();
+      //       window.location.href = "/"
+      //     }else{
+      //       return
+      //     }
+      //   });
+      // }
+
     </script>
 
    
