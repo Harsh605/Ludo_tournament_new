@@ -89,6 +89,17 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
     // useEffect(() => {
     //     fetchpenalty();
     // }, [])
+
+    const [selectedMode, setSelectedMode] = useState("");
+
+    useEffect(() => {
+        // Get the gameMode from localStorage when the component mounts
+        const savedGameMode = localStorage.getItem("gameMode") || "offSite";
+        if (savedGameMode) {
+            setSelectedMode(savedGameMode);
+        }
+    }, []);
+
     return (
         <div className="col-12 card my-1 walletcard pt-2 px-0 mx-auto text-white" key={key}>
             <div className="row">
@@ -208,7 +219,11 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
                                         to={{ pathname: `/viewgame/${allgame._id}`, state: { prevPath: window.location.pathname } }}
                                         onClick={(e) => updateChallenge(allgame._id)}
                                     >
-                                        click for room code
+                                        
+                                        {
+                                                selectedMode === "offSite" ? "click for room code" : "Play game"
+                                            }
+                                        
                                     </Link>
                                 </div>
                             )}
