@@ -14,7 +14,7 @@ exports.room = (req, res) => {
         
         if (
             Object.keys(rooms).includes(roomCode) &&
-            Object.keys(rooms[roomCode]).length < 2
+            Object.keys(rooms[roomCode]).length < 3
         ) {
             res.sendFile('ludo.html', { root: views });
         } else {
