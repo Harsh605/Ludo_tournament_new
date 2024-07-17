@@ -39,6 +39,10 @@ const Settings = () => {
   const [LandingImage2, setLandingImage2] = useState("");
   const [LandingImage3, setLandingImage3] = useState("");
   const [LandingImage4, setLandingImage4] = useState("");
+  const [LandingImage5, setLandingImage5] = useState("");
+  const [LandingImage6, setLandingImage6] = useState("");
+  const [LandingImage7, setLandingImage7] = useState("");
+  const [LandingImage8, setLandingImage8] = useState("");
   const [telegramLink, setTelegramLink] = useState("");
   const [upiId1, setUpiId1] = useState("");
   const [upiId2, setUpiId2] = useState("");
@@ -50,10 +54,15 @@ const Settings = () => {
   const [isLandingImage2, issetLandingImage2] = useState(true);
   const [isLandingImage3, issetLandingImage3] = useState(true);
   const [isLandingImage4, issetLandingImage4] = useState(true);
+  const [isLandingImage5, issetLandingImage5] = useState(true);
+  const [isLandingImage6, issetLandingImage6] = useState(true);
+  const [isLandingImage7, issetLandingImage7] = useState(true);
+  const [isLandingImage8, issetLandingImage8] = useState(true);
   const [checkedRoom, setCheckedRoom] = useState(true);
 
   const [upiGatewayKey, setUpiGatewayKey] = useState("");
   const [paymentGateway, setPaymentGateway] = useState(0);
+  const [isOnSiteLudoPlay, setIsOnSiteLudoPlay] = useState(0);
 
   const [version, setVersion] = useState("");
 
@@ -90,6 +99,7 @@ const Settings = () => {
       setMaximumDeposit(res?.data?.maximumDeposit);
       setUpiGatewayKey(res?.data?.upiGatewayKey);
       setPaymentGateway(res?.data?.paymentGateway);
+      setIsOnSiteLudoPlay(res?.data?.isOnSiteLudoPlay);
       setCommissionSettingOne(res?.data?.commissionSettingOne);
       setCommissionSettingTwo(res?.data?.commissionSettingTwo);
       setCommissionSettingThree(res?.data?.commissionSettingThree);
@@ -111,10 +121,18 @@ const Settings = () => {
       setLandingImage2(res.data.LandingImage2);
       setLandingImage3(res.data.LandingImage3);
       setLandingImage4(res.data.LandingImage4);
+      setLandingImage1(res.data.LandingImage5);
+      setLandingImage2(res.data.LandingImage6);
+      setLandingImage3(res.data.LandingImage7);
+      setLandingImage4(res.data.LandingImage8);
       issetLandingImage1(res.data.isLandingImage1);
       issetLandingImage2(res.data.isLandingImage2);
       issetLandingImage3(res.data.isLandingImage3);
       issetLandingImage4(res.data.isLandingImage4);
+      issetLandingImage5(res.data.isLandingImage5);
+      issetLandingImage6(res.data.isLandingImage6);
+      issetLandingImage7(res.data.isLandingImage7);
+      issetLandingImage8(res.data.isLandingImage8);
       setVersion(res.data.version);
     });
   }, []);
@@ -146,6 +164,7 @@ const Settings = () => {
     formData.append("maximumDeposit", maximumDeposit);
     formData.append("upiGatewayKey", upiGatewayKey);
     formData.append("paymentGateway", paymentGateway);
+    formData.append("isOnSiteLudoPlay", isOnSiteLudoPlay);
     formData.append("wrongUpdatePenalty", wrongUpdatePenalty);
     formData.append("noUpdatePenalty", noUpdatePenalty);
     formData.append("withdrawTime", withdrawTime);
@@ -163,10 +182,18 @@ const Settings = () => {
     formData.append("LandingImage2", LandingImage2);
     formData.append("LandingImage3", LandingImage3);
     formData.append("LandingImage4", LandingImage4);
+    formData.append("LandingImage5", LandingImage5);
+    formData.append("LandingImage6", LandingImage6);
+    formData.append("LandingImage7", LandingImage7);
+    formData.append("LandingImage8", LandingImage8);
     formData.append("isLandingImage1", isLandingImage1);
     formData.append("isLandingImage2", isLandingImage2);
     formData.append("isLandingImage3", isLandingImage3);
     formData.append("isLandingImage4", isLandingImage4);
+    formData.append("isLandingImage5", isLandingImage5);
+    formData.append("isLandingImage6", isLandingImage6);
+    formData.append("isLandingImage7", isLandingImage7);
+    formData.append("isLandingImage8", isLandingImage8);
     formData.append("version", version);
     const response = await axios.post(baseURL + `settings`, formData);
     console.log(response.data);
@@ -188,6 +215,10 @@ const Settings = () => {
     const LandingImage2 = document.getElementById("LandingImage2");
     const LandingImage3 = document.getElementById("LandingImage3");
     const LandingImage4 = document.getElementById("LandingImage4");
+    const LandingImage5 = document.getElementById("LandingImage5");
+    const LandingImage6 = document.getElementById("LandingImage6");
+    const LandingImage7 = document.getElementById("LandingImage7");
+    const LandingImage8 = document.getElementById("LandingImage8");
     const QrCodeImage = document.getElementById("QrCodeImage");
 
     Logo1.onchange = (e) => {
@@ -213,6 +244,22 @@ const Settings = () => {
     LandingImage4.onchange = (e) => {
       const [file] = LandingImage4.files;
       setLandingImage4(file);
+    };
+    LandingImage5.onchange = (e) => {
+      const [file] = LandingImage5.files;
+      setLandingImage5(file);
+    };
+    LandingImage6.onchange = (e) => {
+      const [file] = LandingImage6.files;
+      setLandingImage6(file);
+    };
+    LandingImage7.onchange = (e) => {
+      const [file] = LandingImage7.files;
+      setLandingImage7(file);
+    };
+    LandingImage8.onchange = (e) => {
+      const [file] = LandingImage8.files;
+      setLandingImage8(file);
     };
     QrCodeImage.onchange = (e) => {
       const [file] = QrCodeImage.files;
@@ -544,6 +591,122 @@ const Settings = () => {
                           </select>
                         </div>
                         
+                      </div>
+
+                      <div style={{fontSize:"22px",color:"#00f",marginBottom:"15px"}}>Live ludo play image</div>
+                      <div className="form-row">
+                      <div className="form-group col-md-4">
+                          <label
+                            htmlFor="WebsiteName"
+                            style={{ color: "black" }}
+                          >
+                            Game image (1)
+                          </label>
+                          <input
+                            className="form-control"
+                            type="file"
+                            name="LandingImage5"
+                            id="LandingImage5"
+                          />
+                          <select
+                            className="form-control"
+                            name=""
+                            id=""
+                            value={isLandingImage5}
+                            onChange={(e) => issetLandingImage5(e.target.value)}
+                          >
+                            <option value="true">on</option>
+                            <option value="false">off</option>
+                          </select>
+                        </div>
+                        <div className="form-group col-md-4">
+                          <label
+                            htmlFor="WebsiteName"
+                            style={{ color: "black" }}
+                          >
+                            Game image (2)
+                          </label>
+                          <input
+                            className="form-control"
+                            type="file"
+                            name="LandingImage6"
+                            id="LandingImage6"
+                          />
+                          <select
+                            className="form-control"
+                            name=""
+                            id=""
+                            value={isLandingImage6}
+                            onChange={(e) => issetLandingImage6(e.target.value)}
+                          >
+                            <option value="true">on</option>
+                            <option value="false">off</option>
+                          </select>
+                        </div>
+                        <div className="form-group col-md-4">
+                          <label
+                            htmlFor="WebsiteName"
+                            style={{ color: "black" }}
+                          >
+                            Game image (3)
+                          </label>
+                          <input
+                            className="form-control"
+                            type="file"
+                            name="LandingImage7"
+                            id="LandingImage7"
+                          />
+                          <select
+                            className="form-control"
+                            name=""
+                            id=""
+                            value={isLandingImage7}
+                            onChange={(e) => issetLandingImage7(e.target.value)}
+                          >
+                            <option value="true">on</option>
+                            <option value="false">off</option>
+                          </select>
+                        </div>
+                        <div className="form-group col-md-4">
+                          <label
+                            htmlFor="WebsiteName"
+                            style={{ color: "black" }}
+                          >
+                            Game image (4)
+                          </label>
+                          <input
+                            className="form-control"
+                            type="file"
+                            name="LandingImage8"
+                            id="LandingImage8"
+                          />
+                          <select
+                            className="form-control"
+                            name=""
+                            id=""
+                            value={isLandingImage8}
+                            onChange={(e) => issetLandingImage8(e.target.value)}
+                          >
+                            <option value="true">on</option>
+                            <option value="false">off</option>
+                          </select>
+                        </div>
+
+                        <div className="form-group col-md-4">
+                          <label
+                            htmlFor="qrCode"
+                            style={{ display: "block", color: "black" }}
+                          >
+                            Switch Live Ludo play
+                          </label>
+                          <ReactSwitch
+                            checked={isOnSiteLudoPlay}
+                            onChange={(e) =>
+                              setIsOnSiteLudoPlay(isOnSiteLudoPlay == 0 ? 1 : 0)
+                            }
+                            style={{ display: "none" }}
+                          />
+                        </div>
                       </div>
 
                       <div style={{fontSize:"22px",color:"#00f",marginBottom:"15px",marginTop:"10px"}}>Manual and Upi Payment Gateway Settings</div>
