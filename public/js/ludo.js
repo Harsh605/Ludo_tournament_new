@@ -1021,7 +1021,7 @@ async function cancelGame() {
                 } catch (error) {
                     console.error("Error cancelling the game:", error);
                     alert("There was an error cancelling the game.");
-                    window.close();
+                    window.location.href = "/"
                 }
             }else{
               return
