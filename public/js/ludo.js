@@ -1011,17 +1011,13 @@ async function cancelGame() {
                     await sendWebSocketMessage('pageReloadSocketCall');
                     alert("The game has been successfully cancelled.");
                     
-                    if (window.opener) {
-                        window.opener.focus();
-                        window.close();
-                    } else {
-                        console.log("No opener window found. Unable to switch tabs.");
-                        // window.location.href = 'your-fallback-url.html';
-                    }
+                    
+                  window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
                 } catch (error) {
                     console.error("Error cancelling the game:", error);
                     alert("There was an error cancelling the game.");
-                    window.location.href = "/"
+                    
+                  window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
                 }
             }else{
               return
@@ -1062,22 +1058,12 @@ async function userWinn() {
               })
               .then((willDelete) => {
                 if (willDelete) {
-                  window.localStorage.clear();
-                  window.location.href = "/"
+                  window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
                 }else{
                   window.localStorage.clear();
-                  window.location.href = "/"
+                  window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
                 }
               });
-            
-            if (window.opener) {
-                window.opener.focus(); // This will focus the opener window
-                window.close(); // This will close the current window
-            } else {
-                console.log("No opener window found. Unable to switch tabs.");
-                // Optionally, you could redirect to a specific URL here
-                // window.location.href = 'your-fallback-url.html';
-            }
         } catch (e) {
             console.log(e);
             alert("There was an error cancelling the game.");
