@@ -39,9 +39,9 @@ exports.post = (req, res) => {
         rooms[p0th] = {};
         win[p0th] = {};
         NumberOfMembers[p0th] = { constant: false, members: 0 };
-        res.status(200).send(`http://84.247.133.7:5010/ludo/${p0th}`);
+        //res.status(200).send(`http://84.247.133.7:5010/ludo/${p0th}`);
         //res.status(200).send(`http://localhost:5010/ludo/${p0th}`);
-        //res.redirect(301, 'ludo/' + p0th);
+        res.redirect(301, 'ludo/' + p0th);
     } else {
         res.status(400).end('Invalid action!');
     }

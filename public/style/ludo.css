@@ -314,10 +314,16 @@ body {
 }
 
 #color-message-span1,#theOneWhoLeft{
-    font-family: 'ZCOOL KuaiLe', cursive;
+    font-family: 'Roboto Slab', serif;
 }
 
 #color-message-span2{
     font-family: 'Roboto Slab', serif;
+}
+
+.textStyle{
+    font-family: 'Roboto Slab', serif;
+    font-size: 20px;
+
 }
 
