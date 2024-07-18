@@ -378,7 +378,9 @@ socket.on('connect',function(){
     });
 
     socket.on('user-disconnected', async function(data){
+        showLoader();
         await userWinn()
+        hideLoader();
         outputMessage({Name:USERNAMES[data],id:data},6);
         resumeHandler(data);    
     })
@@ -956,11 +958,11 @@ function resumeHandler(id){
       })
       .then((willDelete) => {
         if (willDelete) {
-          window.localStorage.clear();
-          window.location.href = "/"
+          
+        window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
         }else{
-          window.localStorage.clear();
-          window.location.href = "/"
+          
+          window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
         }
       });
 }
@@ -1001,37 +1003,39 @@ async function cancelGame() {
           })
           .then( async (willDelete) => {
             if (willDelete) {
-                const headers = {
-                    Authorization: `Bearer ${urlParams.get('token')}`,
-                    'Content-Type': 'application/json'
-                };
-                try {
-                    const response = await fetch(`/challange/result/live/${urlParams.get('game_id')}`, {
-                        method: 'POST',
-                        headers: headers,
-                        body: JSON.stringify({
-                            status: "cancelled"
-                        })
-                    });
+                // const headers = {
+                //     Authorization: `Bearer ${urlParams.get('token')}`,
+                //     'Content-Type': 'application/json'
+                // };
+                // try {
+                //     const response = await fetch(`/challange/result/live/${urlParams.get('game_id')}`, {
+                //         method: 'POST',
+                //         headers: headers,
+                //         body: JSON.stringify({
+                //             status: "cancelled"
+                //         })
+                //     });
         
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
+                //     if (!response.ok) {
+                //         throw new Error('Network response was not ok');
+                //     }
         
-                    const responseData = await response.json();
-                    console.log(responseData);
+                //     const responseData = await response.json();
+                //     console.log(responseData);
         
-                    await sendWebSocketMessage('pageReloadSocketCall');
-                    alert("The game has been successfully cancelled.");
+                //     await sendWebSocketMessage('pageReloadSocketCall');
+                //     alert("The game has been successfully cancelled.");
                     
                     
+                //   window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
+                // } catch (error) {
+                //     console.error("Error cancelling the game:", error);
+                //     alert("There was an error cancelling the game.");
+                    
+                //   window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
+                // }
+                
                   window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
-                } catch (error) {
-                    console.error("Error cancelling the game:", error);
-                    alert("There was an error cancelling the game.");
-                    
-                  window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
-                }
             }else{
               return
             }
@@ -1057,7 +1061,9 @@ async function userWinn() {
             });
 
             if (!response.ok) {
+                alert("Network response was not ok")
                 throw new Error('Network response was not ok');
+               
             }
 
             await sendWebSocketMessage('pageReloadSocketCall');
@@ -1081,10 +1087,32 @@ async function userWinn() {
             console.log(e);
             alert("There was an error cancelling the game.");
         }
-   
-}
+    }
 
-window.addEventListener('beforeunload', function() {
+
+   function showLoader() {
+        document.getElementById('loader').style.display = 'flex';
+        document.getElementById('content').style.display = 'none';
+    }
+    
+    function hideLoader() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+    }
+    
+    // Example usage:
+    // Show the loader when the page starts loading
+    showLoader();
+    
+    // Hide the loader and show content once the page is fully loaded
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            hideLoader();
+        }, 2000);
+    });
+    
+
+ window.addEventListener('beforeunload', function() {
     // Clear all cookies
     const cookies = document.cookie.split(";");
     for (let i = 0; i < cookies.length; i++) {

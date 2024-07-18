@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LUDO</title>
     <link rel="stylesheet" href="../style/ludo.css">
+    <link rel="stylesheet" href="../style/loader.css">
     <script src='../../socket.io/socket.io.js'></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide|Sofia">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -219,6 +220,8 @@
 
   </style>
   <body >
+    <div id="loader"></div>
+    <div id="content">
     <div class="container-fluid">
       <div class="row row-full-height">
         <div class="copy-wrapper d-none">
@@ -287,6 +290,7 @@
         <audio id="dicesoundMusic" src="../audio/dicesound.mp3"></audio>
         <audio id="piceSound" src="../audio/ludupice.mp3"></audio>
     </div>
+  </div>
     
     <script>
 
