@@ -890,6 +890,11 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
             console.log('req comes');
             const reqUser = req.user.id;
 
+            if(!reqUser){
+                res.status(400).send(reqUser)
+              
+            }
+
             console.log(req.user.id)
 
             // Player status update
