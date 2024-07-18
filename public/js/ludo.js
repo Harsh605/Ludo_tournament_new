@@ -346,7 +346,7 @@ socket.on('connect',function(){
         });
     }
     
-    socket.on('imposter',()=>{window.localStorage.clear(); window.location.replace("/");});
+    socket.on('imposter',()=>{window.localStorage.clear(); window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`});
 
     socket.on('is-it-your-chance', function(data) {
         if (data === myid) {
@@ -419,25 +419,25 @@ socket.on('connect',function(){
     });
 
     socket.on('winner', async function(data) {
-        // showModal(data.id);
+        showToast(`you are the winner ${USERNAMES[id]}`);
         console.log(data)
         await userLiveWinn(data.token, data.game_id);
-        swal({
-            title: "Winner",
-            text: `you are the winner ${USERNAMES[id]}`,
-            icon: "success",
-            buttons: true,
-            dangerMode: true,
-          })
-          .then((willDelete) => {
-            if (willDelete) {
-              window.localStorage.clear();
-              window.location.href = "/"
-            }else{
-              window.localStorage.clear();
-              window.location.href = "/"
-            }
-          });
+        // swal({
+        //     title: "Winner",
+        //     text: `you are the winner ${USERNAMES[id]}`,
+        //     icon: "success",
+        //     buttons: true,
+        //     dangerMode: true,
+        //   })
+        //   .then((willDelete) => {
+        //     if (willDelete) {
+        //       window.localStorage.clear();
+        //       window.location.href = "/"
+        //     }else{
+        //       window.localStorage.clear();
+        //       window.location.href = "/"
+        //     }
+        //   });
         
     });
 
@@ -461,10 +461,23 @@ socket.on('connect',function(){
             }
 
             await sendWebSocketMessage('pageReloadSocketCall');
-            console.log(response);
-            
-            window.opener = self;
-            window.close();
+
+            swal({
+            title: "Winner",
+            text: `you are the winner ${USERNAMES[id]}`,
+            icon: "success",
+            buttons: true,
+            dangerMode: true,
+          })
+          .then((willDelete) => {
+            if (willDelete) {
+             console.log(response);
+             window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
+            }else{
+             console.log(response);
+             window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
+            }
+          });
 
         } catch (e) {
             console.log(e);
@@ -579,7 +592,7 @@ function rollDice() {
         // const randomNumber = Math.floor(Math.random() * 6) + 1;
         dice.src = `../images/dice/${imgName[randomPiceNumber - 1]}.png`;
         dice.classList.remove('rolling');
-    }, 200);
+    }, 300);
 }
 
 //simulates the action of dice and also chance rotation.
