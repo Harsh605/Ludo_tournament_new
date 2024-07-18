@@ -421,7 +421,7 @@ socket.on('connect',function(){
     });
 
     socket.on('winner', async function(data) {
-        showToast(`you are the winner ${USERNAMES[id]}`);
+        //showToast(`you are the winner ${USERNAMES[id]}`);
         console.log(data)
         await userLiveWinn(data.token, data.game_id);
         // swal({
