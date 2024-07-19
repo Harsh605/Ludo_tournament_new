@@ -91,6 +91,7 @@ router.post("/settings", upload.fields([
             updatesetting.upiGatewayKey=req.body.upiGatewayKey
             updatesetting.paymentGateway=req.body.paymentGateway
             updatesetting.isOnSiteLudoPlay=req.body.isOnSiteLudoPlay
+            updatesetting.isOffSiteLudoPlay=req.body.isOffSiteLudoPlay
 
 
             updatesetting.wrongUpdatePenalty=req.body.wrongUpdatePenalty
@@ -383,6 +384,7 @@ router.post("/settings", upload.fields([
                 version: req.body.version,
                 paymentGateway: req.body.paymentGateway,
                 isOnSiteLudoPlay: req.body.isOnSiteLudoPlay,
+                isOffSiteLudoPlay: req.body.isOffSiteLudoPlay,
                 upiGatewayKey: req.body.upiGatewayKey
             }); 
             
