@@ -607,8 +607,8 @@ function EnterFirstGame(props) {
                     socket.emit('resultAPI');
                     submitReq.current = false;
                     setProcess(false);
-                    navigate(-1);
-                    // window.location.reload();
+                    //navigate(-1);
+                    window.location.reload();
                 })
                     .catch((e) => {
                         if (e.response.status == 401) {
@@ -765,7 +765,8 @@ function EnterFirstGame(props) {
                     </div>
 
                     {/* {type === "openbattle" ? */}
-                    <div className='row'>
+                    {fecthStatus !== null && fecthStatus !== undefined ? null : (<>
+                        <div className='row'>
                         <div className="col-12 card mt-3 walletcard pt-2 px-0 mx-auto text-white">
                             <div className="text-center">{selectedMode === "offSite" ? "Room Code" : "Live ludo game play"}</div>
                             <div className="card-body walletbody mt-2">
@@ -786,6 +787,7 @@ function EnterFirstGame(props) {
                                             {/* <span>{Game?.Room_code}</span> */}
                                             
                                         </div>
+                                        
 
                                         {
                                             selectedMode === "offSite" ? <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }} onClick={(e) => copyCode(e)} >
@@ -811,9 +813,9 @@ function EnterFirstGame(props) {
                                        
                                     </div> || (Game?.Accepetd_By._id == user) &&
                                         <div className='roomCode cxy flex-column text-center'>
-                                           {selectedMode === "offSite" ? "Waiting for Room Code..." : null}
+                                           {selectedMode === "offSite" ? "Waiting for Room Code..." : "Wait for joning link"}
                                            <h6>{selectedMode === "offSite" ? "रूम कोड का इंतजार है।" : null}</h6>
-                                            <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                                            <div className="lds-spinner text-white"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 
                                         </div>)
 
@@ -895,6 +897,8 @@ function EnterFirstGame(props) {
                             </div>
                         </div>
                     </div>
+                    </>)}
+                    
                     {/* : */}
                     <div className='row'>
                         <div className="col-12 card mt-3 walletcard pt-2 px-0 mx-auto text-white">
@@ -1097,7 +1101,9 @@ function EnterFirstGame(props) {
                             </div>
                             {/* <p>{message}</p> */}
                         </div>
-                        <div className="col-12 card my-3 walletcard pt-2 px-0 mx-auto text-white">
+                        {
+                            selectedMode === "offSite" ? (<>
+                             <div className="col-12 card my-3 walletcard pt-2 px-0 mx-auto text-white">
                             <div className="text-center">Penalty</div>
                             <div className="card-body walletbody mt-2">
                                 <table className="table table-bordered table-bg">
@@ -1136,6 +1142,9 @@ function EnterFirstGame(props) {
                                 </table>
                             </div>
                         </div>
+                            </>) : null
+                        }
+                       
                         <div className="modal fade" id="exampleModal1" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="false">
                             <div className="modal-dialog  modal-dialog-centered">
                                 <div className="modal-content">

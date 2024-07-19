@@ -315,16 +315,33 @@ function SecondPage({ walletUpdate }) {
                 }, 30000 + 1000);
             })
             socket.listen("recieveGame", (data) => {
+                console.log(data)
                 let owenedCreated = [], remainingGame = [];
-                data.forEach(function (ele) {
-                    if (ele.Created_by)
-                        if ((ele.Created_by._id === userID.current) && (ele.Status === "new" || ele.Status === "requested")) {
-                            owenedCreated.push(ele);
-                        }
-                        else {
-                            remainingGame.push(ele);
-                        }
-                });
+                if(selectedMode === "onSite"){
+
+                    data.forEach(function (ele) {
+                        if (ele.Created_by)
+                            if ((ele.Created_by._id === userID.current) && (ele.Status === "new" || ele.Status === "requested") && (ele.Game_type === "Ludo Classics Live")) {
+                                owenedCreated.push(ele);
+                            }
+                            else {
+                                remainingGame.push(ele);
+                            }
+                    });
+
+                }else{
+
+                    data.forEach(function (ele) {
+                        if (ele.Created_by)
+                            if ((ele.Created_by._id === userID.current) && (ele.Status === "new" || ele.Status === "requested")) {
+                                owenedCreated.push(ele);
+                            }
+                            else {
+                                remainingGame.push(ele);
+                            }
+                    });
+
+                }
                 // console.log('own',owenedCreated,'remiain',remainingGame);
                 setCreated(owenedCreated);
                 setallgame(remainingGame);
@@ -438,7 +455,18 @@ function SecondPage({ walletUpdate }) {
 
             socket.listen("ongoingChallenge", (data) => {
                 let owenedCreated = [], remainingGame = [];
-                data.openBattle.forEach(function (ele) {
+                if(selectedMode === "onSite"){
+                    data.openBattle.forEach(function (ele) {
+                        if (ele.Created_by)
+                            if ((ele.Created_by._id == userID.current) && (ele.Status == "new" || ele.Status == "requested") && (ele.Game_type === "Ludo Classics Live")) {
+                                owenedCreated.push(ele);
+                            }
+                            else {
+                                remainingGame.push(ele);
+                            }
+                    });
+                }else{
+                    data.openBattle.forEach(function (ele) {
                     if (ele.Created_by)
                         if ((ele.Created_by._id == userID.current) && (ele.Status == "new" || ele.Status == "requested")) {
                             owenedCreated.push(ele);
@@ -447,18 +475,33 @@ function SecondPage({ walletUpdate }) {
                             remainingGame.push(ele);
                         }
                 });
+                }
+                
                 setCreated(owenedCreated);
                 setallgame(remainingGame);
                 let owenedRunning = [], remainingRunning = [];
-                data.runningBattle.forEach(function (ele) {
-                    if (ele.Created_by && ele.Accepetd_By)
-                        if ((ele.Created_by._id == userID.current) || (ele.Accepetd_By._id == userID.current)) {
-                            owenedRunning.push(ele);
-                        }
-                        else {
-                            remainingRunning.push(ele);
-                        }
-                });
+                if(selectedMode === "onSite"){
+                    data.runningBattle.forEach(function (ele) {
+                        if (ele.Created_by && ele.Accepetd_By && ele.Game_type === "Ludo Classics Live")
+                            if ((ele.Created_by._id == userID.current) || (ele.Accepetd_By._id == userID.current)) {
+                                owenedRunning.push(ele);
+                            }
+                            else {
+                                remainingRunning.push(ele);
+                            }
+                    });
+                }else{
+                    data.runningBattle.forEach(function (ele) {
+                        if (ele.Created_by && ele.Accepetd_By)
+                            if ((ele.Created_by._id == userID.current) || (ele.Accepetd_By._id == userID.current)) {
+                                owenedRunning.push(ele);
+                            }
+                            else {
+                                remainingRunning.push(ele);
+                            }
+                    });
+                }
+               
                 setOwnRunning(owenedRunning);
                 setRunningGames(remainingRunning);
             });
