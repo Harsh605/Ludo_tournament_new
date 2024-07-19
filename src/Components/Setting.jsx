@@ -63,6 +63,7 @@ const Settings = () => {
   const [upiGatewayKey, setUpiGatewayKey] = useState("");
   const [paymentGateway, setPaymentGateway] = useState(0);
   const [isOnSiteLudoPlay, setIsOnSiteLudoPlay] = useState(0);
+  const [isOffSiteLudoPlay, setIsOffSiteLudoPlay] = useState(0);
 
   const [version, setVersion] = useState("");
 
@@ -100,6 +101,7 @@ const Settings = () => {
       setUpiGatewayKey(res?.data?.upiGatewayKey);
       setPaymentGateway(res?.data?.paymentGateway);
       setIsOnSiteLudoPlay(res?.data?.isOnSiteLudoPlay);
+      setIsOffSiteLudoPlay(res?.data?.isOffSiteLudoPlay);
       setCommissionSettingOne(res?.data?.commissionSettingOne);
       setCommissionSettingTwo(res?.data?.commissionSettingTwo);
       setCommissionSettingThree(res?.data?.commissionSettingThree);
@@ -165,6 +167,7 @@ const Settings = () => {
     formData.append("upiGatewayKey", upiGatewayKey);
     formData.append("paymentGateway", paymentGateway);
     formData.append("isOnSiteLudoPlay", isOnSiteLudoPlay);
+    formData.append("isOffSiteLudoPlay", isOffSiteLudoPlay);
     formData.append("wrongUpdatePenalty", wrongUpdatePenalty);
     formData.append("noUpdatePenalty", noUpdatePenalty);
     formData.append("withdrawTime", withdrawTime);
@@ -589,6 +592,21 @@ const Settings = () => {
                             <option value="true">on</option>
                             <option value="false">off</option>
                           </select>
+                        </div>
+                        <div className="form-group col-md-4">
+                          <label
+                            htmlFor="qrCode"
+                            style={{ display: "block", color: "black" }}
+                          >
+                            Switch Ludo king play
+                          </label>
+                          <ReactSwitch
+                            checked={isOffSiteLudoPlay}
+                            onChange={(e) =>
+                              setIsOffSiteLudoPlay(isOffSiteLudoPlay == 0 ? 1 : 0)
+                            }
+                            style={{ display: "none" }}
+                          />
                         </div>
                         
                       </div>
