@@ -1195,8 +1195,6 @@ async function cancelGame() {
 }
 
 async function userWinn() {
-    alert(urlParams.get('token'))
-    alert(urlParams.get('game_id'))
         const headers = {
             Authorization: `Bearer ${urlParams.get('token')}`,
             'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
