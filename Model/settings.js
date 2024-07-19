@@ -216,7 +216,7 @@ const SiteSettingsSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    setIsOffSiteLudoPlay:{
+    isOffSiteLudoPlay:{
         type: Number,
         default: 0
     },
