@@ -82,182 +82,183 @@ app.enable('trust proxy');
 //
 let nsp = io.of('/ludo');
 
-nsp.on('connection',(socket)=>{
-    console.log('A User has connected to the game');
-    socket.on('fetch',(data,cb)=>{
-        try{
-            let member_id = generate_member_id(socket.id,data);
-            socket.join(data);
-            if(member_id !== -1){
-                cb(Object.keys(rooms[data]),member_id);
-                socket.to(data).emit('new-user-joined',{id:member_id});
-            }else{
-                console.log('There is someone with m_id = -1');
-            }
-        }
-        catch(err){
-            if(err.name === 'TypeError'){
-                socket.emit('imposter');
-            }
-            console.log("hello",err,rooms);
-        }
-    });
+// nsp.on('connection',(socket)=>{
+//     console.log('A User has connected to the game');
+//     socket.on('fetch',(data,cb)=>{
+//         try{
+//             let member_id = generate_member_id(socket.id,data);
+//             socket.join(data);
+//             if(member_id !== -1){
+//                 cb(Object.keys(rooms[data]),member_id);
+//                 socket.to(data).emit('new-user-joined',{id:member_id});
+//             }else{
+//                 console.log('There is someone with m_id = -1');
+//             }
+//         }
+//         catch(err){
+//             if(err.name === 'TypeError'){
+//                 socket.emit('imposter');
+//             }
+//             console.log("hello",err,rooms);
+//         }
+//     });
 
-    socket.on('roll-dice',(data,cb)=>{
-        rooms[data.room][data.id]['num'] = Math.floor((Math.random()*6) + 1);
-        data['num'] = rooms[data.room][data.id]['num']
-        nsp.to(data.room).emit('rolled-dice',data);
-        cb(rooms[data.room][data.id]['num']);
-    })
+//     socket.on('roll-dice',(data,cb)=>{
+//         rooms[data.room][data.id]['num'] = Math.floor((Math.random()*6) + 1);
+//         data['num'] = rooms[data.room][data.id]['num']
+//         nsp.to(data.room).emit('rolled-dice',data);
+//         cb(rooms[data.room][data.id]['num']);
+//     })
 
-    socket.on('chance',(data)=>{
-        nsp.to(data.room).emit('is-it-your-chance',data.nxt_id);
-    });
+//     socket.on('chance',(data)=>{
+//         console.log(data.room, data.nxt_id)
+//         nsp.to(data.room).emit('is-it-your-chance',data.nxt_id);
+//     });
 
-    socket.on('random',(playerObj,cb)=>{
-        // playerObj ={
-        //     room: room_code,
-        //     id: myid,
-        //     pid: pid,
-        //     num: temp
-        // }
-        if(playerObj['num'] != rooms[playerObj.room][playerObj.id]['num']){
-            console.log('Someone is trying to cheat!');
-        }
-        playerObj['num'] = rooms[playerObj.room][playerObj.id]['num']
-        nsp.to(playerObj.room).emit('Thrown-dice', playerObj);
-        cb(playerObj['num']);
-    });
+//     socket.on('random',(playerObj,cb)=>{
+//         // playerObj ={
+//         //     room: room_code,
+//         //     id: myid,
+//         //     pid: pid,
+//         //     num: temp
+//         // }
+//         if(playerObj['num'] != rooms[playerObj.room][playerObj.id]['num']){
+//             console.log('Someone is trying to cheat!');
+//         }
+//         playerObj['num'] = rooms[playerObj.room][playerObj.id]['num']
+//         nsp.to(playerObj.room).emit('Thrown-dice', playerObj);
+//         cb(playerObj['num']);
+//     });
 
-    // socket.on('WON',(OBJ)=>{
-    //     if(validateWinner(OBJ,socket)){
-    //         delete win[OBJ.room];
-    //         delete NumberOfMembers[OBJ.room];
-    //         if(rooms[OBJ.room]){
-    //             delete rooms[OBJ.room];
-    //         }
-    //         nsp.to(OBJ.room).emit('winner',OBJ.id);
-    //     }
-    // });
+//     // socket.on('WON',(OBJ)=>{
+//     //     if(validateWinner(OBJ,socket)){
+//     //         delete win[OBJ.room];
+//     //         delete NumberOfMembers[OBJ.room];
+//     //         if(rooms[OBJ.room]){
+//     //             delete rooms[OBJ.room];
+//     //         }
+//     //         nsp.to(OBJ.room).emit('winner',OBJ.id);
+//     //     }
+//     // });
 
-    socket.on('WON', async function(OBJ) {
-        if (validateWinner(OBJ, socket)) {
-            delete win[OBJ.room];
-            delete NumberOfMembers[OBJ.room];
-            if (rooms[OBJ.room]) {
-                delete rooms[OBJ.room];
-            }
-            console.log(OBJ)
-            nsp.to(OBJ.room).emit('winner', OBJ); // Emitting OBJ directly to frontend
-        }
-    });
+//     socket.on('WON', async function(OBJ) {
+//         if (validateWinner(OBJ, socket)) {
+//             delete win[OBJ.room];
+//             delete NumberOfMembers[OBJ.room];
+//             if (rooms[OBJ.room]) {
+//                 delete rooms[OBJ.room];
+//             }
+//             console.log(OBJ)
+//             nsp.to(OBJ.room).emit('winner', OBJ); // Emitting OBJ directly to frontend
+//         }
+//     });
     
 
-    socket.on('resume',(data,cb)=>{
-        socket.to(data.room).emit('resume',data);
-        NumberOfMembers[data.room].members<=2?2:NumberOfMembers[data.room].members -= 1;
-        NumberOfMembers[data.room].constant = true;
-        cb();
-    });
+//     socket.on('resume',(data,cb)=>{
+//         socket.to(data.room).emit('resume',data);
+//         NumberOfMembers[data.room].members<=2?2:NumberOfMembers[data.room].members -= 1;
+//         NumberOfMembers[data.room].constant = true;
+//         cb();
+//     });
 
-    socket.on('wait',(data,cb)=>{
-        socket.to(data.room).emit('wait',data);
-        cb();
-    });
+//     socket.on('wait',(data,cb)=>{
+//         socket.to(data.room).emit('wait',data);
+//         cb();
+//     });
 
-    socket.on("admin",(data) =>{
-        console.log(data)
-        nsp.emit("admin", data)
-    })
+//     socket.on("admin",(data) =>{
+//         console.log(data)
+//         nsp.emit("admin", data)
+//     })
 
-    // socket.on('disconnect',()=>{
-    //     let roomKey = deleteThisid(socket.id);
-    //     if(roomKey != undefined){
-    //         console.log(rooms[roomKey.room],socket.id);
-    //         socket.to(roomKey.room).emit('user-disconnected',roomKey.key)
-    //     }
-    //     console.log('A client just got disconnected');
-    // });
-    // socket.on('disconnect', () => {
-    //     let roomKey = deleteThisid(socket.id);
-    //     if (roomKey != undefined) {
-    //         console.log(rooms[roomKey.room], socket.id);
-    //         socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+//     // socket.on('disconnect',()=>{
+//     //     let roomKey = deleteThisid(socket.id);
+//     //     if(roomKey != undefined){
+//     //         console.log(rooms[roomKey.room],socket.id);
+//     //         socket.to(roomKey.room).emit('user-disconnected',roomKey.key)
+//     //     }
+//     //     console.log('A client just got disconnected');
+//     // });
+//     // socket.on('disconnect', () => {
+//     //     let roomKey = deleteThisid(socket.id);
+//     //     if (roomKey != undefined) {
+//     //         console.log(rooms[roomKey.room], socket.id);
+//     //         socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
             
-    //         // Check if the room is empty after this user disconnected
-    //         if (rooms[roomKey.room].length === 0) {
-    //             // If the room is empty, delete the room code
-    //             delete rooms[roomKey.room];
-    //             console.log(`Room ${roomKey.room} has been deleted as it's empty`);
-    //         }
-    //     }
-    //     console.log('A client just got disconnected');
-    // });
+//     //         // Check if the room is empty after this user disconnected
+//     //         if (rooms[roomKey.room].length === 0) {
+//     //             // If the room is empty, delete the room code
+//     //             delete rooms[roomKey.room];
+//     //             console.log(`Room ${roomKey.room} has been deleted as it's empty`);
+//     //         }
+//     //     }
+//     //     console.log('A client just got disconnected');
+//     // });
 
-   // Handle 'disconnectInfo' event
-    // socket.on('disconnect_user_lose', async (data) => {
-    //     const { token, game_id } = data; // Destructure token and game_id from data
+//    // Handle 'disconnectInfo' event
+//     // socket.on('disconnect_user_lose', async (data) => {
+//     //     const { token, game_id } = data; // Destructure token and game_id from data
 
-    //     console.log(token, game_id)
+//     //     console.log(token, game_id)
 
-    //     try {
-    //         const headers = {
-    //             Authorization: `Bearer ${token}`,
-    //             'Content-Type': 'application/json'
-    //         };
+//     //     try {
+//     //         const headers = {
+//     //             Authorization: `Bearer ${token}`,
+//     //             'Content-Type': 'application/json'
+//     //         };
 
-    //         const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
-    //             status: "lose"
-    //         }, {
-    //             headers: headers
-    //         });
+//     //         const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
+//     //             status: "lose"
+//     //         }, {
+//     //             headers: headers
+//     //         });
 
-    //         console.log('POST request successful:', response.data);
-    //     } catch (error) {
-    //         console.error('POST request failed:', error.message);
-    //     }
-    // });
-   // Handle 'disconnectInfo' event
-    // socket.on('disconnect_user_winn', async (data) => {
-    //     const { token, game_id } = data; // Destructure token and game_id from data
+//     //         console.log('POST request successful:', response.data);
+//     //     } catch (error) {
+//     //         console.error('POST request failed:', error.message);
+//     //     }
+//     // });
+//    // Handle 'disconnectInfo' event
+//     // socket.on('disconnect_user_winn', async (data) => {
+//     //     const { token, game_id } = data; // Destructure token and game_id from data
 
-    //     console.log(token, game_id)
+//     //     console.log(token, game_id)
 
-    //     try {
-    //         const headers = {
-    //             Authorization: `Bearer ${token}`,
-    //             'Content-Type': 'application/json'
-    //         };
+//     //     try {
+//     //         const headers = {
+//     //             Authorization: `Bearer ${token}`,
+//     //             'Content-Type': 'application/json'
+//     //         };
 
-    //         const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
-    //             status: "winn",
+//     //         const response = await axios.post(`http://84.247.133.7:5010/challange/result/${game_id}`, {
+//     //             status: "winn",
                 
-    //         }, {
-    //             headers: headers
-    //         });
+//     //         }, {
+//     //             headers: headers
+//     //         });
 
-    //         console.log('POST request successful:', response.data);
-    //     } catch (error) {
-    //         console.error('POST request failed:', error.message);
-    //     }
-    // });
+//     //         console.log('POST request successful:', response.data);
+//     //     } catch (error) {
+//     //         console.error('POST request failed:', error.message);
+//     //     }
+//     // });
 
-// Handle general disconnect event
-    socket.on('disconnect', async () => {
-        let roomKey = deleteThisid(socket.id);
-        if (roomKey != undefined) {
-            console.log(rooms[roomKey.room], socket.id);
-            socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+// // Handle general disconnect event
+//     socket.on('disconnect', async () => {
+//         let roomKey = deleteThisid(socket.id);
+//         if (roomKey != undefined) {
+//             console.log(rooms[roomKey.room], socket.id);
+//             socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
 
-            // Delete the room code
-            delete rooms[roomKey.room];
-            console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
-        }
-        console.log('A client just got disconnected');
-    });
+//             // Delete the room code
+//             delete rooms[roomKey.room];
+//             console.log(`Room ${roomKey.room} has been deleted due to user disconnection`);
+//         }
+//         console.log('A client just got disconnected');
+//     });
 
     
-});
+// });
 
 
 //
@@ -302,6 +303,107 @@ nsp.on('connection',(socket)=>{
 //         return -1;
 //     }
 // }
+
+nsp.on('connection', (socket) => {
+    console.log('A User has connected to the game');
+    
+    socket.on('fetch', (data, cb) => {
+        try {
+            let member_id = generate_member_id(socket.id, data);
+            socket.join(data);
+            if (member_id !== -1) {
+                cb(Object.keys(rooms[data]), member_id);
+                socket.to(data).emit('new-user-joined', { id: member_id });
+            } else {
+                console.log('There is someone with m_id = -1');
+            }
+        } catch (err) {
+            if (err.name === 'TypeError') {
+                socket.emit('imposter');
+            }
+            console.log("hello", err, rooms);
+        }
+    });
+
+    socket.on('roll-dice', (data, cb) => {
+        if (!rooms[data.room] || !rooms[data.room][data.id]) {
+            console.log('Invalid room or player ID');
+            return;
+        }
+
+        const diceRoll = Math.floor((Math.random() * 6) + 1);
+        rooms[data.room][data.id]['num'] = diceRoll;
+        data['num'] = diceRoll;
+
+        nsp.to(data.room).emit('rolled-dice', data);
+        cb(diceRoll);
+    });
+
+    socket.on('chance', (data) => {
+        console.log(data.room, data.nxt_id);
+        nsp.to(data.room).emit('is-it-your-chance', data.nxt_id);
+    });
+
+    socket.on('random', (playerObj, cb) => {
+        if (!rooms[playerObj.room] || !rooms[playerObj.room][playerObj.id]) {
+            console.log('Invalid room or player ID');
+            return;
+        }
+
+        if (playerObj['num'] !== rooms[playerObj.room][playerObj.id]['num']) {
+            console.log('Someone is trying to cheat!');
+        }
+
+        playerObj['num'] = rooms[playerObj.room][playerObj.id]['num'];
+        nsp.to(playerObj.room).emit('Thrown-dice', playerObj);
+        cb(playerObj['num']);
+    });
+
+    socket.on('WON', async (OBJ) => {
+        if (validateWinner(OBJ, socket)) {
+            delete win[OBJ.room];
+            delete NumberOfMembers[OBJ.room];
+            if (rooms[OBJ.room]) {
+                delete rooms[OBJ.room];
+            }
+            console.log(OBJ);
+            nsp.to(OBJ.room).emit('winner', OBJ);
+        }
+    });
+
+    socket.on('resume', (data, cb) => {
+        socket.to(data.room).emit('resume', data);
+        NumberOfMembers[data.room].members = Math.max(2, NumberOfMembers[data.room].members - 1);
+        NumberOfMembers[data.room].constant = true;
+        cb();
+    });
+
+    socket.on('wait', (data, cb) => {
+        socket.to(data.room).emit('wait', data);
+        cb();
+    });
+
+    socket.on('admin', (data) => {
+        console.log(data);
+        nsp.emit('admin', data);
+    });
+
+    socket.on('disconnect', async () => {
+        let roomKey = deleteThisid(socket.id);
+        if (roomKey != undefined) {
+            console.log(rooms[roomKey.room], socket.id);
+            socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+
+            // Check if the room is empty after this user disconnected
+            if (rooms[roomKey.room] && Object.keys(rooms[roomKey.room]).length === 0) {
+                delete rooms[roomKey.room];
+                console.log(`Room ${roomKey.room} has been deleted as it's empty`);
+            }
+        }
+        console.log('A client just got disconnected');
+    });
+});
+
 
 function generate_member_id(s_id,rc){
     let m_id = Math.floor(Math.random()*4);
@@ -360,6 +462,7 @@ function deleteThisid(id){
 
 
 //to validate a winner, by comparing the data provided by all 4
+
 function validateWinner(OBJ, socket) {
     win[OBJ.room] = win[OBJ.room] || {}; // Ensure the room object exists in the win object
     win[OBJ.room][OBJ.player] = { o: OBJ, s: socket.id };
