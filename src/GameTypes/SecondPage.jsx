@@ -59,10 +59,12 @@ function SecondPage({ walletUpdate }) {
     );
     // const [game_type, setGame_type] = useState("Ludo Classics");
     const [Game_Ammount, setGame_Ammount] = useState();
+    const [isloading , setLoading] = useState(false)
 
     //   console.log(game_type);
 
     const ChallengeCreate = (e) => {
+        setLoading(true)
         const access_token = localStorage.getItem("access_token");
         const headers = {
             Authorization: `Bearer ${access_token}`,
@@ -78,6 +80,7 @@ function SecondPage({ walletUpdate }) {
                 { headers }
             )
             .then((res) => {
+                setLoading(false)
                 setGame_Ammount('')
                 if (res.data.msg === 'you can not create same amount challenge.') {
                     Swal.fire({
@@ -160,6 +163,7 @@ function SecondPage({ walletUpdate }) {
                 }
             })
             .catch((e) => {
+                setLoading(false)
                 if (e.response.status == 401) {
                     handleUnAuthorized(e.response.status, navigate)
                 }
@@ -806,10 +810,18 @@ function SecondPage({ walletUpdate }) {
                         </div>
                         <div className="col-12 mb-4 d-flex justify-content-center">
                             <input id="amount-input" className="text-yellow" type="tel" value={Game_Ammount} onChange={(e) => setGame_Ammount(e.target.value)} />
-                            <button id="amount-btn" className="text-light" onClick={(e) => {
-                                e.preventDefault();
-                                ChallengeCreate();
-                            }}>Set</button>
+                            <button 
+                                id="amount-btn" 
+                                className={`text-light ${isloading ? "disabled" : ""}`} 
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    ChallengeCreate();
+                                }} 
+                                disabled={isloading}
+                            >
+                                {isloading ? "loading..." : "Set"}
+                            </button>
+
                         </div>
                         {/* <div className="col-12">
                             <div className="slidecontainer">
@@ -860,7 +872,7 @@ function SecondPage({ walletUpdate }) {
                                         created.map((allgame) =>
                                             (allgame.Game_type == game_type) && (allgame.Created_by._id.toString() === userAllData._id.toString()) &&
                                             (
-                                                <Openbattles key={allgame._id} created={created} game_type={game_type} allgame={allgame} user={user} deleteChallenge={deleteChallenge} getPost={getPost} RejectGame={RejectGame} winnAmount={winnAmount} AcceptChallang={AcceptChallang} updateChallenge={updateChallenge} />
+                                                <Openbattles key={allgame._id} loading={false} created={created} game_type={game_type} allgame={allgame} user={user} deleteChallenge={deleteChallenge} getPost={getPost} RejectGame={RejectGame} winnAmount={winnAmount} AcceptChallang={AcceptChallang} updateChallenge={updateChallenge} />
                                             )
                                         )}
 
@@ -868,7 +880,7 @@ function SecondPage({ walletUpdate }) {
                                         if (((user == runnig.Accepetd_By._id ? ((runnig.Status === "running" && user == runnig.Accepetd_By._id && runnig.Acceptor_seen == true) || (runnig.Status === "pending")) : ((runnig.Status === "running" && user == runnig.Created_by._id) || (runnig.Status === "pending"))) || runnig.Status == "conflict") && runnig.Game_type == game_type && (runnig.Created_by._id.toString() === userAllData._id.toString()))
                                             return (
 
-                                                <Runningbattles key={runnig._id} runnig={runnig} user={user} winnAmount={winnAmount} />
+                                                <Runningbattles key={runnig._id} loading={false} runnig={runnig} user={user} winnAmount={winnAmount} />
 
                                             );
                                     })}
@@ -877,7 +889,7 @@ function SecondPage({ walletUpdate }) {
                                             if (((user == runnig.Accepetd_By._id || user == runnig.Created_by._id) ? (user == runnig.Accepetd_By._id ? ((runnig.Status === "running" && user == runnig.Accepetd_By._id && runnig.Acceptor_seen == true) || (runnig.Status === "pending" && runnig.Acceptor_status == null)) : ((runnig.Status === "running" && user == runnig.Created_by._id) || (runnig.Status === "pending" && runnig.Creator_Status == null))) : (runnig.Status === "running" || runnig.Status === "pending")) && runnig.Game_type == game_type && (runnig.Created_by._id.toString() === userAllData._id.toString()))
                                                 return (
 
-                                                    <Runningbattles key={runnig._id} runnig={runnig} user={user} winnAmount={winnAmount} />
+                                                    <Runningbattles key={runnig._id} loading={false} runnig={runnig} user={user} winnAmount={winnAmount} />
 
                                                 );
                                         })}
@@ -919,7 +931,7 @@ function SecondPage({ walletUpdate }) {
                                         created.map((allgame) =>
                                             (allgame.Game_type == game_type) && (allgame.Created_by._id.toString() !== userAllData._id.toString()) &&
                                             (
-                                                <Openbattles key={allgame._id} created={created} game_type={game_type} allgame={allgame} user={user} deleteChallenge={deleteChallenge} getPost={getPost} RejectGame={RejectGame} winnAmount={winnAmount} AcceptChallang={AcceptChallang} updateChallenge={updateChallenge} />
+                                                <Openbattles key={allgame._id} loading={false} created={created} game_type={game_type} allgame={allgame} user={user} deleteChallenge={deleteChallenge} getPost={getPost} RejectGame={RejectGame} winnAmount={winnAmount} AcceptChallang={AcceptChallang} updateChallenge={updateChallenge} />
                                             )
                                         )}
                                     {allgame &&
@@ -932,7 +944,7 @@ function SecondPage({ walletUpdate }) {
                                             ) &&
                                             (
                                                 <div className="col-12 my-2 bg-purple2 py-3">
-                                                    <Openbattles key={allgame._id} allgame={allgame} user={user} deleteChallenge={deleteChallenge} getPost={getPost} RejectGame={RejectGame} winnAmount={winnAmount} AcceptChallang={AcceptChallang} updateChallenge={updateChallenge} />
+                                                    <Openbattles key={allgame._id} loading={false} allgame={allgame} user={user} deleteChallenge={deleteChallenge} getPost={getPost} RejectGame={RejectGame} winnAmount={winnAmount} AcceptChallang={AcceptChallang} updateChallenge={updateChallenge} />
                                                 </div>
                                             )
                                         )}
@@ -964,7 +976,7 @@ function SecondPage({ walletUpdate }) {
                                         if (((user == runnig.Accepetd_By._id ? ((runnig.Status === "running" && user == runnig.Accepetd_By._id && runnig.Acceptor_seen == true) || (runnig.Status === "pending")) : ((runnig.Status === "running" && user == runnig.Created_by._id) || (runnig.Status === "pending"))) || runnig.Status == "conflict") && runnig.Game_type == game_type)
                                             return (
 
-                                                <Runningbattles key={runnig._id} runnig={runnig} user={user} winnAmount={winnAmount} />
+                                                <Runningbattles key={runnig._id} loading={false} runnig={runnig} user={user} winnAmount={winnAmount} />
 
                                             );
                                     })}
@@ -973,7 +985,7 @@ function SecondPage({ walletUpdate }) {
                                             if (((user == runnig.Accepetd_By._id || user == runnig.Created_by._id) ? (user == runnig.Accepetd_By._id ? ((runnig.Status === "running" && user == runnig.Accepetd_By._id && runnig.Acceptor_seen == true) || (runnig.Status === "pending" && runnig.Acceptor_status == null)) : ((runnig.Status === "running" && user == runnig.Created_by._id) || (runnig.Status === "pending" && runnig.Creator_Status == null))) : (runnig.Status === "running" || runnig.Status === "pending")) && runnig.Game_type == game_type)
                                                 return (
 
-                                                    <Runningbattles key={runnig._id} runnig={runnig} user={user} winnAmount={winnAmount} />
+                                                    <Runningbattles key={runnig._id} loading={false} runnig={runnig} user={user} winnAmount={winnAmount} />
 
                                                 );
                                         })}

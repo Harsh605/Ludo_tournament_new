@@ -13,7 +13,7 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
     // const navigate = useNavigate();
     // const [messageError, setMessageError] = useState('');
     // const [commission, setCommision] = useState(0);
-    // const [isLoading, setIsLoading] = useState(false);
+     const [isLoading, setIsLoading] = useState(false);
 
     // const handleplaybtn = async (id, price, roomcode, challengeid) => {
     //     setMessageError('');
@@ -98,7 +98,8 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
         if (savedGameMode) {
             setSelectedMode(savedGameMode);
         }
-    }, []);
+        setIsLoading(false)
+    },[ key, allgame, user, deleteChallenge, getPost, RejectGame, winnAmount, AcceptChallang, updateChallenge]);
 
     return (
         <div className="col-12 card my-1 walletcard pt-2 px-0 mx-auto text-white" key={key}>
@@ -112,9 +113,9 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
                                 style={{ width: '80px', height: '29px', fontSize: '11px' }}
                                 // className={` p-1 m-1 mb-1 ml-auto btn-danger btn-sm`}
                                 className={`btn bg-orange mr-2`}
-                                onClick={() => deleteChallenge(allgame._id)}
+                                onClick={() => (deleteChallenge(allgame._id), setIsLoading(true))}
                             >
-                                DELETE
+                                {isLoading ? "Loading..." : "DELETE"} 
                             </button>
                         )}
                 </div>
@@ -154,9 +155,9 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
                                     <button
                                         className={`btn bg-orange ml-2 mt-2`}
                                         style={{ width: '80px', height: '29px', fontSize: '11px', fontWeight: '600' }}
-                                        onClick={() => RejectGame(allgame._id)}
+                                        onClick={() => (RejectGame(allgame._id), setIsLoading(true))}
                                     >
-                                        REJECT
+                                        {isLoading ? "Loading..." : "REJECT"}
                                     </button>
                                     {/* <button className="btn bg-orange" disabled={isLoading} onClick={() => handlecancelbtn(battle.id)} >Cancel</button> */}
                                     {/* <button className="btn bg-orange" onClick={handlePlaybtn}>Play</button> */}
@@ -168,23 +169,23 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
                                 <button
                                     style={{ width: '80px', height: '37px' }}
                                     className={`btn bg-orange`}
-                                    onClick={() => AcceptChallang(allgame._id)}
+                                    onClick={() => (AcceptChallang(allgame._id), setIsLoading(true))}
                                 >
-                                    Play
+                                    {isLoading ? "Loading..." : "Play"} 
                                 </button>
                             )}
                         {/* {user == allgame.Accepetd_By._id && allgame.Status == 'running' && <button
                         style={{width: '80px', height: '37px'}} className={`${css.bgSecondary} ${css.playButton} ${css.cxy}`} >start</button>} */}
                         {user == allgame.Created_by._id &&
                             allgame.Status == "new" && (
-                                <div className="text-center col-5 ml-auto mt-auto mb-auto">
-                                    <div className="pl-2 text-center">
+                                <div className="flex justify-center gap-7 items-center">
+                                    <div className="text-center">
                                         <img
                                             src={findGif}
                                             style={{ width: "15px", height: "15px" }}
                                         />
                                     </div>
-                                    <div style={{ lineHeight: 1 }}>
+                                    <div style={{ lineHeight: 0 }}>
                                         <span className={''}>
                                             Finding Player!
                                         </span>
@@ -202,9 +203,9 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
                                     <button
                                         style={{ width: '80px', height: '30px' }}
                                         className={`btn bg-orange position-relative mx-1 bg-danger btn-sm`}
-                                        onClick={() => RejectGame(allgame._id)}
+                                        onClick={() => (RejectGame(allgame._id), setIsLoading(true))}
                                     >
-                                        cancel
+                                        {isLoading ? "Loading..." : "cancel"}
                                     </button>
                                 </div>
                             )}
@@ -241,7 +242,7 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
                                                 width='40px' height="40px"
                                                 style={{ borderTopLeftRadius: "50%", borderTopRightRadius: "50%", borderBottomRightRadius: "50%", borderBottomLeftRadius: "50%" }}
                                             />) : (<img
-                                                src={`https://tpludo.com/user.png`}
+                                                src={`https://avatar.iran.liara.run/public/2`}
                                                 alt=""
                                                 width='40px' height="40px"
                                                 style={{ borderTopLeftRadius: "50%", borderTopRightRadius: "50%", borderBottomRightRadius: "50%", borderBottomLeftRadius: "50%" }}
