@@ -1216,6 +1216,7 @@ async function userWinn() {
                
             }
 
+            hideLoader();
             await sendWebSocketMessage('pageReloadSocketCall');
             console.log(response);
             swal({
@@ -1229,7 +1230,6 @@ async function userWinn() {
                 if (willDelete) {
                   window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
                 }else{
-                  window.localStorage.clear();
                   window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
                 }
               });
