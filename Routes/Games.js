@@ -890,13 +890,6 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
             console.log('req comes');
             const reqUser = req.user.id;
 
-            if(!reqUser){
-                res.status(400).send(reqUser)
-              
-            }
-
-            console.log(req.user.id)
-
             // Player status update
             const field = (game.Created_by == reqUser) ? 'Creator_Status' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status' : undefined);
             const fieldUpdatedAt = (game.Created_by == reqUser) ? 'Creator_Status_Updated_at' : ((game.Accepetd_By == reqUser) ? 'Acceptor_status_Updated_at' : undefined);
@@ -927,6 +920,29 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
             if (game.Created_by == reqUser && req.body.status.toLowerCase() === 'lose') {
                 game['Creator_Status'] = 'lose';
                 game['Acceptor_status'] = 'winn';
+                game['Creator_Status_Updated_at'] = Date.now();
+                game['Acceptor_status_Updated_at'] = Date.now();
+            }
+            // If status is canceled and user is the creator, update both statuses
+            if (game.Accepetd_By == reqUser && req.body.status.toLowerCase() === 'cancelled') {
+                game['Creator_Status'] = 'cancelled';
+                game['Acceptor_status'] = 'cancelled';
+                game['Creator_Status_Updated_at'] = Date.now();
+                game['Acceptor_status_Updated_at'] = Date.now();
+            }
+
+            // If status is "winn" and user is the creator, update statuses accordingly
+            if (game.Accepetd_By == reqUser && req.body.status.toLowerCase() === 'winn') {
+                game['Creator_Status'] = 'lose';
+                game['Acceptor_status'] = 'winn';
+                game['Creator_Status_Updated_at'] = Date.now();
+                game['Acceptor_status_Updated_at'] = Date.now();
+            }
+
+            // If status is "lose" and user is the creator, update statuses accordingly
+            if (game.Accepetd_By == reqUser && req.body.status.toLowerCase() === 'lose') {
+                game['Creator_Status'] = 'winn';
+                game['Acceptor_status'] = 'lose';
                 game['Creator_Status_Updated_at'] = Date.now();
                 game['Acceptor_status_Updated_at'] = Date.now();
             }
