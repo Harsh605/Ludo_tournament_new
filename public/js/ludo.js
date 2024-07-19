@@ -1195,6 +1195,8 @@ async function cancelGame() {
 }
 
 async function userWinn() {
+    alert(urlParams.get('token'))
+    alert(urlParams.get('game_id'))
         const headers = {
             Authorization: `Bearer ${urlParams.get('token')}`,
             'Content-Type': 'application/json' // Ensure the Content-Type header is set for JSON
@@ -1249,19 +1251,19 @@ async function userWinn() {
     }
     
 
- window.addEventListener('beforeunload', function() {
-    // Clear all cookies
-    const cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i];
-      const eqPos = cookie.indexOf("=");
-      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-    }
+//  window.addEventListener('beforeunload', function() {
+//     // Clear all cookies
+//     const cookies = document.cookie.split(";");
+//     for (let i = 0; i < cookies.length; i++) {
+//       const cookie = cookies[i];
+//       const eqPos = cookie.indexOf("=");
+//       const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+//       document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+//     }
   
-    // Clear localStorage
-    localStorage.clear();
-  });
+//     // Clear localStorage
+//     localStorage.clear();
+//   });
 
 
 
