@@ -406,6 +406,7 @@ nsp.on('connection', (socket) => {
 
 
 function generate_member_id(s_id,rc){
+    console.log(s_id, rc)
     let m_id = Math.floor(Math.random()*4);
     let m_r = Object.keys(rooms[rc]);
     if(m_r.length <= 4){
