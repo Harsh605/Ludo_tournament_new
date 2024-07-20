@@ -218,7 +218,7 @@ function GameView() {
     const [iframeUrl, setIframeUrl] = useState(null);
   
     const handleViewLiveGame = () => {
-        setIframeUrl(`http://84.247.133.7:5010/ludo/${game?.Room_code}`);  
+        setIframeUrl(`http://84.247.133.7:5010/ludo/spectate/${game?.Room_code}`);  
     };
 
     useEffect(() => {
@@ -433,14 +433,14 @@ function GameView() {
                                                         game?.Game_type === "Ludo Classics Live" ? (<>
                                                         <div>
                                                         <h5 className='mb-2'>dice number</h5>
-                                                        <input type="number" id='penaltyval' className="mb-3 form-control  input-sm" style={{ minWidth: '100px' }} placeholder="Penalty Amount"
+                                                        <input type="number" id='penaltyval' className="mb-3 form-control  input-sm" style={{ minWidth: '100px' }} placeholder="number"
                                                             onChange={(e) => setDice(e.target.value)}  />
                                                         </div>
                                                         <button
                                                             className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
                                                             onClick={() => liveGameWinRoomCode(game?.Room_code, 3)} // Pass the user ID to the function
                                                         >
-                                                           Win
+                                                           Submit
                                                         </button>
                                                         {/* <button
                                                         className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
@@ -532,14 +532,14 @@ function GameView() {
                                                         game?.Game_type === "Ludo Classics Live" ? (<>
                                                         <div>
                                                         <h5 className='mb-2'>dice number</h5>
-                                                        <input type="number" id='penaltyval' className="mb-3 form-control  input-sm" style={{ minWidth: '100px' }} placeholder="Penalty Amount"
+                                                        <input type="number" id='penaltyval' className="mb-3 form-control  input-sm" style={{ minWidth: '100px' }} placeholder=" number"
                                                             onChange={(e) => setDice(e.target.value)}  />
                                                         </div>
                                                         <button
                                                             className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
                                                             onClick={() => liveGameWinRoomCode(game?.Room_code, 1)} // Pass the user ID to the function
                                                         >
-                                                           Win
+                                                           Submit
                                                         </button>
                                                         {/* <button
                                                         className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
