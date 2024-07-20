@@ -1,30 +1,332 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
-    <title>Ludo Spectator View</title>
-    <style>
-        /* Add your styles here */
-    </style>
-</head>
-<body>
-    <div id="game-container">
-        <!-- Game UI for spectators -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUDO</title>
+    <link rel="stylesheet" href="/style/ludo.css">
+    <link rel="stylesheet" href="/style/loader.css">
+    <script src='/socket.io/socket.io.js'></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide|Sofia">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicon/site.webmanifest">
+    <meta name="msapplication-config" content="/images/favicon/browserconfig.xml" />
+    <meta name="msapplication-TileColor" content="000000">
+    <meta name="theme-color" content="000000">  
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <style>
+   
+   /* .border-custom {
+    border: 5px solid rgb(216, 216, 216);
+  }
+    */
+
+    .row-full-height {
+        height: 80vh; /* Make the row full height of the viewport */
+      }
+
+      .container-relative {
+        position: relative;
+        width: 100%;
+        height: auto;
+        max-width: 350px;
+        max-height: 350px;
+        margin: 0 auto;
+      }
+
+      .ludoContainer {
+        position: relative;
+        width: 100%;
+        padding-top: 100%; /* Maintain aspect ratio 1:1 */
+        overflow: hidden;
+        border-radius: 10px;
+      }
+
+      .ludoImg, .gameCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .cd {
+        position: relative;
+        width: 100%;
+        max-width: 350px;
+        margin: 30px auto 0;
+        top: 30px;
+      }
+
+      .sizeSVG {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+      }
+
+      /* Make sure the images and canvas resize properly */
+      img, canvas {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 576px) {
+        .container-relative {
+          max-width: 100%;
+          height: auto;
+        }
+
+        .cd {
+          max-width: 100%;
+          top: 50px
+        }
+      }
+    .diceBoard {
+      position: relative;
+      width: 350px;
+      height: 150px;
+      top: 0;
+      left: 0px;
+      right: 0px;
+      background-color: white;
+      border-radius: 20px;
+    }
+    .diceSize{
+      width: 30px;
+      height: 30px;
+    }
+
+  .AvatarSize {
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+  }
+
+
+    .msgBoard {
+        float: top;
+        width: 350px;
+        height: 150px;
+        border-radius: 5px;
+        align-content: center;
+        padding: 8px 8px 8px 8px;
+        box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+        overflow-y: auto;
+        font-family: sans-serif;
+        
+    }
+
+      .dice {
+          height: 40px;
+          width: 40px;
+          border: 1px solid #333;
+          border-radius: 10px;
+          margin: 0px auto;
+      }
+
+      @keyframes roll {
+          0%, 100% { transform: rotate(0); }
+          20% { transform: rotate(90deg); }
+          40% { transform: rotate(180deg); }
+          60% { transform: rotate(270deg); }
+          80% { transform: rotate(360deg); }
+      }
+
+        .rolling {
+            animation: roll 0.5s;
+        }
+
+      /* @keyframes roll3d {
+          0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+          20% { transform: rotateX(90deg) rotateY(90deg) rotateZ(90deg); }
+          40% { transform: rotateX(180deg) rotateY(180deg) rotateZ(180deg); }
+          60% { transform: rotateX(270deg) rotateY(270deg) rotateZ(270deg); }
+          80% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+          100% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+      }
+
+      .rolling {
+          animation: roll3d 0.5s;
+      } */
+        .sizeSVG{
+          height: 30px;
+          width: 30px;
+          cursor: pointer;
+          color: aliceblue;
+        }
+        
+        .sizeSVG:hover{
+          height: 32px;
+          width: 32px;
+          cursor: pointer;
+          color: rgb(255, 246, 66);
+        }
+
+        .hidden { display: none; }
+
+        /* .toast {
+          position: fixed;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: #fe3c3c;
+          color: #ffffff;
+          padding: 10px 20px;
+          border-radius: 5px;
+          opacity: 0;
+          transition: opacity 0.3s ease-in-out;
+        }
+        
+        .toast.show {
+          opacity: 1;
+        } */
+
+        .toast {
+          position: fixed;
+          top: 20px; /* Adjust top position as needed */
+          right: 20px; /* Adjust right position as needed */
+          background-color: #fe3c3c;
+          color: #fff;
+          padding: 10px 20px;
+          border-radius: 5px;
+          opacity: 0;
+          transition: opacity 0.3s ease-in-out;
+          z-index: 1000; /* Ensure it's above other content */
+        }
+
+        .toast.show {
+          opacity: 1;
+        }
+
+       
+  </style>
+
+  </style>
+  <body >
+    <div id="loader"></div>
+    <div id="content">
+    <div class="container-fluid">
+      <div class="row row-full-height">
+        <div class="copy-wrapper d-none">
+          <h3 id="my-name" onclick="copy(event)">&#10024;  </h3>
+          <div class="copy-content d-none">
+              <h3>Invite your friends!</h3>
+              <textarea id="copy"  cols="30" rows="6">Hey dude let's play a LUDO match &#x1f3b2;</textarea><br>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <!-- Content for the right column -->
+          <div id="toast" class="toast">
+            <!-- Content of the toast notification will be updated dynamically -->
+          </div>
+        </div>
+        <div class="col-12 col-md-4">       
+          <div class="container-relative">
+            <div class="d-flex justify-content-between mt-5 mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" onclick="cancelGame()" viewBox="0 0 24 24" fill="currentColor" class="sizeSVG">
+                <path d="M9.195 18.44c1.25.714 2.805-.189 2.805-1.629v-2.34l6.945 3.968c1.25.715 2.805-.188 2.805-1.628V8.69c0-1.44-1.555-2.343-2.805-1.628L12 11.029v-2.34c0-1.44-1.555-2.343-2.805-1.628l-7.108 4.061c-1.26.72-1.26 2.536 0 3.256l7.108 4.061Z"/>
+              </svg>
+              <div class="text-center text-white textStyle">Live ludo play</div>
+              <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" onclick="toggleMusic()" viewBox="0 0 24 24" fill="currentColor" class="sizeSVG">
+                <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z"/>
+                <path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z"/>
+              </svg>
+              <svg id="stopIcon" xmlns="http://www.w3.org/2000/svg" onclick="toggleMusic()" viewBox="0 0 24 24" fill="currentColor" class="sizeSVG hidden">
+                <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM17.78 9.22a.75.75 0 1 0-1.06 1.06L18.44 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L20.56 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z"/>
+              </svg>
+            </div>
+            <div class="ludoContainer">
+              <img src="/images/ludo.png" alt="" class="ludoImg">
+              <canvas class="gameCanvas" id="theCanvas"></canvas>
+            </div>
+          </div>
+          <div class="card bg-danger shadow text-center cd">
+            <div class="d-flex justify-content-around align-items-center">
+              <div class="mt-1" id="player1">
+                <!-- <img class="AvatarSize" id="isPlayer1" style="border: 2px solid yellow; border-radius: 50%;" src="/images/avatar/Avatar2.png" alt="">
+                <p id="player1"></p> -->
+              </div>
+              <div class="goButt">
+                <div style="position: relative; display: inline-block;">
+                  <img id="randomButt" class="dice" src="/images/dice/five.png" alt="">
+                  <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: not-allowed; display: none;"></div>
+                </div>                
+              </div>
+              <div class="mt-1" id="player2">
+                <img class="AvatarSize" id="isPlayer2" style="border: none; border-radius: 50%;" src="/images/loading.gif" alt="">
+                <!-- <p id="player2"></p> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <!-- Content for the right column -->
+          <div class="diceBoard mt-2 d-none">
+            <div class="msgBoard">
+              <div class="messageFromServer">
+                <strong>LET US START THE GAME!!!</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <audio id="backgroundMusic" src="/audio/ludobackground.mp3" loop></audio>
+        <audio id="dicesoundMusic" src="/audio/dicesound.mp3"></audio>
+        <audio id="piceSound" src="/audio/ludupice.mp3"></audio>
     </div>
-
+  </div>
+    
     <script>
-        const roomCode = window.location.pathname.split('/')[2];
-        // Set up WebSocket or other real-time connection to get the game state
-        const socket = new WebSocket(`ws://84.247.133.7:5010/ws/ludo/${roomCode}`);
 
-        socket.onmessage = (event) => {
-            const gameState = JSON.parse(event.data);
-            // Update the UI with the game state
-        };
+    // window.onload = function() {
+    //     var backgroundMusic = document.getElementById('backgroundMusic');
+    //     backgroundMusic.play();
+    //   }
+      
+      function toggleMusic() {
+        var playIcon = document.getElementById('playIcon');
+        var stopIcon = document.getElementById('stopIcon');
+        var backgroundMusic = document.getElementById('backgroundMusic');
+        
+        if (playIcon.classList.contains('hidden')) {
+          playIcon.classList.remove('hidden');
+          stopIcon.classList.add('hidden');
+          backgroundMusic.play();
+        } else {
+          playIcon.classList.add('hidden');
+          stopIcon.classList.remove('hidden');
+          backgroundMusic.pause();
+        }
+      }
+      // function existGame() {
+      //   swal({
+      //     title: "Are you sure?",
+      //     text: "Once exist, you will lose this match!",
+      //     icon: "warning",
+      //     buttons: true,
+      //     dangerMode: true,
+      //   })
+      //   .then((willDelete) => {
+      //     if (willDelete) {
+      //       window.localStorage.clear();
+      //       window.location.href = "/"
+      //     }else{
+      //       return
+      //     }
+      //   });
+      // }
 
-        socket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
     </script>
-</body>
+
+   
+    <!-- <script src="/js/ludo.js" defer></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
 </html>

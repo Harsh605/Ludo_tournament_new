@@ -27,8 +27,7 @@ exports.room = (req, res) => {
 }
 
 
-exports.spectateRoom = (req, res) => {
-    console.log(rooms);
+exports.spectateRoom = (req, res) => {    
     try {
         const roomCode = req.params.ROOMCODE;
         

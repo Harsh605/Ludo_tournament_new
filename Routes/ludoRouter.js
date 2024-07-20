@@ -9,7 +9,7 @@ router
     .route('/:ROOMCODE')
     .get(ludoController.room);
 
-router.get('/ludo/:ROOMCODE/spectate', ludoController.spectateRoom);
+router.get('/spectate/:ROOMCODE', ludoController.spectateRoom);
 
     
 
