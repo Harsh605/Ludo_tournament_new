@@ -81,6 +81,7 @@ app.enable('trust proxy');
 ///sockets
 //
 let nsp = io.of('/ludo');
+let spectate = io.of('/ludo/spectate');
 
 // nsp.on('connection',(socket)=>{
 //     console.log('A User has connected to the game');
@@ -330,18 +331,19 @@ nsp.on('connection', (socket) => {
             console.log('Invalid room or player ID');
             return;
         }
-
         const diceRoll = Math.floor((Math.random() * 6) + 1);
         rooms[data.room][data.id]['num'] = diceRoll;
         data['num'] = diceRoll;
 
         nsp.to(data.room).emit('rolled-dice', data);
+        spectate.to(data.room).emit('rolled-dice', data); // Emitting to spectators
         cb(diceRoll);
     });
 
     socket.on('chance', (data) => {
         console.log(data.room, data.nxt_id);
         nsp.to(data.room).emit('is-it-your-chance', data.nxt_id);
+        spectate.to(data.room).emit('is-it-your-chance', data.nxt_id); // Emitting to spectators
     });
 
     socket.on('random', (playerObj, cb) => {
@@ -356,6 +358,7 @@ nsp.on('connection', (socket) => {
 
         playerObj['num'] = rooms[playerObj.room][playerObj.id]['num'];
         nsp.to(playerObj.room).emit('Thrown-dice', playerObj);
+        spectate.to(playerObj.room).emit('Thrown-dice', playerObj); // Emitting to spectators
         cb(playerObj['num']);
     });
 
@@ -368,11 +371,13 @@ nsp.on('connection', (socket) => {
             }
             console.log(OBJ);
             nsp.to(OBJ.room).emit('winner', OBJ);
+            spectate.to(OBJ.room).emit('winner', OBJ); // Emitting to spectators
         }
     });
 
     socket.on('resume', (data, cb) => {
         socket.to(data.room).emit('resume', data);
+        spectate.to(data.room).emit('resume', data); // Emitting to spectators
         NumberOfMembers[data.room].members = Math.max(2, NumberOfMembers[data.room].members - 1);
         NumberOfMembers[data.room].constant = true;
         cb();
@@ -380,12 +385,14 @@ nsp.on('connection', (socket) => {
 
     socket.on('wait', (data, cb) => {
         socket.to(data.room).emit('wait', data);
+        spectate.to(data.room).emit('wait', data); // Emitting to spectators
         cb();
     });
 
     socket.on('admin', (data) => {
         console.log(data);
         nsp.emit('admin', data);
+        spectate.emit('admin', data); // Emitting to spectators
     });
 
     socket.on('disconnect', async () => {
@@ -393,6 +400,7 @@ nsp.on('connection', (socket) => {
         if (roomKey != undefined) {
             console.log(rooms[roomKey.room], socket.id);
             socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+            spectate.to(roomKey.room).emit('user-disconnected', roomKey.key); // Emitting to spectators
 
             // Check if the room is empty after this user disconnected
             if (rooms[roomKey.room] && Object.keys(rooms[roomKey.room]).length === 0) {
@@ -404,12 +412,33 @@ nsp.on('connection', (socket) => {
     });
 });
 
+spectate.on('connection', (socket) => {
+    console.log('A User has connected to spectate the game');
+    
+    socket.on('fetch', (data, cb) => {
+        try {
+            socket.join(data);
+            cb(Object.keys(rooms[data]));
+            console.log(`Spectator joined room: ${data}`);
+        } catch (err) {
+            if (err.name === 'TypeError') {
+                socket.emit('imposter');
+            }
+            console.log("hello", err, rooms);
+        }
+    });
+
+    socket.on('disconnect', () => {
+        console.log('A spectator just got disconnected');
+    });
+});
+
 
 function generate_member_id(s_id,rc){
     console.log(s_id, rc)
-    let m_id = Math.floor(Math.random()*4);
+    let m_id = Math.floor(Math.random()*3);
     let m_r = Object.keys(rooms[rc]);
-    if(m_r.length <= 4){
+    if(m_r.length <= 3){
         if(m_r.includes(m_id.toString())){
             return generate_member_id(s_id,rc)
         }else{
