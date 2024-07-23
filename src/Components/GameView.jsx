@@ -7,8 +7,6 @@ import { useLocation, Link, useNavigate } from 'react-router-dom'
 // src/socket.js
 import { io } from "socket.io-client";
 
-
-
 import css from '../view.module.css';
 import moment from 'moment';
 import Swal from 'sweetalert2';
@@ -22,7 +20,6 @@ function GameView() {
 
     
     const socket = io(socketURL + "/ludo");
-
     const location = useLocation();
     const navigate = useNavigate();
     const path = location.state.id;
@@ -216,9 +213,13 @@ function GameView() {
 
 
     const [iframeUrl, setIframeUrl] = useState(null);
-  
-    const handleViewLiveGame = () => {
-        setIframeUrl(`${socketURL}ludo/spectate/${game?.Room_code}`);  
+
+    const handleToggleViewLiveGame = () => {
+      if (iframeUrl) {
+        setIframeUrl(null);  // Hide the iframe
+      } else {
+        setIframeUrl(`${socketURL}ludo/spectate/${game?.Room_code}`);  // Show the iframe
+      }
     };
 
     useEffect(() => {
@@ -233,6 +234,7 @@ function GameView() {
       let [dice, setDice] = useState()
 
     function liveGameWinRoomCode(roomCode, type){
+        alert(type)
         socket.emit("admin", {room: roomCode, id: type, num: dice});
     }
 
@@ -307,26 +309,26 @@ function GameView() {
                                                 Check participants data, and announced result.
                                             </p>
                                            <div>
-                                           {game?.Game_type === "Ludo Classics Live" ? (
-                                             <>
-                                               <button
-                                                 className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 mb-4 snip-a`}
-                                                 onClick={handleViewLiveGame}
-                                               >
-                                                 View live game
-                                               </button>
-                                             </>
-                                           ) : (null)}
-                                           
-                                           {iframeUrl && (
-                                             <iframe
-                                               src={iframeUrl}
-                                               width="100%"
-                                               height="600px"
-                                               frameBorder="0"
-                                               allowFullScreen
-                                             ></iframe>
-                                           )}
+                                            {game?.Game_type === "Ludo Classics Live" && (
+                                                <>
+                                                <button
+                                                    className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 mb-4 snip-a`}
+                                                    onClick={handleToggleViewLiveGame}
+                                                >
+                                                    {iframeUrl ? 'Hide game' : 'View live game'}
+                                                </button>
+                                                </>
+                                            )}
+                                            
+                                            {iframeUrl && (
+                                                <iframe
+                                                src={iframeUrl}
+                                                width="100%"
+                                                height="600px"
+                                                frameBorder="0"
+                                                allowFullScreen
+                                                ></iframe>
+                                            )}
                                          </div>
                                      
                                             
@@ -430,25 +432,30 @@ function GameView() {
                                                         {game?.Creator_Screenshot && <img alt='Creator Screenshot' src={baseURL + `${game?.Creator_Screenshot}`} className="img-responsive img w-auto" height={150} />}
                                                     </div>
                                                     {
-                                                        game?.Game_type === "Ludo Classics Live" ? (<>
-                                                        <div>
+                                                        game?.Game_type === "Ludo Classics Live" && game?.Status === "running" ? (<>
                                                         <h5 className='mb-2'>dice number</h5>
-                                                        <input type="number" id='penaltyval' className="mb-3 form-control  input-sm" style={{ minWidth: '100px' }} placeholder="number"
-                                                            onChange={(e) => setDice(e.target.value)}  />
+                                                        <input type="number" id='penaltyval' className="mb-3 form-control input-sm" style={{ minWidth: '100px' }} placeholder=" number"
+                                                            onChange={(e) => setDice(e.target.value)} />
+
+                                                        <div>
+                                                            {[1, 2, 3, 4, 5, 6].map(number => (
+                                                                <button
+                                                                    key={number}
+                                                                    className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
+                                                                    onClick={() => liveGameWinRoomCode(game?.Room_code, number)} // Pass the number to the function
+                                                                >
+                                                                    {number}
+                                                                </button>
+                                                            ))}
                                                         </div>
-                                                        <button
-                                                            className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
-                                                            onClick={() => liveGameWinRoomCode(game?.Room_code, 3)} // Pass the user ID to the function
-                                                        >
-                                                           Submit
-                                                        </button>
+
                                                         {/* <button
                                                         className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
                                                         onClick={() => liveGameLoseRoomCode(game?.Room_code, game?.Created_by?._id)} // Pass the user ID to the function
                                                     >
                                                        lose
                                                     </button> */}
-                                                    </>) : (<>null</>)
+                                                    </>) : (null)
                                                         
                                                     }   
                                                 </ul>
@@ -529,25 +536,30 @@ function GameView() {
                                                         {game?.Acceptor_screenshot && <img alt='Acceptor Screenshot' src={baseURL + `${game?.Acceptor_screenshot}`} className="img-responsive img w-auto" height={200} />}
                                                     </div>
                                                     {
-                                                        game?.Game_type === "Ludo Classics Live" ? (<>
-                                                        <div>
+                                                        game?.Game_type === "Ludo Classics Live" && game?.Status === "running" ? (<>
                                                         <h5 className='mb-2'>dice number</h5>
-                                                        <input type="number" id='penaltyval' className="mb-3 form-control  input-sm" style={{ minWidth: '100px' }} placeholder=" number"
-                                                            onChange={(e) => setDice(e.target.value)}  />
+                                                        <input type="number" id='penaltyval' className="mb-3 form-control input-sm" style={{ minWidth: '100px' }} placeholder=" number"
+                                                            onChange={(e) => setDice(e.target.value)} />
+
+                                                        <div>
+                                                            {[1, 2, 3, 4, 5, 6].map(number => (
+                                                                <button
+                                                                    key={number}
+                                                                    className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
+                                                                    onClick={() => liveGameWinRoomCode(game?.Room_code, number)} // Pass the number to the function
+                                                                >
+                                                                    {number}
+                                                                </button>
+                                                            ))}
                                                         </div>
-                                                        <button
-                                                            className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
-                                                            onClick={() => liveGameWinRoomCode(game?.Room_code, 1)} // Pass the user ID to the function
-                                                        >
-                                                           Submit
-                                                        </button>
+
                                                         {/* <button
                                                         className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
                                                         onClick={() => liveGameLoseRoomCode(game?.Room_code, game?.Accepetd_By?._id)} // Pass the user ID to the function
                                                     >
                                                        lose
                                                     </button> */}
-                                                    </>) : (<>null</>)
+                                                    </>) : (null)
                                                         
                                                     }
                                                 </ul>
