@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import HeaderComponent from '../Components/HeaderComponent';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useScrollTrigger } from '@mui/material';
-import { baseURL, } from '../token';
+import { baseURL, socketURL, } from '../token';
 import axios from 'axios';
 import copy from "copy-to-clipboard";
 import Logo from '../Components/Logo';
@@ -292,7 +292,7 @@ function EnterFirstGame(props) {
         localStorage.setItem('ludo_game_id', path);
         
         // Add the axios post call here
-        await axios.post("http://84.247.133.7:5010", {
+        await axios.post(baseURL, {
             action_to_do: "create",
             token : access_token,
             game_id: path,
@@ -484,7 +484,7 @@ function EnterFirstGame(props) {
             this._socketListeners[eventName] = callback
         }
         // let socket = new WebSocket("wss://socket.ludo-khelo.com/server");
-        let socket = new WebSocket("ws://84.247.133.7:7001");
+        let socket = new WebSocket(socketURL);
         function openFunc() {
             socket.onopen = () => {
                 console.log('websocket is connected 👍');
@@ -525,7 +525,7 @@ function EnterFirstGame(props) {
                 if (isMounted.current) {
                     clearTimeout(socket.pingTimeout);
                     setSocket(undefined);
-                    let socket = new WebSocket("ws://84.247.133.7:7001");
+                    let socket = new WebSocket(socketURL);
                     //socket = new WebSocket("ws://192.168.29.119:5001/server");
                     openFunc();
                     listenFunc();
@@ -782,7 +782,7 @@ function EnterFirstGame(props) {
                                         <div className='text-center'>
                                             <div>{selectedMode === "offSite" ? "Room Code" : null}</div>
                                             {
-                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }}><a href={`http://84.247.133.7:5010/ludo/${Game?.Room_code}?token=${access_token}&game_id=${path}`} target="_blank" className='text-white no-underline'>Play game</a></button>
+                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }}><a href={`${baseURL}/ludo/${Game?.Room_code}?token=${access_token}&game_id=${path}`} target="_blank" className='text-white no-underline'>Play game</a></button>
                                             }
                                             {/* <span>{Game?.Room_code}</span> */}
                                             

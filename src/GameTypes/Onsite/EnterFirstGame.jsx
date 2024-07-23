@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import swal from 'sweetalert';
 import './style.css'
 import { handleUnAuthorized } from '../Components/hooks/handleUnAuthorized'
+import { socketURL } from '../../token';
 
 // import ScreenshotUpload from '../Components/Transaction/SsUpload';
 
@@ -484,7 +485,7 @@ function EnterFirstGame(props) {
             this._socketListeners[eventName] = callback
         }
         // let socket = new WebSocket("wss://socket.ludo-khelo.com/server");
-        let socket = new WebSocket("ws://84.247.133.7:7001");
+        let socket = new WebSocket(socketURL);
         function openFunc() {
             socket.onopen = () => {
                 console.log('websocket is connected 👍');
@@ -525,7 +526,7 @@ function EnterFirstGame(props) {
                 if (isMounted.current) {
                     clearTimeout(socket.pingTimeout);
                     setSocket(undefined);
-                    let socket = new WebSocket("ws://84.247.133.7:7001");
+                    let socket = new WebSocket(socketURL);
                     //socket = new WebSocket("ws://192.168.29.119:5001/server");
                     openFunc();
                     listenFunc();

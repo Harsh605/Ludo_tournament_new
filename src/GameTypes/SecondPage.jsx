@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import HeaderComponent from '../Components/HeaderComponent';
 import { useNavigate, useLocation } from 'react-router-dom';
 // import token from '../token';
-import { baseURL, token } from '../token';
+import { baseURL, socketURL, token } from '../token';
 import axios from 'axios';
 import "../styles/bootstrap.css"
 import Openbattles from '../Components/Battles/openbattles';
@@ -287,7 +287,7 @@ function SecondPage({ walletUpdate }) {
             this._socketListeners[eventName] = callback
         }
         // let socket = new WebSocket("wss://socket.ludo-khelo.com/server");
-        let socket = new WebSocket("ws://84.247.133.7:7001");
+        let socket = new WebSocket(socketURL);
         function openFunc() {
             socket.onopen = () => {
                 console.log('websocket is connected 👍');
@@ -531,7 +531,7 @@ function SecondPage({ walletUpdate }) {
                 if (isMounted.current) {
                     clearTimeout(socket.pingTimeout);
                     setSocket(undefined);
-                    socket = new WebSocket("ws://84.247.133.7:7001");
+                    socket = new WebSocket(socketURL);
                     //socket = new WebSocket("ws://192.168.29.119:5001/server");
                     openFunc();
                     listenFunc();
