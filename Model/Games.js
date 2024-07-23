@@ -132,7 +132,25 @@ const transactionSchema = new mongoose.Schema({
      winnAmount:{
         type: Number,
         default:null
-    }
+    },
+    liveGameCreaterPiceNo:{
+        type: Number,
+        default: 0
+    },
+    liveGameAcceptorPiceNo:{
+        type: Number,
+        default: 0
+    },
+    adminRoomDiceSet:{
+        room_code:{
+            type: String,
+            default: null,
+        },
+        diceNumber:{
+            type: Number,
+            default: 0
+        },
+    },
 }, { timestamps: true })
 
 const Game = mongoose.model("Game", transactionSchema)

@@ -1538,3 +1538,33 @@ function hideLoader() {
 //     // Clear localStorage
 //     localStorage.clear();
 //   });
+
+
+ window.addEventListener('onload', async function() {
+    const headers = {
+          Authorization: `Bearer ${urlParams.get('token')}`,
+          'Content-Type': 'application/json'
+      };
+      try {
+          const response = await fetch(`/challange/pice/number/update/live/${urlParams.get('game_id')}`, {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({
+                  liveGamePiceNumber: localStorage.getItem("chance")
+              })
+          });
+
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+
+          const responseData = await response.json();
+          console.log(responseData);
+
+          alert("Pice number submit successfully");
+          return
+      } catch (error) {
+          console.error("Error cancelling the game:", error);
+      }
+    
+  });

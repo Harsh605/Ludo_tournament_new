@@ -1050,6 +1050,41 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
         res.status(400).send(e)
     }
 })
+//live ludo onsite game api pice number update
+router.post('/challange/pice/number/update/live/:id', Auth, async (req, res) => {
+    try {
+        // if(InProcessSubmit==false)
+
+        console.log(Auth)
+
+        console.log(req.params.id)
+
+        // InProcessSubmit=true;
+        const game = await Game.findById(req.params.id)
+        if (game.Status != "cancelled" && game.Status != "completed") {
+
+            console.log('req comes');
+            const reqUser = req.user.id;
+
+            if(game.Created_by == reqUser){
+                game.liveGameCreaterPiceNo = req.body.liveGamePiceNumber
+            }else{
+                game.liveGameAcceptorPiceNo = req.body.liveGamePiceNumber
+            }
+
+            await game.save();         
+
+        }
+        else {
+            console.log('else cme')
+            res.status(200).send(game);
+        }
+
+    } catch (e) {
+        console.log(e);
+        res.status(400).send(e)
+    }
+})
 
 
 router.post('/challange/admin/result/:id', Auth, async (req, res) => {
@@ -1209,6 +1244,7 @@ async function update_wallet(winID, loseID, gameAmount, winnAmount, deductedWith
     await losser.save();
     await winner.save();
 }
+
 async function deduct_wallet(user1_id, user2_id, gameAmount) {
 
     const user1 = await User.findById(user1_id);
