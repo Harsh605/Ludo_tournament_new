@@ -3,7 +3,13 @@ export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInJvbGUiO
 // export const token2 = ""
 
 // export const baseURL = "http://backend.ludokavish.com/";
-export const baseURL = "http://84.247.133.7:5010/";
+// export const baseURL = "http://84.247.133.7:5010/";
+// export const baseURL = "http://localhost:5010/";
+// export const socketURL = "http://localhost:5010/";
+
+
+export const baseURL = "http://93.127.199.145:5010/";
+export const socketURL = "http://93.127.199.145:5010/";
 // export const baseURL = "https://misty-pelican.cyclic.cloud/api/v1";
 
 // export const baseURL = "https://backened.ludokavish.com/api/v1";

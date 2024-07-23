@@ -12,16 +12,16 @@ import { io } from "socket.io-client";
 import css from '../view.module.css';
 import moment from 'moment';
 import Swal from 'sweetalert2';
+import { baseURL, socketURL } from '../token';
 
 const styles = {
     color: '#fff !important',
 }
-const baseUrl = 'http://84.247.133.7:5010/'
 
 function GameView() {
 
-    const SOCKET_URL = "http://84.247.133.7:5010/ludo"; // Replace with your server URL
-    const socket = io(SOCKET_URL);
+    
+    const socket = io(socketURL + "/ludo");
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -37,7 +37,7 @@ function GameView() {
         const headers = {
             Authorization: `Bearer ${access_token}`
         }
-        axios.get(baseUrl + `challange/${path}`, { headers })
+        axios.get(baseURL + `challange/${path}`, { headers })
             .then((res) => {
                 setall(res.data)
                 console.log(res.data)
@@ -82,7 +82,7 @@ function GameView() {
                 Authorization: `Bearer ${access_token}`
 
             }
-            axios.patch(baseUrl + `challange/Cancel/admin/${path}`, { Cancelled_by: access_token }, { headers })
+            axios.patch(baseURL + `challange/Cancel/admin/${path}`, { Cancelled_by: access_token }, { headers })
                 .then((res) => {
                     // console.log(res)
                     Allchallenge()
@@ -104,7 +104,7 @@ function GameView() {
             const headers = {
                 Authorization: `Bearer ${access_token}`
             }
-            axios.post(baseUrl + `challange/admin/result/${path}`, {
+            axios.post(baseURL + `challange/admin/result/${path}`, {
                 winner: id,
                 Status_Update_By: access_token
             }, { headers })
@@ -131,7 +131,7 @@ function GameView() {
                 Authorization: `Bearer ${access_token}`
             }
 
-            axios.post(baseUrl + `user/penlaty/${id}?wallet=mainWallet`,
+            axios.post(baseURL + `user/penlaty/${id}?wallet=mainWallet`,
                 {
                     bonus: JSON.parse(bonus)
                 },
@@ -203,7 +203,7 @@ function GameView() {
     }
 
     const settingData = async () => {
-        const data = axios.get(baseUrl + "settings/data", {}).then((res) => {
+        const data = axios.get(baseURL + "settings/data", {}).then((res) => {
             setSettings(res?.data);
 
         });
@@ -218,7 +218,7 @@ function GameView() {
     const [iframeUrl, setIframeUrl] = useState(null);
   
     const handleViewLiveGame = () => {
-        setIframeUrl(`http://84.247.133.7:5010/ludo/spectate/${game?.Room_code}`);  
+        setIframeUrl(`${socketURL}ludo/spectate/${game?.Room_code}`);  
     };
 
     useEffect(() => {
@@ -427,7 +427,7 @@ function GameView() {
                                                     </li>}
                                                     <br />
                                                     <div className='img-panel' >
-                                                        {game?.Creator_Screenshot && <img alt='Creator Screenshot' src={baseUrl + `${game?.Creator_Screenshot}`} className="img-responsive img w-auto" height={150} />}
+                                                        {game?.Creator_Screenshot && <img alt='Creator Screenshot' src={baseURL + `${game?.Creator_Screenshot}`} className="img-responsive img w-auto" height={150} />}
                                                     </div>
                                                     {
                                                         game?.Game_type === "Ludo Classics Live" ? (<>
@@ -526,7 +526,7 @@ function GameView() {
                                                     </li>}
                                                     <br />
                                                     <div className='img-panel'>
-                                                        {game?.Acceptor_screenshot && <img alt='Acceptor Screenshot' src={baseUrl + `${game?.Acceptor_screenshot}`} className="img-responsive img w-auto" height={200} />}
+                                                        {game?.Acceptor_screenshot && <img alt='Acceptor Screenshot' src={baseURL + `${game?.Acceptor_screenshot}`} className="img-responsive img w-auto" height={200} />}
                                                     </div>
                                                     {
                                                         game?.Game_type === "Ludo Classics Live" ? (<>

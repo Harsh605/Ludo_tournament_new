@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { handleUnAuthorized } from './hooks/handleUnAuthorized'
+import { baseURL } from '../token'
 const $ = require("jquery")
 $.Datatable = require("datatables.net");
-// import { baseURL } from '../token';
-const baseURL = 'http://84.247.133.7:5010/'
+
 
 export default function UserView() {
     const location = useLocation();
