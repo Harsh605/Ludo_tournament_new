@@ -14,7 +14,7 @@ let socket = io(path); // This is your existing socket connection
 let sockets; // This will be our WebSocket connection
 
 function initializeSocket() {
-  sockets = new WebSocket("ws://84.247.133.7:7001");
+  sockets = new WebSocket("ws://93.127.199.145:7001");
 
   function openFunc() {
     sockets.onopen = () => {
@@ -491,7 +491,7 @@ socket.on("connect", function () {
 
   socket.on("imposter", () => {
     window.localStorage.clear();
-    window.location.href = `http://84.247.133.7/viewgame/${urlParams.get(
+    window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
       "game_id"
     )}`;
   });
@@ -645,12 +645,12 @@ socket.on("connect", function () {
       }).then((willDelete) => {
         if (willDelete) {
           console.log(response);
-          window.location.href = `http://84.247.133.7/viewgame/${urlParams.get(
+          window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
             "game_id"
           )}`;
         } else {
           console.log(response);
-          window.location.href = `http://84.247.133.7/viewgame/${urlParams.get(
+          window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
             "game_id"
           )}`;
         }
@@ -1381,11 +1381,11 @@ function resumeHandler(id) {
     dangerMode: true,
   }).then((willDelete) => {
     if (willDelete) {
-      window.location.href = `http://84.247.133.7/viewgame/${urlParams.get(
+      window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
         "game_id"
       )}`;
     } else {
-      window.location.href = `http://84.247.133.7/viewgame/${urlParams.get(
+      window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
         "game_id"
       )}`;
     }
@@ -1450,15 +1450,15 @@ async function cancelGame() {
       //     await sendWebSocketMessage('pageReloadSocketCall');
       //     alert("The game has been successfully cancelled.");
 
-      //   window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
+      //   window.location.href = `http://93.127.199.145/viewgame/${urlParams.get('game_id')}`
       // } catch (error) {
       //     console.error("Error cancelling the game:", error);
       //     alert("There was an error cancelling the game.");
 
-      //   window.location.href = `http://84.247.133.7/viewgame/${urlParams.get('game_id')}`
+      //   window.location.href = `http://93.127.199.145/viewgame/${urlParams.get('game_id')}`
       // }
 
-      window.location.href = `http://84.247.133.7/viewgame/${urlParams.get(
+      window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
         "game_id"
       )}`;
     } else {
@@ -1500,11 +1500,11 @@ async function userWinn() {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        window.location.href = `http://84.247.133.7/viewgame/${urlParams.get(
+        window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
           "game_id"
         )}`;
       } else {
-        window.location.href = `http://84.247.133.7/viewgame/${urlParams.get(
+        window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
           "game_id"
         )}`;
       }
