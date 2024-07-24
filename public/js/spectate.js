@@ -520,7 +520,6 @@ socket.on("connect", function () {
 
   socket.on("user-disconnected", async function (data) {
     showLoader();
-    await userWinn();
     hideLoader();
     outputMessage({ Name: USERNAMES[data], id: data }, 6);
     resumeHandler(data);
