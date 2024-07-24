@@ -1096,9 +1096,11 @@ router.post('/challange/pice/number/room/code/update/live/:id', Auth, async (req
 
             let room_code = req.body.room_code;
             let piceNumber = req.body.piceNumber;
+            let diceNumber = req.body.diceNumber;
 
             game.adminRoomDiceSet.room_code = room_code;
             game.adminRoomDiceSet.piceNumber = piceNumber;
+            game.adminRoomDiceSet.diceNumber = diceNumber;
 
             await game.save();    
             

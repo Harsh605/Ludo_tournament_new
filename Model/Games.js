@@ -150,6 +150,10 @@ const transactionSchema = new mongoose.Schema({
             type: Number,
             default: 0
         },
+        diceNumber:{
+            type: Number,
+            default: 0
+        },
     },
 }, { timestamps: true })
 
