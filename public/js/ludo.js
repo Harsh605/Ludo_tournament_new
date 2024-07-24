@@ -462,6 +462,7 @@ class Piece {
 }
 
 let diceTimeout;
+let remaningChance = 5;
 
 socket.on("connect", function () {
   console.log("You are connected to the server!!");
@@ -514,6 +515,8 @@ socket.on("connect", function () {
         });
         togglePlayerTurn(true);
         styleButton(0);
+        remaningChance -= 1; // Decrement remainingChance
+        localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
         console.log("Timeout reached, next chance");
       }, 10000); // 10 seconds
     } else {
