@@ -1561,11 +1561,6 @@ async function userLose() {
     hideLoader();
     await sendWebSocketMessage("pageReloadSocketCall");
     console.log(response);
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
     swal({
       title: "Time out...",
       text: `You lose this match.`,
