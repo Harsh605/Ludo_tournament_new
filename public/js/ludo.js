@@ -499,12 +499,12 @@ socket.on("connect", function () {
   socket.on("is-it-your-chance", function (data) {
     console.log("is-it-your-chance", data);
     if (data === myid) {
-      // togglePlayerTurn(true);
+      togglePlayerTurn(true);
       styleButton(1);
       outputMessage({ Name: "your", id: data }, 4);
     } else {
       outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
-      // togglePlayerTurn(false);
+      togglePlayerTurn(false);
     }
     chance = Number(data);
     window.localStorage.setItem("chance", chance.toString());
