@@ -3,32 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Page Title</title>
+    <title>Game Ended</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-        }
-        header {
-            background-color: #f4f4f4;
-            padding: 1rem;
-            text-align: center;
-        }
-        main {
-            padding: 1rem;
-        }
+    body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+.card {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+.card-title {
+    font-size: 2rem;
+    color: #343a40;
+}
+
+.card-text {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
     </style>
 </head>
 <body>
-    <header>
-        <h1>This is either not a valid Room Code or The room is filled up, Go to home and create a new game!</h1>
-        <button onclick="back()">back</button>
-    </header>
-   
+    <div class="container text-center mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Game Ended</h1>
+                <p class="card-text">This is either not a valid Room Code or the room is filled up.</p>
+                <a href="#" onclick="back()" class="btn btn-primary mt-3">Go to Home</a>
+                <!-- <a href="create_game.html" class="btn btn-secondary mt-3">Create a New Game</a> -->
+            </div>
+        </div>
+    </div>
 </body>
-
 <script>
     function back(){
         window.opener = self;
