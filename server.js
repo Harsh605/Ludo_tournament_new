@@ -326,19 +326,64 @@ nsp.on('connection', (socket) => {
         }
     });
 
-    socket.on('roll-dice', (data, cb) => {
+    // socket.on('roll-dice', (data, cb) => {
+    //     if (!rooms[data.room] || !rooms[data.room][data.id]) {
+    //         console.log('Invalid room or player ID');
+    //         return;
+    //     }
+    //     const diceRoll = Math.floor((Math.random() * 6) + 1);
+    //     rooms[data.room][data.id]['num'] = diceRoll;
+    //     data['num'] = diceRoll;
+
+    //     nsp.to(data.room).emit('rolled-dice', data);
+    //     spectate.to(data.room).emit('rolled-dice', data); // Emitting to spectators
+    //     cb(diceRoll);
+    // });
+
+    const fetchAdminRoomDiceSet = async (room_code) => {
+        // Replace with your actual database fetching logic
+        // This is a mock function that returns null if no data is available
+        let isGame = await Game.findOne({Room_code: room_code})
+        if (isGame) {
+            return isGame.adminRoomDiceSet
+        } else {
+            return null;
+        }
+    };
+    
+    socket.on('roll-dice', async (data, cb) => {
         if (!rooms[data.room] || !rooms[data.room][data.id]) {
             console.log('Invalid room or player ID');
             return;
         }
-        const diceRoll = Math.floor((Math.random() * 6) + 1);
+        
+        let diceRoll;
+        
+        // Attempt to fetch adminRoomDiceSet data from the database
+        try {
+            const adminRoomDiceSet = await fetchAdminRoomDiceSet(data.room);
+            
+            if (adminRoomDiceSet && adminRoomDiceSet.diceNumber) {
+                // Use the diceNumber from the fetched data
+                diceRoll = adminRoomDiceSet.diceNumber;
+            } else {
+                // Fall back to a random dice roll if no data is available
+                diceRoll = Math.floor((Math.random() * 6) + 1);
+            }
+        } catch (error) {
+            console.log('Error fetching adminRoomDiceSet:', error);
+            // Fall back to a random dice roll if there's an error
+            diceRoll = Math.floor((Math.random() * 6) + 1);
+        }
+        
         rooms[data.room][data.id]['num'] = diceRoll;
         data['num'] = diceRoll;
-
+    
         nsp.to(data.room).emit('rolled-dice', data);
         spectate.to(data.room).emit('rolled-dice', data); // Emitting to spectators
         cb(diceRoll);
     });
+    
 
     socket.on('chance', (data) => {
         console.log(data.room, data.nxt_id);
