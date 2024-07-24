@@ -222,20 +222,49 @@ function GameView() {
       }
     };
 
-    useEffect(() => {
-        // Listen for messages from the server
-        socket.on("admin", (data) => {
-          console.log(data);
-          //setMessage(data);
-        });
-      }, []);
+    // useEffect(() => {
+    //     // Listen for messages from the server
+    //     socket.on("admin", (data) => {
+    //       console.log(data);
+    //       //setMessage(data);
+    //     });
+    //   }, []);
 
 
       let [dice, setDice] = useState()
 
-    function liveGameWinRoomCode(roomCode, type){
-        alert(type)
-        socket.emit("admin", {room: roomCode, id: type, num: dice});
+    function liveGameWinRoomCode(game_id, roomCode, piceNumbe, dice){
+        ///challange/pice/number/room/code/update/live/:id
+        // alert(type)
+        // socket.emit("admin", {room: roomCode, id: type, num: dice});
+        const access_token = localStorage.getItem("access_token")
+        const headers = {
+            Authorization: `Bearer ${access_token}`
+        }
+
+        axios.post(baseURL + `challange/pice/number/room/code/update/live/${game_id}`,
+            {
+                room_code: roomCode,
+                piceNumber: piceNumbe,
+                diceNumber: dice,
+            },
+            { headers })
+            .then((res) => {
+                if (res.data.status) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Succes",
+                        text: res.data.message,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: res.data.message,
+                    });
+                    
+                }
+            })
     }
 
     if (game == undefined) {
@@ -333,7 +362,7 @@ function GameView() {
                                      
                                             
                                             
-                                            <div className="row">
+                                            <div className="row mt-4">
                                                 <div className="col-lg-2" style={{ borderRight: '1px solid #fff' }}>
                                                     <h4 className={`text-white ${css.font_weight_bolder} snip-h4`}>
                                                         Match Fee: {game?.Game_Ammount}
@@ -433,16 +462,16 @@ function GameView() {
                                                     </div>
                                                     {
                                                         game?.Game_type === "Ludo Classics Live" && game?.Status === "running" ? (<>
-                                                        <h5 className='mb-2'>dice number</h5>
-                                                        <input type="number" id='penaltyval' className="mb-3 form-control input-sm" style={{ minWidth: '100px' }} placeholder=" number"
-                                                            onChange={(e) => setDice(e.target.value)} />
+                                                        <h5 className='mb-2'>Set dice number</h5>
+                                                        {/* <input type="number" id='penaltyval' className="mb-3 form-control input-sm" style={{ minWidth: '100px' }} placeholder=" number"
+                                                            onChange={(e) => setDice(e.target.value)} /> */}
 
                                                         <div>
                                                             {[1, 2, 3, 4, 5, 6].map(number => (
                                                                 <button
                                                                     key={number}
                                                                     className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
-                                                                    onClick={() => liveGameWinRoomCode(game?.Room_code, number)} // Pass the number to the function
+                                                                    onClick={() => liveGameWinRoomCode(game?._id, game?.Room_code, game?.liveGameCreaterPiceNo, number)} // Pass the number to the function
                                                                 >
                                                                     {number}
                                                                 </button>
@@ -537,16 +566,16 @@ function GameView() {
                                                     </div>
                                                     {
                                                         game?.Game_type === "Ludo Classics Live" && game?.Status === "running" ? (<>
-                                                        <h5 className='mb-2'>dice number</h5>
-                                                        <input type="number" id='penaltyval' className="mb-3 form-control input-sm" style={{ minWidth: '100px' }} placeholder=" number"
-                                                            onChange={(e) => setDice(e.target.value)} />
+                                                        <h5 className='mb-2'>Set dice number</h5>
+                                                        {/* <input type="number" id='penaltyval' className="mb-3 form-control input-sm" style={{ minWidth: '100px' }} placeholder=" number"
+                                                            onChange={(e) => setDice(e.target.value)} /> */}
 
                                                         <div>
                                                             {[1, 2, 3, 4, 5, 6].map(number => (
                                                                 <button
                                                                     key={number}
                                                                     className={`btn ${css.btn_success} ${css.font_weight_bold} ${css.py_2} ${css.px_6} mr-2 snip-a`}
-                                                                    onClick={() => liveGameWinRoomCode(game?.Room_code, number)} // Pass the number to the function
+                                                                    onClick={() => liveGameWinRoomCode(game?._id, game?.Room_code, game?.liveGameAcceptorPiceNo, number)} // Pass the number to the function
                                                                 >
                                                                     {number}
                                                                 </button>
