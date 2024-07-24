@@ -461,6 +461,8 @@ class Piece {
   }
 }
 
+let diceTimeout;
+
 socket.on("connect", function () {
   console.log("You are connected to the server!!");
 
@@ -496,12 +498,23 @@ socket.on("connect", function () {
     )}`;
   });
 
+ 
+
   socket.on("is-it-your-chance", function (data) {
     console.log("is-it-your-chance", data);
     if (data === myid) {
       togglePlayerTurn(true);
       styleButton(1);
       outputMessage({ Name: "your", id: data }, 4);
+      
+      // Set a timeout for 10 seconds
+      diceTimeout = setTimeout(() => {
+        socket.emit("chance", {
+          room: room_code,
+          nxt_id: chanceRotation(myid, 0), // Assuming 0 can be used to indicate no roll
+        });
+        console.log("Timeout reached, next chance");
+      }, 10000); // 10 seconds
     } else {
       outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
       togglePlayerTurn(false);
@@ -931,6 +944,8 @@ function rollDice() {
 // }
 
 function diceAction() {
+  clearTimeout(diceTimeout); // Clear the timeout when the player rolls the dice
+
   socket.emit("roll-dice", { room: room_code, id: myid }, function (num) {
     console.log("Dice rolled, got", num);
     let spirit = [];
