@@ -1493,7 +1493,7 @@ async function userWinn() {
     await sendWebSocketMessage("pageReloadSocketCall");
     console.log(response);
     swal({
-      title: "Opponent left the game",
+      title: "Congratulations",
       text: `You are ths winner of this game opponent left the game.`,
       icon: "success",
       buttons: true,
