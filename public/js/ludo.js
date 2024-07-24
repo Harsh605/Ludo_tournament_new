@@ -530,14 +530,77 @@ socket.on("connect", function () {
     clearInterval(window.timer);
   });
 
-  socket.on("user-disconnected", async function (data) {
-    showLoader();
-    await userWinn();
-    hideLoader();
-    outputMessage({ Name: USERNAMES[data], id: data }, 6);
-    resumeHandler(data);
-  });
+  // socket.on("user-disconnected", async function (data) {
+  //   showLoader();
+  //   await userWinn();
+  //   hideLoader();
+  //   outputMessage({ Name: USERNAMES[data], id: data }, 6);
+  //   resumeHandler(data);
+  // });
 
+  socket.on("user-disconnected", async function (data) {
+    swal({
+      title: "Oppss...",
+      text: "Opponent player has been left the game, \n you can wait 30, \n sercond to rejoin or cancel the match!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (willDelete) => {
+      if (willDelete) {
+        const headers = {
+            Authorization: `Bearer ${urlParams.get('token')}`,
+            'Content-Type': 'application/json'
+        };
+        try {
+            const response = await fetch(`/challange/result/live/${urlParams.get('game_id')}`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    status: "cancelled"
+                })
+            });
+  
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+  
+            const responseData = await response.json();
+            console.log(responseData);
+  
+            await sendWebSocketMessage('pageReloadSocketCall');
+            swal({
+              title: "Canceled",
+              text: "Game has been canceled successfully",
+              icon: "success",
+              buttons: true,
+              dangerMode: true,
+            }).
+  
+          window.location.href = `http://ludowinners.in/viewgame/${urlParams.get('game_id')}`
+        } catch (error) {
+            console.error("Error cancelling the game:", error);
+            alert("There was an error cancelling the game.");
+  
+          window.location.href = `http://ludowinners.in/viewgame/${urlParams.get('game_id')}`
+        }
+
+      } else {
+        showLoader();
+        return;
+      }
+    });
+   
+  
+    // Wait for 30 seconds before proceeding
+    setTimeout(async () => {
+      await userWinn();
+      hideLoader();
+      outputMessage({ Name: USERNAMES[data], id: data }, 6);
+      resumeHandler(data);
+    }, 30000);
+  });f
+
+  
   socket.on("resume", function (data) {
     resume(data.id);
     data.id == data.click
