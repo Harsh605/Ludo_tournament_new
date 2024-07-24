@@ -499,12 +499,12 @@ socket.on("connect", function () {
   socket.on("is-it-your-chance", function (data) {
     console.log("is-it-your-chance", data);
     if (data === myid) {
-      togglePlayerTurn(true);
+      // togglePlayerTurn(true);
       styleButton(1);
       outputMessage({ Name: "your", id: data }, 4);
     } else {
       outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
-      togglePlayerTurn(false);
+      // togglePlayerTurn(false);
     }
     chance = Number(data);
     window.localStorage.setItem("chance", chance.toString());
@@ -543,7 +543,7 @@ socket.on("connect", function () {
     swal({
          title: "Oppes..",
           text: `Please wait for 30 second to rejoin after 30 second you will winn the match`,
-          icon: "success",
+          icon: "warning",
           buttons: true,
           dangerMode: true,
         })
@@ -1132,9 +1132,11 @@ function StartTheGame() {
   let copyText = `\n\nMy room:\n${window.location.href} \nor join the room via\nMy room code:${room_code}`;
   document.getElementById("copy").innerHTML += copyText;
   if (MYROOM.length === 1) {
+    togglePlayerTurn(true);
     styleButton(1);
     chance = Number(myid);
   } else {
+    togglePlayerTurn(false);
     styleButton(0);
   }
   loadAllPieces();
