@@ -1570,8 +1570,6 @@ setTimeout(() => {
   
         const responseData = await response.json();
         console.log(responseData);
-  
-        alert("Pice number submitted successfully");
     } catch (error) {
         console.error("Error updating the piece number:", error);
     }
