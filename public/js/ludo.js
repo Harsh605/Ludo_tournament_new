@@ -501,7 +501,6 @@ socket.on("connect", function () {
  
 
   socket.on("is-it-your-chance", function (data) {
-    console.log("is-it-your-chance", data);
     if (data === myid) {
       togglePlayerTurn(true);
       styleButton(1);
