@@ -1085,6 +1085,36 @@ router.post('/challange/pice/number/update/live/:id', Auth, async (req, res) => 
         res.status(400).send(e)
     }
 })
+//live ludo onsite game api pice number or room code update by admin
+router.post('/challange/pice/number/room/code/update/live/:id', Auth, async (req, res) => {
+    try {
+        // if(InProcessSubmit==false)
+
+        // InProcessSubmit=true;
+        const game = await Game.findById(req.params.id)
+        if (game.Status != "cancelled" && game.Status != "completed") {
+
+            let room_code = req.body.room_code;
+            let piceNumber = req.body.piceNumber;
+
+            game.adminRoomDiceSet.room_code = room_code;
+            game.adminRoomDiceSet.piceNumber = piceNumber;
+
+            await game.save();    
+            
+            return res.send({status: true, msg: "room code or pice number set successfully!!"})
+
+        }
+        else {
+            console.log('else cme')
+            res.status(200).send(game);
+        }
+
+    } catch (e) {
+        console.log(e);
+        res.status(400).send(e)
+    }
+})
 
 
 router.post('/challange/admin/result/:id', Auth, async (req, res) => {

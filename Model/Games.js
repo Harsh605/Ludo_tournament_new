@@ -146,7 +146,7 @@ const transactionSchema = new mongoose.Schema({
             type: String,
             default: null,
         },
-        diceNumber:{
+        piceNumber:{
             type: Number,
             default: 0
         },
