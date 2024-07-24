@@ -507,19 +507,21 @@ socket.on("connect", function () {
       styleButton(1);
       outputMessage({ Name: "your", id: data }, 4);
       
-      // Set a timeout for 10 seconds
-      diceTimeout = setTimeout(() => {
-        socket.emit("chance", {
-          room: room_code,
-          nxt_id: chanceRotation(myid, 0), // Assuming 0 can be used to indicate no roll
-        });
-        togglePlayerTurn(true);
-        styleButton(0);
-        showRemaningDots();
-        remaningChance -= 1; // Decrement remainingChance
-        localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
-        console.log("Timeout reached, next chance");
-      }, 10000); // 10 seconds
+     // Set a timeout for 10 seconds
+    diceTimeout = setTimeout(() => {
+      socket.emit("chance", {
+        room: room_code,
+        nxt_id: chanceRotation(myid, 0), // Assuming 0 can be used to indicate no roll
+      });
+      togglePlayerTurn(true);
+      styleButton(0);
+      
+      remaningChance -= 1; // Decrement remainingChance
+      localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
+      
+      showRemaningDots();
+      console.log("Timeout reached, next chance");
+    }, 10000); // 10 seconds
     } else {
       outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
       togglePlayerTurn(false);
@@ -754,42 +756,41 @@ function outputMessage(anObject, k) {
     msgBoard.appendChild(div);
     if (!player1Set) {
       document.getElementById("player1").innerHTML = `
-                 <div>
-                    <img class="AvatarSize" id="isPlayer1" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar2.png" alt="">
-                </div>    
-                <div class="">
-                    <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
-                      colors[anObject.id]
-                    };">${anObject.Name}</span>
-                    <span id="color-message-span2"></span>
-                    <img style="width: 15px" src="../images/pieces/${
-                      colors[anObject.id]
-                    }.png" alt="${anObject.Name} Piece">
-                </div>
-                <div>
-                    <img style="width: 40px" src="../images/dots/five.png" alt="dots">
-                </div> 
-                
-                `;
+        <div>
+          <img class="AvatarSize" id="isPlayer1" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar2.png" alt="">
+        </div>    
+        <div class="">
+          <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
+            colors[anObject.id]
+          };">${anObject.Name}</span>
+          <span id="color-message-span2"></span>
+          <img style="width: 15px" src="../images/pieces/${
+            colors[anObject.id]
+          }.png" alt="${anObject.Name} Piece">
+        </div>
+        <div id="remaningDots1">
+          <img style="width: 40px" src="../images/dots/five.png" alt="dots">
+        </div> 
+      `;
       player1Set = true;
     } else {
       document.getElementById("player2").innerHTML = `            
-                <div>
-                    <img class="AvatarSize" id="isPlayer2" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar1.png" alt="">
-                </div>    
-                <div class="">
-                    <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
-                      colors[anObject.id]
-                    };">${anObject.Name}</span>
-                    <span id="color-message-span2"></span>
-                    <img style="width: 15px" src="../images/pieces/${
-                      colors[anObject.id]
-                    }.png" alt="${anObject.Name} Piece">
-                </div>
-                <div>
-                    <img style="width: 40px" src="../images/dots/five.png" alt="dots">
-                </div>                   
-                `;
+        <div>
+          <img class="AvatarSize" id="isPlayer2" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar1.png" alt="">
+        </div>    
+        <div class="">
+          <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
+            colors[anObject.id]
+          };">${anObject.Name}</span>
+          <span id="color-message-span2"></span>
+          <img style="width: 15px" src="../images/pieces/${
+            colors[anObject.id]
+          }.png" alt="${anObject.Name} Piece">
+        </div>
+        <div id="remaningDots2">
+          <img style="width: 40px" src="../images/dots/five.png" alt="dots">
+        </div>                   
+      `;
     }
   } else if (k === 3) {
     const div = document.createElement("div");
@@ -825,14 +826,20 @@ function outputMessage(anObject, k) {
   msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
 }
 
-function showRemaningDots(){
+function showRemaningDots() {
   const remaningDots1 = document.getElementById("remaningDots1");
   const remaningDots2 = document.getElementById("remaningDots2");
-  // let parseInt(localStorage.getItem("remaningChance"))
-
-  remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/four.png" alt="dots">`
-  remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/four.png" alt="dots">`
-
+  
+  const dotImages = ["one.png", "two.png", "three.png", "four.png", "five.png"];
+  const currentDotsImage = remaningChance >= 1 && remaningChance <= 5 ? dotImages[remaningChance - 1] : "zero.png";
+  
+  if (remaningDots1) {
+    remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage}" alt="dots">`;
+  }
+  
+  if (remaningDots2) {
+    remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage}" alt="dots">`;
+  }
 }
 
 function rollDice() {
