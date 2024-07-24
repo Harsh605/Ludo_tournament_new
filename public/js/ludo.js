@@ -515,6 +515,7 @@ socket.on("connect", function () {
         });
         togglePlayerTurn(true);
         styleButton(0);
+        showRemaningDots();
         remaningChance -= 1; // Decrement remainingChance
         localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
         console.log("Timeout reached, next chance");
@@ -765,7 +766,8 @@ function outputMessage(anObject, k) {
                       colors[anObject.id]
                     }.png" alt="${anObject.Name} Piece">
                 </div>
-                <div id="remaningDots1">
+                <div>
+                    <img style="width: 40px" src="../images/dots/five.png" alt="dots">
                 </div> 
                 
                 `;
@@ -784,7 +786,8 @@ function outputMessage(anObject, k) {
                       colors[anObject.id]
                     }.png" alt="${anObject.Name} Piece">
                 </div>
-                <div id="remaningDots2">
+                <div>
+                    <img style="width: 40px" src="../images/dots/five.png" alt="dots">
                 </div>                   
                 `;
     }
@@ -820,6 +823,16 @@ function outputMessage(anObject, k) {
     msgBoard.appendChild(div);
   }
   msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
+}
+
+function showRemaningDots(){
+  const remaningDots1 = document.getElementById("remaningDots1");
+  const remaningDots2 = document.getElementById("remaningDots2");
+  // let parseInt(localStorage.getItem("remaningChance"))
+
+  remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/four.png" alt="dots">`
+  remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/four.png" alt="dots">`
+
 }
 
 function rollDice() {
@@ -1121,18 +1134,6 @@ function diceAction() {
 //         }
 //     });
 // }
-
-function showRemaningDots(){
-  const remaningDots1 = document.getElementById("remaningDots1");
-  const remaningDots2 = document.getElementById("remaningDots2");
-  // let parseInt(localStorage.getItem("remaningChance"))
-
-  remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/five.png" alt="dots">`
-  remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/five.png" alt="dots">`
-
-}
-
-showRemaningDots();
 
 function togglePlayerTurn(isPlayer1Turn) {
   const player1 = document.getElementById("isPlayer1");
