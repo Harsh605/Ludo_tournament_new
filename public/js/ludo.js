@@ -1374,7 +1374,7 @@ function resumeHandler(id) {
   //     }
   // }, 1000)
   swal({
-    title: "Opponent has left the game",
+    title: "Congratulations",
     text: `you are the winner ${USERNAMES[id]}`,
     icon: "success",
     buttons: true,
