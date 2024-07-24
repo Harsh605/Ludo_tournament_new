@@ -539,17 +539,21 @@ socket.on("connect", function () {
   // });
 
   socket.on("user-disconnected", async function (data) {
-    swal({
-      title: "Oppss...",
-      text: "Opponent player has been left the game, you can wait 30 second, to Opponent rejoin or if not join You will be this winner!",
-      icon: "warning",
-      buttons: ["Wait"],
-    }).then(() => {
-        showLoader();
-        return;
-    });
    
-  
+    swal({
+         title: "Oppes..",
+          text: `Please wait for 30 second to rejoin after 30 second you will winn the match`,
+          icon: "success",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            return  showLoader();
+          }else{
+           return  showLoader();
+          }
+        });
     // Wait for 30 seconds before proceeding
     setTimeout(async () => {
       await userWinn();
@@ -557,8 +561,7 @@ socket.on("connect", function () {
       outputMessage({ Name: USERNAMES[data], id: data }, 6);
       resumeHandler(data);
     }, 30000);
-  });f
-
+  });
   
   socket.on("resume", function (data) {
     resume(data.id);
