@@ -765,15 +765,13 @@ function outputMessage(anObject, k) {
                       colors[anObject.id]
                     }.png" alt="${anObject.Name} Piece">
                 </div>
-                <div>
-                    <img style="width: 40px" src="../images/dots/five.png" alt="dots">
+                <div id="remaningDots1">
                 </div> 
                 
                 `;
       player1Set = true;
     } else {
-      document.getElementById("player2").innerHTML = `
-            
+      document.getElementById("player2").innerHTML = `            
                 <div>
                     <img class="AvatarSize" id="isPlayer2" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar1.png" alt="">
                 </div>    
@@ -786,10 +784,8 @@ function outputMessage(anObject, k) {
                       colors[anObject.id]
                     }.png" alt="${anObject.Name} Piece">
                 </div>
-                <div>
-                    <img style="width: 40px" src="../images/dots/five.png" alt="dots">
-                </div>               
-                    
+                <div id="remaningDots2">
+                </div>                   
                 `;
     }
   } else if (k === 3) {
@@ -1125,6 +1121,18 @@ function diceAction() {
 //         }
 //     });
 // }
+
+function showRemaningDots(){
+  const remaningDots1 = document.getElementById("remaningDots1");
+  const remaningDots2 = document.getElementById("remaningDots2");
+  // let parseInt(localStorage.getItem("remaningChance"))
+
+  remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/five.png" alt="dots">`
+  remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/five.png" alt="dots">`
+
+}
+
+showRemaningDots();
 
 function togglePlayerTurn(isPlayer1Turn) {
   const player1 = document.getElementById("isPlayer1");
