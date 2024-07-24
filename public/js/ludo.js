@@ -506,6 +506,7 @@ socket.on("connect", function () {
       togglePlayerTurn(true);
       styleButton(1);
       outputMessage({ Name: "your", id: data }, 4);
+      showRemaningDots();
       
      // Set a timeout for 10 seconds
     diceTimeout = setTimeout(() => {
