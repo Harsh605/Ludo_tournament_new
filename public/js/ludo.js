@@ -502,11 +502,11 @@ socket.on("connect", function () {
  
 
   socket.on("is-it-your-chance", function (data) {
+    showRemaningDots();
     if (data === myid) {
       togglePlayerTurn(true);
       styleButton(1);
       outputMessage({ Name: "your", id: data }, 4);
-      showRemaningDots();
       
      // Set a timeout for 10 seconds
     diceTimeout = setTimeout(() => {
