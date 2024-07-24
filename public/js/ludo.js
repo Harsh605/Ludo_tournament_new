@@ -514,7 +514,7 @@ socket.on("connect", function () {
           nxt_id: chanceRotation(myid, 0), // Assuming 0 can be used to indicate no roll
         });
         togglePlayerTurn(true);
-        styleButton(1);
+        styleButton(0);
         console.log("Timeout reached, next chance");
       }, 10000); // 10 seconds
     } else {
