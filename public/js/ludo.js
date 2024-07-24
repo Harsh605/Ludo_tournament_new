@@ -1560,7 +1560,7 @@ setTimeout(() => {
             method: 'POST',
             headers: headers,
             body: JSON.stringify({
-                liveGamePiceNumber: localStorage.getItem("chance")
+                liveGamePiceNumber: myid
             })
         });
   
