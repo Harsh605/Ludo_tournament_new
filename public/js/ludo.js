@@ -462,12 +462,7 @@ class Piece {
 }
 
 let diceTimeout;
-let myRemaningChance = localStorage.getItem("myRemaningChance") ? parseInt(localStorage.getItem("myRemaningChance")) : 5;
-let opponentRemaningChance = localStorage.getItem("opponentRemaningChance") ? parseInt(localStorage.getItem("opponentRemaningChance")) : 5;
-
-document.addEventListener("DOMContentLoaded", () => {
-  showRemaningDots(); // Display the remaining dots at the start
-});
+let remaningChance = 5;
 
 socket.on("connect", function () {
   console.log("You are connected to the server!!");
@@ -511,41 +506,25 @@ socket.on("connect", function () {
       togglePlayerTurn(true);
       styleButton(1);
       outputMessage({ Name: "your", id: data }, 4);
-  
-      // Set a timeout for 10 seconds
-      diceTimeout = setTimeout(() => {
-        socket.emit("chance", {
-          room: room_code,
-          nxt_id: chanceRotation(myid, 0), // Assuming 0 can be used to indicate no roll
-        });
-        togglePlayerTurn(false);
-        styleButton(0);
-  
-        myRemaningChance -= 1; // Decrement myRemaningChance
-        localStorage.setItem("myRemaningChance", myRemaningChance); // Update localStorage with the new value
-  
-        showRemaningDots();
-        console.log("Timeout reached, next chance");
-      }, 10000); // 10 seconds
+      
+     // Set a timeout for 10 seconds
+    diceTimeout = setTimeout(() => {
+      socket.emit("chance", {
+        room: room_code,
+        nxt_id: chanceRotation(myid, 0), // Assuming 0 can be used to indicate no roll
+      });
+      togglePlayerTurn(true);
+      styleButton(0);
+      
+      remaningChance -= 1; // Decrement remainingChance
+      localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
+      
+      showRemaningDots();
+      console.log("Timeout reached, next chance");
+    }, 10000); // 10 seconds
     } else {
       outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
       togglePlayerTurn(false);
-      
-      // When it's the opponent's turn, set a timeout for 10 seconds
-      diceTimeout = setTimeout(() => {
-        // Assuming 0 can be used to indicate no roll for the opponent
-        socket.emit("chance", {
-          room: room_code,
-          nxt_id: chanceRotation(data, 0),
-        });
-        togglePlayerTurn(false);
-  
-        opponentRemaningChance -= 1; // Decrement opponentRemaningChance
-        localStorage.setItem("opponentRemaningChance", opponentRemaningChance); // Update localStorage with the new value
-  
-        showRemaningDots();
-        console.log("Timeout reached, next chance for opponent");
-      }, 10000); // 10 seconds
     }
     chance = Number(data);
     window.localStorage.setItem("chance", chance.toString());
@@ -850,17 +829,16 @@ function outputMessage(anObject, k) {
 function showRemaningDots() {
   const remaningDots1 = document.getElementById("remaningDots1");
   const remaningDots2 = document.getElementById("remaningDots2");
-
-  const dotImages = ["zero.png", "one.png", "two.png", "three.png", "four.png", "five.png"];
-  const myDotsImage = myRemaningChance >= 0 && myRemaningChance <= 5 ? dotImages[myRemaningChance] : "zero.png";
-  const opponentDotsImage = opponentRemaningChance >= 0 && opponentRemaningChance <= 5 ? dotImages[opponentRemaningChance] : "zero.png";
-
+  
+  const dotImages = ["one.png", "two.png", "three.png", "four.png", "five.png"];
+  const currentDotsImage = remaningChance >= 1 && remaningChance <= 5 ? dotImages[remaningChance - 1] : "zero.png";
+  
   if (remaningDots1) {
-    remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/${myDotsImage}" alt="dots">`;
+    remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage}" alt="dots">`;
   }
-
+  
   if (remaningDots2) {
-    remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/${opponentDotsImage}" alt="dots">`;
+    remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage}" alt="dots">`;
   }
 }
 
