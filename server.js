@@ -340,15 +340,63 @@ nsp.on('connection', (socket) => {
     //     cb(diceRoll);
     // });
 
+    // const fetchAdminRoomDiceSet = async (room_code) => {
+    //     // Replace with your actual database fetching logic
+    //     // This is a mock function that returns null if no data is available
+    //     let isGame = await Game.findOne({Room_code: room_code})
+    //     if (isGame) {
+    //         return isGame.adminRoomDiceSet
+    //     } else {
+    //         return null;
+    //     }
+    // };
+    
+    // socket.on('roll-dice', async (data, cb) => {
+    //     if (!rooms[data.room] || !rooms[data.room][data.id]) {
+    //         console.log('Invalid room or player ID');
+    //         return;
+    //     }
+        
+    //     let diceRoll;
+        
+    //     // Attempt to fetch adminRoomDiceSet data from the database
+    //     try {
+    //         const adminRoomDiceSet = await fetchAdminRoomDiceSet(data.room);
+            
+    //         if (adminRoomDiceSet && adminRoomDiceSet.diceNumber) {
+    //             // Use the diceNumber from the fetched data
+    //             diceRoll = adminRoomDiceSet.diceNumber;
+    //         } else {
+    //             // Fall back to a random dice roll if no data is available
+    //             diceRoll = Math.floor((Math.random() * 6) + 1);
+    //         }
+    //     } catch (error) {
+    //         console.log('Error fetching adminRoomDiceSet:', error);
+    //         // Fall back to a random dice roll if there's an error
+    //         diceRoll = Math.floor((Math.random() * 6) + 1);
+    //     }
+        
+    //     rooms[data.room][data.id]['num'] = diceRoll;
+    //     data['num'] = diceRoll;
+    
+    //     nsp.to(data.room).emit('rolled-dice', data);
+    //     spectate.to(data.room).emit('rolled-dice', data); // Emitting to spectators
+    //     cb(diceRoll);
+    // });
+
     const fetchAdminRoomDiceSet = async (room_code) => {
         // Replace with your actual database fetching logic
-        // This is a mock function that returns null if no data is available
-        let isGame = await Game.findOne({Room_code: room_code})
+        let isGame = await Game.findOne({ Room_code: room_code });
         if (isGame) {
-            return isGame.adminRoomDiceSet
+            return isGame.adminRoomDiceSet;
         } else {
             return null;
         }
+    };
+    
+    const updateAdminRoomDiceSet = async (room_code, diceNumber) => {
+        // Replace with your actual database update logic
+        await Game.updateOne({ Room_code: room_code }, { $set: { 'adminRoomDiceSet.diceNumber': diceNumber } });
     };
     
     socket.on('roll-dice', async (data, cb) => {
@@ -356,18 +404,21 @@ nsp.on('connection', (socket) => {
             console.log('Invalid room or player ID');
             return;
         }
-        
+    
         let diceRoll;
-        
+    
         // Attempt to fetch adminRoomDiceSet data from the database
         try {
             const adminRoomDiceSet = await fetchAdminRoomDiceSet(data.room);
-            
-            if (adminRoomDiceSet && adminRoomDiceSet.diceNumber) {
+    
+            if (adminRoomDiceSet && adminRoomDiceSet.diceNumber > 0) {
                 // Use the diceNumber from the fetched data
                 diceRoll = adminRoomDiceSet.diceNumber;
+    
+                // Update the database to set diceNumber to 0
+                await updateAdminRoomDiceSet(data.room, 0);
             } else {
-                // Fall back to a random dice roll if no data is available
+                // Fall back to a random dice roll if diceNumber is 0 or no data is available
                 diceRoll = Math.floor((Math.random() * 6) + 1);
             }
         } catch (error) {
@@ -375,7 +426,7 @@ nsp.on('connection', (socket) => {
             // Fall back to a random dice roll if there's an error
             diceRoll = Math.floor((Math.random() * 6) + 1);
         }
-        
+    
         rooms[data.room][data.id]['num'] = diceRoll;
         data['num'] = diceRoll;
     
@@ -383,6 +434,7 @@ nsp.on('connection', (socket) => {
         spectate.to(data.room).emit('rolled-dice', data); // Emitting to spectators
         cb(diceRoll);
     });
+    
     
 
     socket.on('chance', (data) => {
