@@ -826,13 +826,20 @@ function outputMessage(anObject, k) {
   msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
 }
 
-function showRemaningDots() {
+async function showRemaningDots() {
   const remaningDots1 = document.getElementById("remaningDots1");
   const remaningDots2 = document.getElementById("remaningDots2");
   
   const dotImages = ["one.png", "two.png", "three.png", "four.png", "five.png"];
   const currentDotsImage = remaningChance >= 1 && remaningChance <= 5 ? dotImages[remaningChance - 1] : "zero.png";
   
+  if (remaningChance === 0) {
+    showLoader();
+   await userLose();
+   hideLoader();
+  }
+
+
   if (remaningDots1) {
     remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage}" alt="dots">`;
   }
@@ -1529,6 +1536,58 @@ async function cancelGame() {
   });
 }
 
+async function userLose() {
+  const headers = {
+    Authorization: `Bearer ${urlParams.get("token")}`,
+    "Content-Type": "application/json", // Ensure the Content-Type header is set for JSON
+  };
+  try {
+    const response = await fetch(
+      `/challange/result/live/${urlParams.get("game_id")}`,
+      {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          status: "lose",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      alert("Network response was not ok");
+      throw new Error("Network response was not ok");
+    }
+
+    hideLoader();
+    await sendWebSocketMessage("pageReloadSocketCall");
+    console.log(response);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+    swal({
+      title: "Time out...",
+      text: `You lose this match.`,
+      icon: "error",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+          "game_id"
+        )}`;
+      } else {
+        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+          "game_id"
+        )}`;
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    alert("There was an error cancelling the game.");
+  }
+}
 async function userWinn() {
   const headers = {
     Authorization: `Bearer ${urlParams.get("token")}`,
