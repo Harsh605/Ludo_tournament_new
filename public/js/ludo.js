@@ -499,28 +499,23 @@ socket.on("connect", function () {
   });
 
  
-  let remaningChance = localStorage.getItem("remaningChance") ? parseInt(localStorage.getItem("remaningChance")) : 5;
-  localStorage.setItem("remaningChance", remaningChance);
-  
+
   socket.on("is-it-your-chance", function (data) {
     console.log("is-it-your-chance", data);
     if (data === myid) {
       togglePlayerTurn(true);
       styleButton(1);
       outputMessage({ Name: "your", id: data }, 4);
-  
+      
       // Set a timeout for 10 seconds
       diceTimeout = setTimeout(() => {
         socket.emit("chance", {
           room: room_code,
           nxt_id: chanceRotation(myid, 0), // Assuming 0 can be used to indicate no roll
         });
-        remaningChance -= 1;
-        localStorage.setItem("remaningChance", remaningChance);
-        togglePlayerTurn(false);
+        togglePlayerTurn(true);
         styleButton(0);
-        alert("Timeout reached, next chance. Remaining chances:", remaningChance)
-        console.log("Timeout reached, next chance. Remaining chances:", remaningChance);
+        console.log("Timeout reached, next chance");
       }, 10000); // 10 seconds
     } else {
       outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
@@ -529,7 +524,6 @@ socket.on("connect", function () {
     chance = Number(data);
     window.localStorage.setItem("chance", chance.toString());
   });
-  
 
   socket.on("new-user-joined", function (data) {
     MYROOM.push(data.id);
