@@ -491,7 +491,7 @@ socket.on("connect", function () {
 
   socket.on("imposter", () => {
     window.localStorage.clear();
-    window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
+    window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
       "game_id"
     )}`;
   });
@@ -645,12 +645,12 @@ socket.on("connect", function () {
       }).then((willDelete) => {
         if (willDelete) {
           console.log(response);
-          window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
+          window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
             "game_id"
           )}`;
         } else {
           console.log(response);
-          window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
+          window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
             "game_id"
           )}`;
         }
@@ -1381,11 +1381,11 @@ function resumeHandler(id) {
     dangerMode: true,
   }).then((willDelete) => {
     if (willDelete) {
-      window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
+      window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
         "game_id"
       )}`;
     } else {
-      window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
+      window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
         "game_id"
       )}`;
     }
@@ -1450,15 +1450,15 @@ async function cancelGame() {
       //     await sendWebSocketMessage('pageReloadSocketCall');
       //     alert("The game has been successfully cancelled.");
 
-      //   window.location.href = `http://93.127.199.145/viewgame/${urlParams.get('game_id')}`
+      //   window.location.href = `http://ludowinners.in/viewgame/${urlParams.get('game_id')}`
       // } catch (error) {
       //     console.error("Error cancelling the game:", error);
       //     alert("There was an error cancelling the game.");
 
-      //   window.location.href = `http://93.127.199.145/viewgame/${urlParams.get('game_id')}`
+      //   window.location.href = `http://ludowinners.in/viewgame/${urlParams.get('game_id')}`
       // }
 
-      window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
+      window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
         "game_id"
       )}`;
     } else {
@@ -1500,11 +1500,11 @@ async function userWinn() {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
+        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
           "game_id"
         )}`;
       } else {
-        window.location.href = `http://93.127.199.145/viewgame/${urlParams.get(
+        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
           "game_id"
         )}`;
       }
@@ -1539,32 +1539,44 @@ function hideLoader() {
 //     localStorage.clear();
 //   });
 
-
- window.addEventListener('onload', async function() {
-    const headers = {
-          Authorization: `Bearer ${urlParams.get('token')}`,
-          'Content-Type': 'application/json'
-      };
-      try {
-          const response = await fetch(`/challange/pice/number/update/live/${urlParams.get('game_id')}`, {
-              method: 'POST',
-              headers: headers,
-              body: JSON.stringify({
-                  liveGamePiceNumber: localStorage.getItem("chance")
-              })
-          });
-
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-
-          const responseData = await response.json();
-          console.log(responseData);
-
-          alert("Pice number submit successfully");
-          return
-      } catch (error) {
-          console.error("Error cancelling the game:", error);
-      }
+setTimeout(() => {
+  async function setPice() {
+    // Assuming urlParams is already defined and initialized somewhere in your code
+    const token = urlParams.get('token');
+    const gameId = urlParams.get('game_id');
     
-  });
+    if (!token || !gameId) {
+        console.error("Token or game_id is missing");
+        return;
+    }
+  
+    const headers = {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+    
+    try {
+        const response = await fetch(`/challange/pice/number/update/live/${gameId}`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                liveGamePiceNumber: localStorage.getItem("chance")
+            })
+        });
+  
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+  
+        const responseData = await response.json();
+        console.log(responseData);
+  
+        alert("Pice number submitted successfully");
+    } catch (error) {
+        console.error("Error updating the piece number:", error);
+    }
+  };
+  
+  setPice();
+}, 2000);
+
