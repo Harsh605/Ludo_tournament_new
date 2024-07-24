@@ -1492,6 +1492,11 @@ async function userWinn() {
     hideLoader();
     await sendWebSocketMessage("pageReloadSocketCall");
     console.log(response);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
     swal({
       title: "Congratulations",
       text: `You are ths winner of this game opponent left the game.`,
