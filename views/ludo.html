@@ -29,14 +29,14 @@
   }
     */
 
-    .row-full-height {
-        height: 80vh; /* Make the row full height of the viewport */
-      }
+    /* .row-full-height {
+        height: 80vh; 
+      } */
 
       .container-relative {
         position: relative;
-        width: 100%;
-        height: auto;
+        /* width: 100%;
+        height: auto; */
         max-width: 750px;
         max-height: 750px;
         margin: 0 auto;
@@ -58,13 +58,13 @@
         height: 100%;
       }
 
-      .cd {
+      /* .cd {
         position: relative;
         width: 100%;
         max-width: 350px;
         margin: 30px auto 0;
         top: 30px;
-      }
+      } */
 
       .sizeSVG {
         width: 24px;
@@ -73,24 +73,23 @@
       }
 
       /* Make sure the images and canvas resize properly */
-      img, canvas {
+      /* img, canvas {
         max-width: 100%;
         height: auto;
-      }
+      } */
 
       /* Responsive adjustments */
-      @media (max-width: 576px) {
+      /* @media (max-width: 576px) {
         .container-relative {
-          max-width: 750px;
-        max-height: 750px;
-          
+          max-width: 100%;
+          height: auto;
         }
 
         .cd {
           max-width: 100%;
           top: 50px
         }
-      }
+      } */
     .diceBoard {
       position: relative;
       width: 350px;
@@ -107,8 +106,8 @@
     }
 
   .AvatarSize {
-    width: 50px; /* Adjust size as needed */
-    height: 50px; /* Adjust size as needed */
+    width: 45px; /* Adjust size as needed */
+    height: 45px; /* Adjust size as needed */
   }
 
 
@@ -269,7 +268,7 @@
               <canvas class="gameCanvas" id="theCanvas"></canvas>
             </div>
           </div>
-          <div class="card bg-danger shadow text-center cd">
+          <div class="card bg-danger shadow text-center cd mt-3">
             <div class="d-flex justify-content-around align-items-center">
               <div class="mt-1" id="player1">
                 <!-- <img class="AvatarSize" id="isPlayer1" style="border: 2px solid yellow; border-radius: 50%;" src="../images/avatar/Avatar2.png" alt="">
