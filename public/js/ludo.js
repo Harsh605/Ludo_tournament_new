@@ -455,18 +455,10 @@ class Piece {
   }
 
   kill() {
-    console.log(`Piece ${this.Pid} of Player ${this.color_id} is being killed.`);
-    console.log(`Previous position: (${this.x}, ${this.y})`);
-    
-    // Reset position based on allPiecesePos
-    this.x = allPiecesePos[this.color_id][this.Pid].x * scaleX;
-    this.y = allPiecesePos[this.color_id][this.Pid].y * scaleY;
-    this.pos = -1; // Reset position indicator
-    
-    console.log(`New position: (${this.x}, ${this.y})`);
+    this.x = allPiecesePos[this.color_id][this.Pid].x;
+    this.y = allPiecesePos[this.color_id][this.Pid].y;
+    this.pos = -1;
   }
-  
-  
 }
 
 let diceTimeout;
@@ -1396,20 +1388,22 @@ function iKill(id, pid) {
   let boss = PLAYERS[id].myPieces[pid];
   for (let i = 0; i < MYROOM.length; i++) {
     for (let j = 0; j < 4; j++) {
+      let otherPiece = PLAYERS[MYROOM[i]].myPieces[j];
       if (
         MYROOM[i] != id &&
-        boss.x == PLAYERS[MYROOM[i]].myPieces[j].x &&
-        boss.y == PLAYERS[MYROOM[i]].myPieces[j].y
+        boss.x === otherPiece.x &&
+        boss.y === otherPiece.y
       ) {
         if (!inAhomeTile(id, pid)) {
-          PLAYERS[MYROOM[i]].myPieces[j].kill();
-          return 1;
+          otherPiece.kill(); // Call kill on the other player's piece
+          return 1; // Return 1 to indicate a piece was killed
         }
       }
     }
   }
-  return 0;
+  return 0; // Return 0 if no piece was killed
 }
+
 
 function inAhomeTile(id, pid) {
   for (let i = 0; i < 4; i++) {
