@@ -1561,23 +1561,18 @@ async function userLose() {
     hideLoader();
     await sendWebSocketMessage("pageReloadSocketCall");
     console.log(response);
-    swal({
-      title: "Time out...",
-      text: `You lose this match.`,
-      icon: "error",
-      buttons: true,
-      dangerMode: true,
-    }).then((willDelete) => {
-      if (willDelete) {
-        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
-          "game_id"
-        )}`;
-      } else {
-        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
-          "game_id"
-        )}`;
-      }
-    });
+    setTimeout(()=>{
+      swal({
+        title: "Time out...",
+        text: `You lose this match.`,
+        icon: "error",
+        buttons: true,
+      })
+          window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+            "game_id"
+          )}`;
+    },1000)
+     
   } catch (e) {
     console.log(e);
     alert("There was an error cancelling the game.");
