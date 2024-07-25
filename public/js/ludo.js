@@ -837,6 +837,8 @@ async function showRemaningDots() {
   
   if (remaningChance === 0) {
     showLoader();
+    clearTimeout(avatarTimeout);
+    clearTimeout(diceTimeout); // Clear the timeout when the player rolls the dice
    await userLose();
    hideLoader();
   }
@@ -1594,13 +1596,14 @@ async function userLose() {
     console.log(response);
     swal({
       title: "Time out...",
-      text: `You lose this match.`,
+      text: "You lose this match.",
       icon: "error",
-    })
-        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
-          "game_id"
-        )}`;
-     
+    }).then(() => {
+      setTimeout(() => {
+        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get("game_id")}`;
+      }, 5000); // 5000 milliseconds = 5 seconds
+    });
+    
   } catch (e) {
     console.log(e);
     alert("There was an error cancelling the game.");
