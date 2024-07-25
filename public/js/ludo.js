@@ -455,10 +455,17 @@ class Piece {
   }
 
   kill() {
-    this.x = allPiecesePos[this.color_id][this.Pid].x * scaleX; // Adjust for scaling
-    this.y = allPiecesePos[this.color_id][this.Pid].y * scaleY; // Adjust for scaling
+    console.log(`Piece ${this.Pid} of Player ${this.color_id} is being killed.`);
+    console.log(`Previous position: (${this.x}, ${this.y})`);
+    
+    // Reset position based on allPiecesePos
+    this.x = allPiecesePos[this.color_id][this.Pid].x * scaleX;
+    this.y = allPiecesePos[this.color_id][this.Pid].y * scaleY;
     this.pos = -1; // Reset position indicator
+    
+    console.log(`New position: (${this.x}, ${this.y})`);
   }
+  
   
 }
 
