@@ -531,46 +531,46 @@ spectate.on('connection', (socket) => {
 });
 
 
-// function generate_member_id(s_id,rc){
-//     console.log(s_id, rc)
-//     let m_id = Math.floor(Math.random()*3);
-//     let m_r = Object.keys(rooms[rc]);
-//     if(m_r.length <= 3){
-//         if(m_r.includes(m_id.toString())){
-//             return generate_member_id(s_id,rc)
-//         }else{
-//             rooms[rc][m_id] = {sid:s_id,num:0};
-//             return m_id;
-//         }
-//     } else{
-//         return -1;
-//     }
-// }
-
-function generate_member_id(s_id, rc) {
-    console.log(s_id, rc);
-    
+function generate_member_id(s_id,rc){
+    console.log(s_id, rc)
+    let m_id = Math.floor(Math.random()*3);
     let m_r = Object.keys(rooms[rc]);
-
-    // Check if the room already has 2 members
-    if (m_r.length === 2) {
-        return -1; // Room is full
+    if(m_r.length <= 3){
+        if(m_r.includes(m_id.toString())){
+            return generate_member_id(s_id,rc)
+        }else{
+            rooms[rc][m_id] = {sid:s_id,num:0};
+            return m_id;
+        }
+    } else{
+        return -1;
     }
-    
-    // Determine the ID to assign based on current room state
-    let m_id;
-    if (m_r.length === 0) {
-        m_id = 1; // First member gets ID 1
-    } else if (m_r.length === 1) {
-        m_id = 3; // Second member gets ID 3
-    } else {
-        return -1; // Invalid state, as room has more than 1 member
-    }
-    
-    // Assign the new ID to the member
-    rooms[rc][m_id] = { sid: s_id, num: 0 };
-    return m_id;
 }
+
+// function generate_member_id(s_id, rc) {
+//     console.log(s_id, rc);
+    
+//     let m_r = Object.keys(rooms[rc]);
+
+//     // Check if the room already has 2 members
+//     if (m_r.length === 2) {
+//         return -1; // Room is full
+//     }
+    
+//     // Determine the ID to assign based on current room state
+//     let m_id;
+//     if (m_r.length === 0) {
+//         m_id = 1; // First member gets ID 1
+//     } else if (m_r.length === 1) {
+//         m_id = 3; // Second member gets ID 3
+//     } else {
+//         return -1; // Invalid state, as room has more than 1 member
+//     }
+    
+//     // Assign the new ID to the member
+//     rooms[rc][m_id] = { sid: s_id, num: 0 };
+//     return m_id;
+// }
 
 
 //to delete the extra place when (only one) user refreshes.
