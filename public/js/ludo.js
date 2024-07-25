@@ -398,12 +398,20 @@ class Piece {
 
   // In the Piece constructor, modify the image drawing
   draw() {
+    const scaleFactor = 1.7; // Increase size by 20%
+    const newWidth = 50 * scaleX * scaleFactor;
+    const newHeight = 50 * scaleY * scaleFactor;
+    
+    // Calculate the offset to keep the piece centered
+    const offsetX = (newWidth - 50 * scaleX) / 2;
+    const offsetY = (newHeight - 50 * scaleY) / 2;
+
     ctx.drawImage(
       this.image,
-      this.x,
-      this.y,
-      50 * scaleX,
-      50 * scaleY
+      this.x - offsetX,
+      this.y - offsetY,
+      newWidth,
+      newHeight
     );
   }
 
