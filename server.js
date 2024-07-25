@@ -551,7 +551,7 @@ function generate_member_id(s_id, rc) {
     console.log(s_id, rc);
     
     let m_r = Object.keys(rooms[rc]);
-    
+
     // Check if the room already has 2 members
     if (m_r.length === 2) {
         return -1; // Room is full
@@ -560,11 +560,11 @@ function generate_member_id(s_id, rc) {
     // Determine the ID to assign based on current room state
     let m_id;
     if (m_r.length === 0) {
-        m_id = 2; // First member gets ID 2
+        m_id = 1; // First member gets ID 1
     } else if (m_r.length === 1) {
         m_id = 3; // Second member gets ID 3
     } else {
-        return -1; // Invalid state, as room has more than 2 members
+        return -1; // Invalid state, as room has more than 1 member
     }
     
     // Assign the new ID to the member
