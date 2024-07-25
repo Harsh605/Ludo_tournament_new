@@ -455,10 +455,11 @@ class Piece {
   }
 
   kill() {
-    this.x = allPiecesePos[this.color_id][this.Pid].x;
-    this.y = allPiecesePos[this.color_id][this.Pid].y;
-    this.pos = -1;
+    this.x = allPiecesePos[this.color_id][this.Pid].x * scaleX; // Adjust for scaling
+    this.y = allPiecesePos[this.color_id][this.Pid].y * scaleY; // Adjust for scaling
+    this.pos = -1; // Reset position indicator
   }
+  
 }
 
 let diceTimeout;
@@ -1326,7 +1327,7 @@ function chanceRotation(id, num) {
 //draws 4 x 4 = 16 pieces per call
 function allPlayerHandler() {
   console.log("all player handler");
-  ctx.clearRect(0, 0, styleWidth, styleHeight);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (let i = 0; i < Object.keys(PLAYERS).length; i++) {
     PLAYERS[MYROOM[i]].draw();
   }
