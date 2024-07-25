@@ -462,7 +462,9 @@ class Piece {
 }
 
 let diceTimeout;
-let remaningChance = 5;
+let myRemaningChance = localStorage.getItem("myRemaningChance") ? parseInt(localStorage.getItem("myRemaningChance")) : 5;
+let opponentRemaningChance = localStorage.getItem("opponentRemaningChance") ? parseInt(localStorage.getItem("opponentRemaningChance")) : 5;
+
 
 socket.on("connect", function () {
   console.log("You are connected to the server!!");
@@ -516,8 +518,8 @@ socket.on("connect", function () {
       togglePlayerTurn(true);
       styleButton(0);
       
-      remaningChance -= 1; // Decrement remainingChance
-      localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
+      myRemaningChance -= 1; // Decrement remainingChance
+      localStorage.setItem("remaningChance", myRemaningChance); // Update localStorage with the new value
       
       showRemaningDots();
       console.log("Timeout reached, next chance");
@@ -831,20 +833,21 @@ async function showRemaningDots() {
   const remaningDots2 = document.getElementById("remaningDots2");
   
   const dotImages = ["one.png", "two.png", "three.png", "four.png", "five.png"];
-  const currentDotsImage = remaningChance >= 1 && remaningChance <= 5 ? dotImages[remaningChance - 1] : "zero.png";
+  const myDotsImage = myRemaningChance >= 1 && myRemaningChance <= 5 ? dotImages[myRemaningChance - 1] : "zero.png";
+  const opponentDotsImage = opponentRemaningChance >= 1 && opponentRemaningChance <= 5 ? dotImages[opponentRemaningChance - 1] : "zero.png";
   
-  if (remaningChance === 0) {
+  if (myRemaningChance === 0) {
     showLoader();
-   await userLose();
-   hideLoader();
-  }
+    await userLose();
+    hideLoader();
+    }
 
 
-  if (remaningDots1) {
+  if (myDotsImage) {
     remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage}" alt="dots">`;
   }
   
-  if (remaningDots2) {
+  if (opponentDotsImage) {
     remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage}" alt="dots">`;
   }
 }
