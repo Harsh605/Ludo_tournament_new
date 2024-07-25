@@ -179,12 +179,12 @@ let homeTilePos = {
   },
 };
 
-// Define safe squares (stamps) for each player
+// Update the safeSquares definition to include the starting position (-1)
 const safeSquares = {
-  0: [0, 8, 13, 21, 26, 34, 39, 47],  // Adjust these indices as needed
-  1: [0, 8, 13, 21, 26, 34, 39, 47],
-  2: [0, 8, 13, 21, 26, 34, 39, 47],
-  3: [0, 8, 13, 21, 26, 34, 39, 47]
+  0: [-1, 0, 8, 13, 21, 26, 34, 39, 47],
+  1: [-1, 0, 8, 13, 21, 26, 34, 39, 47],
+  2: [-1, 0, 8, 13, 21, 26, 34, 39, 47],
+  3: [-1, 0, 8, 13, 21, 26, 34, 39, 47]
 };
 
 class Player {
@@ -468,16 +468,14 @@ class Piece {
     console.log("to 315", this.x, this.y, typeof this.x, typeof this.y);
   }
 
-  // Add this method to the Piece class
   isOnSafeSquare() {
     return safeSquares[this.color_id].includes(this.pos);
   }
 
-  // Modify the update method in the Piece class
   update(num) {
     if (this.pos != -1 && this.pos + num <= 56) {
-      for (let i = this.pos; i < this.pos + num; i++) {
-        this.path[i](this.color_id, this.Pid);
+      for (let i = 0; i < num; i++) {
+        this.path[this.pos + i](this.color_id, this.Pid);
       }
       this.pos += num;
       if (this.pos == 56) {
@@ -493,10 +491,9 @@ class Piece {
     }
   }
 
-  // Add this new method to the Piece class
   checkForKill() {
     if (this.isOnSafeSquare()) {
-      return;  // Don't kill on safe squares
+      return;  // Don't kill if the current piece is on a safe square
     }
 
     for (let playerId in window.PLAYERS) {
@@ -505,8 +502,8 @@ class Piece {
         for (let pieceId in otherPlayer.myPieces) {
           let otherPiece = otherPlayer.myPieces[pieceId];
           if (otherPiece.pos !== -1 && !otherPiece.isOnSafeSquare() &&
-              Math.abs(this.x - otherPiece.x) < 5 * scaleX &&
-              Math.abs(this.y - otherPiece.y) < 5 * scaleY) {
+              Math.abs(this.x - otherPiece.x) < 25 * scaleX &&
+              Math.abs(this.y - otherPiece.y) < 25 * scaleY) {
             otherPiece.kill();
           }
         }
@@ -514,7 +511,6 @@ class Piece {
     }
   }
 
-  // The kill method remains the same
   kill() {
     this.x = allPiecesePos[this.color_id][this.Pid].x;
     this.y = allPiecesePos[this.color_id][this.Pid].y;
@@ -730,7 +726,7 @@ socket.on("connect", function () {
 
       swal({
         title: "Winner",
-        text: `you are the winner ${USERNAMES[id]}`,
+        text: `you are the winner`,
         icon: "success",
         buttons: true,
         dangerMode: true,
@@ -1564,6 +1560,7 @@ function showToast(message) {
     toast.classList.remove("show");
   }, 3000); // Adjust the timeout as needed
 }
+
 
 async function cancelGame() {
   swal({

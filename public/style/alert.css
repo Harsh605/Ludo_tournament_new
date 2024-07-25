@@ -1,0 +1,56 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+.losepopup {
+    margin: auto;
+    width: 90%;
+    max-width: 350px;
+    height: auto;
+    background-color: #000000;
+    border-radius: 20px;
+    display: none; /* Hide the popup initially */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    color: #fff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.loseWon {
+    color: #f7e07c;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+h3 {
+    color: #ffeb3b;
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+}
+
+
+
+img {
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .loseWon {
+        font-size: 1.75rem;
+    }
+
+    h3 {
+        font-size: 1rem;
+    }
+}
