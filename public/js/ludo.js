@@ -462,6 +462,7 @@ class Piece {
 }
 
 let diceTimeout;
+let avatarTimeout;
 let remaningChance = 5;
 
 socket.on("connect", function () {
@@ -972,6 +973,7 @@ function rollDice() {
 // }
 
 function diceAction() {
+  clearTimeout(avatarTimeout);
   clearTimeout(diceTimeout); // Clear the timeout when the player rolls the dice
 
   socket.emit("roll-dice", { room: room_code, id: myid }, function (num) {
@@ -1184,7 +1186,7 @@ function togglePlayerTurn(isPlayer1Turn) {
   }
 
   // Stop the animation after 10 seconds
-  setTimeout(() => {
+  avatarTimeout = setTimeout(() => {
     player1.classList.remove("animated-border");
     player2.classList.remove("animated-border");
   }, 10000); // 10 seconds
