@@ -531,21 +531,44 @@ spectate.on('connection', (socket) => {
 });
 
 
-function generate_member_id(s_id,rc){
-    console.log(s_id, rc)
-    let m_id = Math.floor(Math.random()*3);
+// function generate_member_id(s_id,rc){
+//     console.log(s_id, rc)
+//     let m_id = Math.floor(Math.random()*3);
+//     let m_r = Object.keys(rooms[rc]);
+//     if(m_r.length <= 3){
+//         if(m_r.includes(m_id.toString())){
+//             return generate_member_id(s_id,rc)
+//         }else{
+//             rooms[rc][m_id] = {sid:s_id,num:0};
+//             return m_id;
+//         }
+//     } else{
+//         return -1;
+//     }
+// }
+
+function generate_member_id(s_id, rc) {
+    console.log(s_id, rc);
+
     let m_r = Object.keys(rooms[rc]);
-    if(m_r.length <= 3){
-        if(m_r.includes(m_id.toString())){
-            return generate_member_id(s_id,rc)
-        }else{
-            rooms[rc][m_id] = {sid:s_id,num:0};
-            return m_id;
-        }
-    } else{
-        return -1;
+    
+    // Check if there are less than 3 member IDs already assigned
+    if (m_r.length < 3) {
+        let m_id;
+        
+        // Generate a random ID from 0 to 2
+        do {
+            m_id = Math.floor(Math.random() * 3);
+        } while (m_r.includes(m_id.toString()));
+        
+        // Assign the new ID to the member
+        rooms[rc][m_id] = { sid: s_id, num: 0 };
+        return m_id;
+    } else {
+        return -1; // No more IDs available
     }
 }
+
 //to delete the extra place when (only one) user refreshes.
 function deleteThisid(id){
     for(var roomcd in rooms){
