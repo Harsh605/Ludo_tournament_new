@@ -549,25 +549,29 @@ spectate.on('connection', (socket) => {
 
 function generate_member_id(s_id, rc) {
     console.log(s_id, rc);
-
+    
     let m_r = Object.keys(rooms[rc]);
     
-    // Check if there are less than 3 member IDs already assigned
-    if (m_r.length < 3) {
-        let m_id;
-        
-        // Generate a random ID from 0 to 2
-        do {
-            m_id = Math.floor(Math.random() * 3);
-        } while (m_r.includes(m_id.toString()));
-        
-        // Assign the new ID to the member
-        rooms[rc][m_id] = { sid: s_id, num: 0 };
-        return m_id;
-    } else {
-        return -1; // No more IDs available
+    // Check if the room already has 2 members
+    if (m_r.length === 2) {
+        return -1; // Room is full
     }
+    
+    // Determine the ID to assign based on current room state
+    let m_id;
+    if (m_r.length === 0) {
+        m_id = 2; // First member gets ID 2
+    } else if (m_r.length === 1) {
+        m_id = 3; // Second member gets ID 3
+    } else {
+        return -1; // Invalid state, as room has more than 2 members
+    }
+    
+    // Assign the new ID to the member
+    rooms[rc][m_id] = { sid: s_id, num: 0 };
+    return m_id;
 }
+
 
 //to delete the extra place when (only one) user refreshes.
 function deleteThisid(id){
