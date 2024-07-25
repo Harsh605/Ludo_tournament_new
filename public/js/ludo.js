@@ -1388,22 +1388,20 @@ function iKill(id, pid) {
   let boss = PLAYERS[id].myPieces[pid];
   for (let i = 0; i < MYROOM.length; i++) {
     for (let j = 0; j < 4; j++) {
-      let otherPiece = PLAYERS[MYROOM[i]].myPieces[j];
       if (
         MYROOM[i] != id &&
-        boss.x === otherPiece.x &&
-        boss.y === otherPiece.y
+        boss.x == PLAYERS[MYROOM[i]].myPieces[j].x &&
+        boss.y == PLAYERS[MYROOM[i]].myPieces[j].y
       ) {
         if (!inAhomeTile(id, pid)) {
-          otherPiece.kill(); // Call kill on the other player's piece
-          return 1; // Return 1 to indicate a piece was killed
+          PLAYERS[MYROOM[i]].myPieces[j].kill();
+          return 1;
         }
       }
     }
   }
-  return 0; // Return 0 if no piece was killed
+  return 0;
 }
-
 
 function inAhomeTile(id, pid) {
   for (let i = 0; i < 4; i++) {
