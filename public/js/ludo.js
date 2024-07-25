@@ -179,12 +179,12 @@ let homeTilePos = {
   },
 };
 
-// Update the safeSquares definition to include the starting position (-1)
+// Define safe squares (stamps) for each player
 const safeSquares = {
-  0: [-1, 0, 8, 13, 21, 26, 34, 39, 47],
-  1: [-1, 0, 8, 13, 21, 26, 34, 39, 47],
-  2: [-1, 0, 8, 13, 21, 26, 34, 39, 47],
-  3: [-1, 0, 8, 13, 21, 26, 34, 39, 47]
+  0: [0, 8, 13, 21, 26, 34, 39, 47],  // Adjust these indices as needed
+  1: [0, 8, 13, 21, 26, 34, 39, 47],
+  2: [0, 8, 13, 21, 26, 34, 39, 47],
+  3: [0, 8, 13, 21, 26, 34, 39, 47]
 };
 
 class Player {
@@ -424,6 +424,52 @@ class Piece {
   //   }
   // }
 
+    // Add this method to the Piece class
+    isOnSafeSquare() {
+      return safeSquares[this.color_id].includes(this.pos);
+    }
+  
+    // Modify the update method in the Piece class
+    update(num) {
+      if (this.pos != -1 && this.pos + num <= 56) {
+        for (let i = this.pos; i < this.pos + num; i++) {
+          this.path[i](this.color_id, this.Pid);
+        }
+        this.pos += num;
+        if (this.pos == 56) {
+          window.PLAYERS[this.color_id].won += 1;
+        } else {
+          this.checkForKill();
+        }
+      } else if (num == 6 && this.pos == -1) {
+        this.x = homeTilePos[this.color_id][0].x;
+        this.y = homeTilePos[this.color_id][0].y;
+        this.pos = 0;
+        this.checkForKill();
+      }
+    }
+  
+    // Add this new method to the Piece class
+    checkForKill() {
+      if (this.isOnSafeSquare()) {
+        return;  // Don't kill on safe squares
+      }
+  
+      for (let playerId in window.PLAYERS) {
+        if (playerId !== this.color_id) {
+          let otherPlayer = window.PLAYERS[playerId];
+          for (let pieceId in otherPlayer.myPieces) {
+            let otherPiece = otherPlayer.myPieces[pieceId];
+            if (otherPiece.pos !== -1 && !otherPiece.isOnSafeSquare() &&
+                Math.abs(this.x - otherPiece.x) < 5 * scaleX &&
+                Math.abs(this.y - otherPiece.y) < 5 * scaleY) {
+              otherPiece.kill();
+            }
+          }
+        }
+      }
+    }
+
   oneStepToRight(id, pid) {
     window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
     console.log("to r", this.x, this.y, typeof this.x, typeof this.y);
@@ -468,49 +514,9 @@ class Piece {
     console.log("to 315", this.x, this.y, typeof this.x, typeof this.y);
   }
 
-  isOnSafeSquare() {
-    return safeSquares[this.color_id].includes(this.pos);
-  }
 
-  update(num) {
-    if (this.pos != -1 && this.pos + num <= 56) {
-      for (let i = 0; i < num; i++) {
-        this.path[this.pos + i](this.color_id, this.Pid);
-      }
-      this.pos += num;
-      if (this.pos == 56) {
-        window.PLAYERS[this.color_id].won += 1;
-      } else {
-        this.checkForKill();
-      }
-    } else if (num == 6 && this.pos == -1) {
-      this.x = homeTilePos[this.color_id][0].x;
-      this.y = homeTilePos[this.color_id][0].y;
-      this.pos = 0;
-      this.checkForKill();
-    }
-  }
 
-  checkForKill() {
-    if (this.isOnSafeSquare()) {
-      return;  // Don't kill if the current piece is on a safe square
-    }
-
-    for (let playerId in window.PLAYERS) {
-      if (playerId !== this.color_id) {
-        let otherPlayer = window.PLAYERS[playerId];
-        for (let pieceId in otherPlayer.myPieces) {
-          let otherPiece = otherPlayer.myPieces[pieceId];
-          if (otherPiece.pos !== -1 && !otherPiece.isOnSafeSquare() &&
-              Math.abs(this.x - otherPiece.x) < 25 * scaleX &&
-              Math.abs(this.y - otherPiece.y) < 25 * scaleY) {
-            otherPiece.kill();
-          }
-        }
-      }
-    }
-  }
-
+  // The kill method remains the same
   kill() {
     this.x = allPiecesePos[this.color_id][this.Pid].x;
     this.y = allPiecesePos[this.color_id][this.Pid].y;
