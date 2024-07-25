@@ -206,6 +206,26 @@
           opacity: 1;
         }
 
+        @keyframes glowing-border {
+          0% {
+            border-color: yellow;
+            box-shadow: 0 0 5px yellow;
+          }
+          50% {
+            border-color: transparent;
+            box-shadow: 0 0 10px yellow;
+          }
+          100% {
+            border-color: yellow;
+            box-shadow: 0 0 5px yellow;
+          }
+        }
+
+        .animated-border {
+          animation: glowing-border 1s infinite;
+        }
+
+
        
   </style>
 

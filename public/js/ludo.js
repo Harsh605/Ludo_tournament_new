@@ -624,7 +624,7 @@ socket.on("connect", function () {
     await PLAYERS[data.id].myPieces[data.pid].update(data.num);
     if (iKill(data.id, data.pid)) {
       outputMessage({ msg: "Oops got killed", id: data.id }, 5);
-      alert({ msg: "Oops got killed", id: data.id }, 5)
+      //alert({ msg: "Oops got killed", id: data.id }, 5)
       allPlayerHandler();
     } else {
       allPlayerHandler();
@@ -1150,18 +1150,46 @@ function diceAction() {
 //     });
 // }
 
+// --------
+
+// function togglePlayerTurn(isPlayer1Turn) {
+//   const player1 = document.getElementById("isPlayer1");
+//   const player2 = document.getElementById("isPlayer2");
+
+//   if (isPlayer1Turn) {
+//     player1.style.border = "3px solid yellow";
+//     player2.style.border = "none";
+//   } else {
+//     player1.style.border = "none";
+//     player2.style.border = "3px solid yellow";
+//   }
+// }
+
 function togglePlayerTurn(isPlayer1Turn) {
   const player1 = document.getElementById("isPlayer1");
   const player2 = document.getElementById("isPlayer2");
 
+  // Remove the animation class from both players
+  player1.classList.remove("animated-border");
+  player2.classList.remove("animated-border");
+
   if (isPlayer1Turn) {
     player1.style.border = "3px solid yellow";
     player2.style.border = "none";
+    player1.classList.add("animated-border");
   } else {
     player1.style.border = "none";
     player2.style.border = "3px solid yellow";
+    player2.classList.add("animated-border");
   }
+
+  // Stop the animation after 10 seconds
+  setTimeout(() => {
+    player1.classList.remove("animated-border");
+    player2.classList.remove("animated-border");
+  }, 10000); // 10 seconds
 }
+
 
 //Initialise the game with the one who created the room.
 function StartTheGame() {
