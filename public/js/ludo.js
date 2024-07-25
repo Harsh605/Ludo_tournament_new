@@ -624,6 +624,7 @@ socket.on("connect", function () {
     await PLAYERS[data.id].myPieces[data.pid].update(data.num);
     if (iKill(data.id, data.pid)) {
       outputMessage({ msg: "Oops got killed", id: data.id }, 5);
+      alert({ msg: "Oops got killed", id: data.id }, 5)
       allPlayerHandler();
     } else {
       allPlayerHandler();
