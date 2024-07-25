@@ -383,13 +383,14 @@ class Piece {
     }
   }
 
+  // In the Piece constructor, modify the image drawing
   draw() {
     ctx.drawImage(
       this.image,
       this.x,
       this.y,
-      50 / (750 / styleHeight),
-      50 / (750 / styleWidth)
+      50 * scaleX,
+      50 * scaleY
     );
   }
 
@@ -411,46 +412,46 @@ class Piece {
   }
 
   oneStepToRight(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x += 50 / (750 / styleHeight);
+    window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
     console.log("to r", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToLeft(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x -= 50 / (750 / styleHeight);
+    window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
     console.log("to l", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToTop(id, pid) {
-    window.PLAYERS[id].myPieces[pid].y -= 50 / (750 / styleWidth);
+    window.PLAYERS[id].myPieces[pid].y -= 50  * scaleY;
     console.log("to t", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToBottom(id, pid) {
-    window.PLAYERS[id].myPieces[pid].y += 50 / (750 / styleWidth);
+    window.PLAYERS[id].myPieces[pid].y += 50  * scaleY;
     console.log("to b", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards45(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x += 50 / (750 / styleHeight);
-    window.PLAYERS[id].myPieces[pid].y -= 50 / (750 / styleWidth);
+    window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
+    window.PLAYERS[id].myPieces[pid].y -= 50  * scaleY;
     console.log("to 45", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards135(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x -= 50 / (750 / styleHeight);
-    window.PLAYERS[id].myPieces[pid].y -= 50 / (750 / styleWidth);
+    window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
+    window.PLAYERS[id].myPieces[pid].y -= 50  * scaleY;
     console.log("to 135", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards225(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x -= 50 / (750 / styleHeight);
-    window.PLAYERS[id].myPieces[pid].y += 50 / (750 / styleWidth);
+    window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
+    window.PLAYERS[id].myPieces[pid].y += 50  * scaleY;
     console.log("to 225", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards315(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x += 50 / (750 / styleHeight);
-    window.PLAYERS[id].myPieces[pid].y += 50 / (750 / styleWidth);
+    window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
+    window.PLAYERS[id].myPieces[pid].y += 50  * scaleY;
     console.log("to 315", this.x, this.y, typeof this.x, typeof this.y);
   }
 
