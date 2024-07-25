@@ -1561,17 +1561,14 @@ async function userLose() {
     hideLoader();
     await sendWebSocketMessage("pageReloadSocketCall");
     console.log(response);
-    setTimeout(()=>{
-      swal({
-        title: "Time out...",
-        text: `You lose this match.`,
-        icon: "error",
-        buttons: true,
-      })
-          window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
-            "game_id"
-          )}`;
-    },1000)
+    swal({
+      title: "Time out...",
+      text: `You lose this match.`,
+      icon: "error",
+    })
+        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+          "game_id"
+        )}`;
      
   } catch (e) {
     console.log(e);
