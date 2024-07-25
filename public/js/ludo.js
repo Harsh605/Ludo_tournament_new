@@ -1326,7 +1326,7 @@ function chanceRotation(id, num) {
 //draws 4 x 4 = 16 pieces per call
 function allPlayerHandler() {
   console.log("all player handler");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, styleWidth, styleHeight);
   for (let i = 0; i < Object.keys(PLAYERS).length; i++) {
     PLAYERS[MYROOM[i]].draw();
   }
@@ -1601,7 +1601,7 @@ async function userLose() {
     }).then(() => {
       setTimeout(() => {
         window.location.href = `http://ludowinners.in/viewgame/${urlParams.get("game_id")}`;
-      }, 5000); // 5000 milliseconds = 5 seconds
+      }, 1000); // 5000 milliseconds = 5 seconds
     });
     
   } catch (e) {
