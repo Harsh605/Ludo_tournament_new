@@ -105,20 +105,25 @@ let myid = -1;
 let chance = Number(-1);
 var PLAYERS = {};
 
+
+
 var canvas = document.getElementById("theCanvas");
 var ctx = canvas.getContext("2d");
 
-// Get the dimensions from the style
+// At the beginning of the file, add these global variables
+let CANVAS_SIZE = 750; // Original canvas size
+let scaleX, scaleY;
+
 var styleWidth = parseInt(window.getComputedStyle(canvas).width);
 var styleHeight = parseInt(window.getComputedStyle(canvas).height);
 
-// Set the canvas dimensions to match the style dimensions
 canvas.width = styleWidth;
 canvas.height = styleHeight;
 
+
 // Scale factor
-var scaleX = styleWidth / 750;
-var scaleY = styleHeight / 750;
+scaleX = styleWidth / CANVAS_SIZE;
+scaleY = styleHeight / CANVAS_SIZE;
 
 // Function to scale positions
 function scalePosition(position) {
@@ -172,6 +177,14 @@ let homeTilePos = {
     0: scalePosition({ x: 300, y: 650 }),
     1: scalePosition({ x: 100, y: 400 }),
   },
+};
+
+// Define safe squares (stamps) for each player
+const safeSquares = {
+  0: [0, 8, 13, 21, 26, 34, 39, 47],  // Adjust these indices as needed
+  1: [0, 8, 13, 21, 26, 34, 39, 47],
+  2: [0, 8, 13, 21, 26, 34, 39, 47],
+  3: [0, 8, 13, 21, 26, 34, 39, 47]
 };
 
 class Player {
@@ -394,22 +407,22 @@ class Piece {
     );
   }
 
-  update(num) {
-    if (this.pos != -1 && this.pos + num <= 56) {
-      for (let i = this.pos; i < this.pos + num; i++) {
-        this.path[i](this.color_id, this.Pid);
-        console.log("hemilo selmon");
-      }
-      this.pos += num;
-      if (this.pos == 56) {
-        window.PLAYERS[this.color_id].won += 1;
-      }
-    } else if (num == 6 && this.pos == -1) {
-      this.x = homeTilePos[this.color_id][0].x;
-      this.y = homeTilePos[this.color_id][0].y;
-      this.pos = 0;
-    }
-  }
+  // update(num) {
+  //   if (this.pos != -1 && this.pos + num <= 56) {
+  //     for (let i = this.pos; i < this.pos + num; i++) {
+  //       this.path[i](this.color_id, this.Pid);
+  //       console.log("hemilo selmon");
+  //     }
+  //     this.pos += num;
+  //     if (this.pos == 56) {
+  //       window.PLAYERS[this.color_id].won += 1;
+  //     }
+  //   } else if (num == 6 && this.pos == -1) {
+  //     this.x = homeTilePos[this.color_id][0].x;
+  //     this.y = homeTilePos[this.color_id][0].y;
+  //     this.pos = 0;
+  //   }
+  // }
 
   oneStepToRight(id, pid) {
     window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
@@ -422,39 +435,86 @@ class Piece {
   }
 
   oneStepToTop(id, pid) {
-    window.PLAYERS[id].myPieces[pid].y -= 50  * scaleY;
+    window.PLAYERS[id].myPieces[pid].y -= 50 * scaleY;
     console.log("to t", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToBottom(id, pid) {
-    window.PLAYERS[id].myPieces[pid].y += 50  * scaleY;
+    window.PLAYERS[id].myPieces[pid].y += 50 * scaleY;
     console.log("to b", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards45(id, pid) {
     window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
-    window.PLAYERS[id].myPieces[pid].y -= 50  * scaleY;
+    window.PLAYERS[id].myPieces[pid].y -= 50 * scaleY;
     console.log("to 45", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards135(id, pid) {
     window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
-    window.PLAYERS[id].myPieces[pid].y -= 50  * scaleY;
+    window.PLAYERS[id].myPieces[pid].y -= 50 * scaleY;
     console.log("to 135", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards225(id, pid) {
     window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
-    window.PLAYERS[id].myPieces[pid].y += 50  * scaleY;
+    window.PLAYERS[id].myPieces[pid].y += 50 * scaleY;
     console.log("to 225", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards315(id, pid) {
     window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
-    window.PLAYERS[id].myPieces[pid].y += 50  * scaleY;
+    window.PLAYERS[id].myPieces[pid].y += 50 * scaleY;
     console.log("to 315", this.x, this.y, typeof this.x, typeof this.y);
   }
 
+  // Add this method to the Piece class
+  isOnSafeSquare() {
+    return safeSquares[this.color_id].includes(this.pos);
+  }
+
+  // Modify the update method in the Piece class
+  update(num) {
+    if (this.pos != -1 && this.pos + num <= 56) {
+      for (let i = this.pos; i < this.pos + num; i++) {
+        this.path[i](this.color_id, this.Pid);
+      }
+      this.pos += num;
+      if (this.pos == 56) {
+        window.PLAYERS[this.color_id].won += 1;
+      } else {
+        this.checkForKill();
+      }
+    } else if (num == 6 && this.pos == -1) {
+      this.x = homeTilePos[this.color_id][0].x;
+      this.y = homeTilePos[this.color_id][0].y;
+      this.pos = 0;
+      this.checkForKill();
+    }
+  }
+
+  // Add this new method to the Piece class
+  checkForKill() {
+    if (this.isOnSafeSquare()) {
+      return;  // Don't kill on safe squares
+    }
+
+    for (let playerId in window.PLAYERS) {
+      if (playerId !== this.color_id) {
+        let otherPlayer = window.PLAYERS[playerId];
+        for (let pieceId in otherPlayer.myPieces) {
+          let otherPiece = otherPlayer.myPieces[pieceId];
+          if (otherPiece.pos !== -1 && !otherPiece.isOnSafeSquare() &&
+              Math.abs(this.x - otherPiece.x) < 5 * scaleX &&
+              Math.abs(this.y - otherPiece.y) < 5 * scaleY) {
+            otherPiece.kill();
+          }
+        }
+      }
+    }
+  }
+
+  // The kill method remains the same
   kill() {
     this.x = allPiecesePos[this.color_id][this.Pid].x;
     this.y = allPiecesePos[this.color_id][this.Pid].y;
@@ -500,8 +560,6 @@ socket.on("connect", function () {
       "game_id"
     )}`;
   });
-
- 
 
   socket.on("is-it-your-chance", function (data) {
     if (data === myid) {
@@ -645,23 +703,9 @@ socket.on("connect", function () {
   socket.on("winner", async function (data) {
     //showToast(`you are the winner ${USERNAMES[id]}`);
     console.log(data);
+    showLoader();
     await userLiveWinn(data.token, data.game_id);
-    // swal({
-    //     title: "Winner",
-    //     text: `you are the winner ${USERNAMES[id]}`,
-    //     icon: "success",
-    //     buttons: true,
-    //     dangerMode: true,
-    //   })
-    //   .then((willDelete) => {
-    //     if (willDelete) {
-    //       window.localStorage.clear();
-    //       window.location.href = "/"
-    //     }else{
-    //       window.localStorage.clear();
-    //       window.location.href = "/"
-    //     }
-    //   });
+    hideLoader();
   });
 
   async function userLiveWinn(t, g) {
