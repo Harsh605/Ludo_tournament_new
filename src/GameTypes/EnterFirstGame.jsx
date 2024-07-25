@@ -782,7 +782,7 @@ function EnterFirstGame(props) {
                                         <div className='text-center'>
                                             <div>{selectedMode === "offSite" ? "Room Code" : null}</div>
                                             {
-                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }}><a href={`${baseURL}/ludo/${Game?.Room_code}?token=${access_token}&game_id=${path}`} target="_blank" className='text-white no-underline'>Play game</a></button>
+                                                selectedMode === "offSite" ? <span>{Game?.Room_code}</span> : <button className='history-btn mt-2' style={{ width: '12rem', borderRadius: '6px' }}><a href={`${baseURL}/ludo/${Game?.Room_code}?token=${access_token}&game_id=${path}`} target="_blank" onClick={() => socket.emit('pageReloadSocketCall')} className='text-white no-underline'>Play game</a></button>
                                             }
                                             {/* <span>{Game?.Room_code}</span> */}
                                             
