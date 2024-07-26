@@ -135,28 +135,28 @@ function scalePosition(position) {
 
 let allPiecesePos = {
   0: [
-    scalePosition({ x: 82, y: 80 }),
-    scalePosition({ x: 172, y: 80 }),
-    scalePosition({ x: 172, y: 170 }),
-    scalePosition({ x: 82, y: 170 }),
+    scalePosition({ x: 80, y: 65 }),
+    scalePosition({ x: 172, y: 65 }),
+    scalePosition({ x: 172, y: 155 }),
+    scalePosition({ x: 82, y: 155 }),
   ],
   1: [
-    scalePosition({ x: 532, y: 80 }),
-    scalePosition({ x: 625, y: 80 }),
-    scalePosition({ x: 533, y: 175 }),
-    scalePosition({ x: 625, y: 175 }),
+    scalePosition({ x: 532, y: 65 }),
+    scalePosition({ x: 625, y: 65 }),
+    scalePosition({ x: 533, y: 155 }),
+    scalePosition({ x: 625, y: 155 }),
   ],
   2: [
-    scalePosition({ x: 533, y: 533 }),
-    scalePosition({ x: 625, y: 533 }),
-    scalePosition({ x: 624, y: 625 }),
-    scalePosition({ x: 535, y: 624 }),
+    scalePosition({ x: 533, y: 515 }),
+    scalePosition({ x: 625, y: 515 }),
+    scalePosition({ x: 624, y: 605 }),
+    scalePosition({ x: 535, y: 605 }),
   ],
   3: [
-    scalePosition({ x: 82, y: 530 }),
-    scalePosition({ x: 172, y: 530 }),
-    scalePosition({ x: 173, y: 620 }),
-    scalePosition({ x: 80, y: 620 }),
+    scalePosition({ x: 82, y: 515 }),
+    scalePosition({ x: 172, y: 515 }),
+    scalePosition({ x: 173, y: 605 }),
+    scalePosition({ x: 80, y: 605 }),
   ],
 };
 
@@ -398,7 +398,7 @@ class Piece {
 
   // In the Piece constructor, modify the image drawing
   draw() {
-    const scaleFactor = 1.7; // Increase size by 20%
+    const scaleFactor = 1.5; // Increase size by 20%
     const newWidth = 50 * scaleX * scaleFactor;
     const newHeight = 50 * scaleY * scaleFactor;
     
