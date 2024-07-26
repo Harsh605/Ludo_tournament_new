@@ -188,6 +188,7 @@ function SecondPage({ walletUpdate }) {
     const settingData = async () => {
         const data = axios.get(baseURL + "/settings/data", {}).then((res) => {
             setSettings(res?.data);
+            localStorage.setItem("gameMode", res?.data?.isOnSiteLudoPlay == 1 ? "onSite" : res?.data?.isOffSiteLudoPlay == 1 ? "offSite" : "offSite")
 
         });
     }
@@ -756,8 +757,8 @@ function SecondPage({ walletUpdate }) {
 
     useEffect(() => {
         // Get the gameMode from localStorage when the component mounts
-        localStorage.setItem("gameMode", settings?.isOnSiteLudoPlay == 1 ? "onSite" : settings?.isOffSiteLudoPlay == 1 ? "offSite" : "offSite")
-        const savedGameMode = localStorage.getItem("gameMode") || settings?.isOnSiteLudoPlay == 1 ? "onSite" : settings?.isOffSiteLudoPlay == 1 ? "offSite" : "offSite";
+
+        const savedGameMode = localStorage.getItem("gameMode");
         if (savedGameMode) {
             setSelectedMode(savedGameMode);
         }
