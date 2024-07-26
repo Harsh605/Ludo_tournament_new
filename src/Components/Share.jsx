@@ -22,7 +22,7 @@ import Swal from 'sweetalert2';
 const SharePage = () => {
     const [activeCard, setActiveCard] = useState(null);
     const [enable, setEnable] = useState(false);
-    const [linkToCopy, setLinkToCopy] = useState('https://khelludokhel.info/#/RegisterPage');
+    const [linkToCopy, setLinkToCopy] = useState('https://ludowinners.in/#/RegisterPage');
     // const [linkToCopy, setLinkToCopy] = useState('http://localhost:3002/#/RegisterPage');
     const [showDialog, setShowDialog] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);

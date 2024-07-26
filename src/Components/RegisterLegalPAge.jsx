@@ -54,7 +54,7 @@ function RegisterLegalPage() {
                                 <div className="row">
                                     <div className="col-12">
                                         <p className="text-light lh-lg">
-                                            These <strong className="text-purple">terms and conditions</strong>  of use (“Terms”) along with privacy policy (“Privacy Policy”) forms a legally binding agreement (“Agreement”) between You and us <a href className="text-warning">( khelludokhel.info )</a>
+                                            These <strong className="text-purple">terms and conditions</strong>  of use (“Terms”) along with privacy policy (“Privacy Policy”) forms a legally binding agreement (“Agreement”) between You and us <a href className="text-warning">( ludowinners.in )</a>
                                             <br />
                                             Hence, We insist that You read these Terms and Privacy Policy and let Us know if You have any questions regarding the same. We will try Our best to answer Your queries.
                                             <br />

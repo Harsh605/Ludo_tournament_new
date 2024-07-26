@@ -51,7 +51,7 @@ const UpiPaymentGateway = ({ userData, setting }) => {
       udf1: userData?._id,
       udf2: String(userData?.Wallet_balance),
       //   redirect_url: `${baseURL}/getUpiGatewayPaymentDetails`,
-      redirect_url: `https://backend.khelludokhel.info/getUpiGatewayPaymentDetails`,
+      redirect_url: `https://backend.ludowinners.in/getUpiGatewayPaymentDetails`,
     };
 
     try {

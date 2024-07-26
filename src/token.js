@@ -6,8 +6,8 @@ export const token1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjI1LCJyb2xl
 
 // export const baseURL = "https://192.168.1.242:3000/api/v1";
 
-export const baseURL = "http://93.127.199.145:5010";
-export const socketURL = "ws://93.127.199.145:7001";
+export const baseURL = "https://api.ludowinners.in";
+export const socketURL = "wss://socket.ludowinners.in";
 
 // export const baseURL = "http://localhost:5010";
 // export const socketURL = "ws://localhost:7001";

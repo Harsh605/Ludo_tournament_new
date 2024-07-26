@@ -1153,7 +1153,7 @@ function EnterFirstGame(props) {
                             <img style={{ marginLeft: '10px', width: "80% ", borderRadius: '50%' }} src="./images/Ludolkjpg.jpg" alt />
                         </picture>
                         <div className="rcBanner-text">Play Ludo &amp; <span className="rcBanner-text-bold">Win Real Cash!</span></div>
-                        <div className="rcBanner-footer">For best experience, open&nbsp;<a href="/">khelludokhel.info</a>&nbsp;on&nbsp;&nbsp;chrome </div> */}
+                        <div className="rcBanner-footer">For best experience, open&nbsp;<a href="/">ludowinners.in</a>&nbsp;on&nbsp;&nbsp;chrome </div> */}
                     </div>
                 </div >
             </section>

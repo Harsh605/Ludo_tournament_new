@@ -237,7 +237,7 @@ function HistoryPage() {
                 <DialogTitle>Image</DialogTitle>
                 <DialogContent>
                     {/* Add your dialog content here */}
-                    {imageSrc ? <img src={`https://backened.khelludokhel.info/api/v1/image/${imageSrc}`} alt="Preview" /> : 'Loading...'}
+                    {imageSrc ? <img src={`https://backened.ludowinners.in/api/v1/image/${imageSrc}`} alt="Preview" /> : 'Loading...'}
                     {/* <p>This is the dialog content.</p> */}
                 </DialogContent>
             </Dialog>
@@ -463,7 +463,7 @@ function HistoryPage() {
                             <img style={{ width: "100% ", borderRadius: '50%' }} src="./images/Ludolkjpg.jpg" alt />
                         </picture>
                         <div className="rcBanner-text">Play Ludo  <span className="rcBanner-text-bold">Win Real Cash!</span></div>
-                        <div className="rcBanner-footer">For best experience  , open&nbsp;<span style={{ cursor: "pointer", color: '#ffb900' }}>khelludokhel.info</span>
+                        <div className="rcBanner-footer">For best experience  , open&nbsp;<span style={{ cursor: "pointer", color: '#ffb900' }}>ludowinners.in</span>
                             &nbsp;on&nbsp;&nbsp;chrome </div> */}
                     </div>
                 </div>

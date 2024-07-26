@@ -20,7 +20,7 @@ function LegalPage() {
     const [activeCard, setActiveCard] = useState(null);
     const [enable, setEnable] = useState(false);
     const [userData, setUserData] = useState({});
-    // const [linkToCopy, setLinkToCopy] = useState('http://khelludokhel.info');
+    // const [linkToCopy, setLinkToCopy] = useState('http://ludowinners.in');
     // const [showDialog, setShowDialog] = useState(false);
     // const [openDialog, setOpenDialog] = useState(false);
 
@@ -84,7 +84,7 @@ function LegalPage() {
                                     <div className="row">
                                         <div className="col-12">
                                             <p className="text-light lh-lg">
-                                                These <strong className="text-purple">terms and conditions</strong>  of use (“Terms”) along with privacy policy (“Privacy Policy”) forms a legally binding agreement (“Agreement”) between You and us <a href=" https://khelludokhel.info" className="text-warning"> </a>
+                                                These <strong className="text-purple">terms and conditions</strong>  of use (“Terms”) along with privacy policy (“Privacy Policy”) forms a legally binding agreement (“Agreement”) between You and us <a href=" https://ludowinners.in" className="text-warning"> </a>
                                                 <br />
                                                 Hence, We insist that You read these Terms and Privacy Policy and let Us know if You have any questions regarding the same. We will try Our best to answer Your queries.
                                                 <br />
@@ -225,7 +225,7 @@ function LegalPage() {
                                         <p className="text-light lh-lg">
                                             <strong className="text-purple">Introduction</strong>
                                             <br />
-                                            This document explains  how  <strong className="text-orange">Ludo Players</strong> <a href=" https://khelludokhel.info" className="text-warning"> https://khelludokhel.info</a> collects, processes, stores and/or shares any personal data and/or information from users (jointly referred to as “Information”). By accessing and/or using the Services you consent the collection, transfer, manipulation, storage, disclosure and other uses of your information as described in this Privacy Policy. If you have any concerns about providing data, or having it used in any manner permitted in this Privacy Policy, you should not use the Services. As set out in the terms and conditions relating the Services (the “Terms”), you must be at least at legal age <strong className="text-orange">(minimum age of 18 years)</strong>  to access and/or use the Services, or if legally possible, to access with your legal guardian consent, due authorization and agreement with these Privacy Policy.
+                                            This document explains  how  <strong className="text-orange">Ludo Players</strong> <a href=" https://ludowinners.in" className="text-warning"> https://ludowinners.in</a> collects, processes, stores and/or shares any personal data and/or information from users (jointly referred to as “Information”). By accessing and/or using the Services you consent the collection, transfer, manipulation, storage, disclosure and other uses of your information as described in this Privacy Policy. If you have any concerns about providing data, or having it used in any manner permitted in this Privacy Policy, you should not use the Services. As set out in the terms and conditions relating the Services (the “Terms”), you must be at least at legal age <strong className="text-orange">(minimum age of 18 years)</strong>  to access and/or use the Services, or if legally possible, to access with your legal guardian consent, due authorization and agreement with these Privacy Policy.
                                             <br />
                                             <strong className="text-purple">The Information collected:</strong>
                                             <br />
@@ -281,9 +281,9 @@ function LegalPage() {
                                             <br />
                                             Ludo Players maintains appropriate technical and physical safeguards to protect Information against accidental or unlawful destruction or loss, alteration, unauthorized disclosures or access, and any other unlawful forms of processing of the data in its possession. However, Ludo Players does not guarantee that Information will not be accessed, disclosed, altered or destroyed by breach of any of the abovementioned safeguards. Information may be transferred to and/or stored at worldwide destinations. Ludo Players takes all steps reasonably necessary to ensure that Information is treated securely and in accordance with this Privacy Policy. In the event that Ludo Players is involved in a bankruptcy, merger, acquisition, reorganization or sale of assets, your information may be sold or transferred as part of that transaction. The undertakings in this Privacy Policy shall apply to the Information as transferred to the new entity.
                                             <br />
-                                            In the Services you may find links to third party websites. You understand that when you click on these links any data which you provide afterwards is subject to that third party's privacy policy and not to Ludo Players’s. Consequently, Ludo Players takes no responsibility for the content, safety or security of any third party website. The Services are not directed to persons under legal age. Ludo Players does not knowingly collect any Information from children under legal age. If you become aware that a child under legal age has provided with personal information, steps will be taken to remove such information and terminate such account. If you become aware that any child has provided personal information without the essential legal guardian consent, please contact: <a href=" support@khelludokhel.info" className="text-warning"> support@khelludokhel.info</a>. Irrespective of which country you reside in or supply information from, you authorize Ludo Players to store and/or use the Information according to this Privacy Policy in any country where Ludo Players may operate.
+                                            In the Services you may find links to third party websites. You understand that when you click on these links any data which you provide afterwards is subject to that third party's privacy policy and not to Ludo Players’s. Consequently, Ludo Players takes no responsibility for the content, safety or security of any third party website. The Services are not directed to persons under legal age. Ludo Players does not knowingly collect any Information from children under legal age. If you become aware that a child under legal age has provided with personal information, steps will be taken to remove such information and terminate such account. If you become aware that any child has provided personal information without the essential legal guardian consent, please contact: <a href=" support@ludowinners.in" className="text-warning"> support@ludowinners.in</a>. Irrespective of which country you reside in or supply information from, you authorize Ludo Players to store and/or use the Information according to this Privacy Policy in any country where Ludo Players may operate.
                                             <br />
-                                            Not with standing anything to the contrary in this Policy, Ludo Players may preserve or disclose your information to the extent reasonably necessary to comply with a law, regulation or legal request; to protect the safety of any person; to address fraud, security or technical issues; or to protect Ludo Players's rights or property. However, nothing in this Privacy Policy is intended to limit any legal defenses or objections that you may have to a third party’s, including a government’s request to disclose your information. We wants to make sure that your Information is accurate and up to date. You may ask to modify, correct or remove information with the tools and account settings of the Service, or otherwise by contacting Ludo Players at support@khelludokhel.info.
+                                            Not with standing anything to the contrary in this Policy, Ludo Players may preserve or disclose your information to the extent reasonably necessary to comply with a law, regulation or legal request; to protect the safety of any person; to address fraud, security or technical issues; or to protect Ludo Players's rights or property. However, nothing in this Privacy Policy is intended to limit any legal defenses or objections that you may have to a third party’s, including a government’s request to disclose your information. We wants to make sure that your Information is accurate and up to date. You may ask to modify, correct or remove information with the tools and account settings of the Service, or otherwise by contacting Ludo Players at support@ludowinners.in.
                                             <br />
                                             If any court or other competent authority finds any of this Privacy Policy to be invalid or unenforceable, the other terms of this Privacy Policy will not be affected. This Privacy Policy is governed by and interpreted in accordance with the laws of Nagaland State Government as well as Republic of India. Any dispute arising in connection with this Privacy Policy will be subject to the exclusive jurisdiction of the courts located in the city of Jaipur/Rajasthan – India. You consent the jurisdiction and venue in such courts and waive any objection as to inconvenient forum Ludo Players may revise or amend this Privacy Policy from&nbsp;time&nbsp;to&nbsp;time.
                                         </p>
@@ -306,14 +306,14 @@ function LegalPage() {
                                             <br />
                                             We are an HTML5 game-publishing company and our mission is to make accessing games fast and easy by removing the friction of app-installs.
                                             <br />
-                                            Ludo Players is a skill-based real-money gaming platform accessible only for our users in India. It is accessible on <a href="https://khelludokhel.info" className="text-warning">https://khelludokhel.info</a> . On Ludo Players, users can compete for real cash in Tournaments and Battles. They can encash their winnings via popular options such as Paytm Wallet, UPI or Phonepe.
+                                            Ludo Players is a skill-based real-money gaming platform accessible only for our users in India. It is accessible on <a href="https://ludowinners.in" className="text-warning">https://ludowinners.in</a> . On Ludo Players, users can compete for real cash in Tournaments and Battles. They can encash their winnings via popular options such as Paytm Wallet, UPI or Phonepe.
                                             <br />
                                             <strong className="text-purple">Our Games</strong>
                                             <br />
                                             We have a wide-variety of high-quality, premium HTML5 games, online games. Our games are especially compressed and optimised to work on low-end devices, uncommon browsers, and patchy internet speeds.
                                             <br />
                                             We have games across several popular categories: Arcade, Action, Adventure, Sports &amp; Racing, Strategy, Puzzle &amp; Logic. We also have a strong portfolio of multiplayer games such as Ludo, Chess, 8 Ball Pool, Carrom, Ludo Tournament Tic Tac Toe, Archery, Quiz, Chinese Checkers and more! Some of our popular titles are: Escape Run, Bubble Wipeout, Tower Twist, Cricket Gunda, Ludo With Friends. If you have any suggestions around new games that we should add or if you are a game developer yourself and want to work with us, don't hesitate to contact us on
-                                            <a href="support@khelludokhel.info " className="text-warning">support@khelludokhel.info </a>
+                                            <a href="support@ludowinners.in " className="text-warning">support@ludowinners.in </a>
                                         </p>
                                     </div>
                                 </div>
@@ -334,9 +334,9 @@ function LegalPage() {
                                             <br />
                                             +
                                             <br />
-                                            support@khelludokhel.info
+                                            support@ludowinners.in
                                             <br />
-                                            www.khelludokhel.info
+                                            www.ludowinners.in
                                             <br />
                                             <a href="support.html" className="text-warning">Contact&nbsp;us</a>
                                         </p>
@@ -353,7 +353,7 @@ function LegalPage() {
                             <img style={{ marginLeft: '10px', width: "80% ", borderRadius: '50%' }} src="./images/Ludolkjpg.jpg" alt />
                         </picture>
                         <div className="rcBanner-text">Play Ludo &amp; <span className="rcBanner-text-bold">Win Real Cash!</span></div>
-                        <div className="rcBanner-footer">For best experience, open&nbsp;<a href="/">khelludokhel.info</a>&nbsp;on&nbsp;&nbsp;chrome </div> */}
+                        <div className="rcBanner-footer">For best experience, open&nbsp;<a href="/">ludowinners.in</a>&nbsp;on&nbsp;&nbsp;chrome </div> */}
                     </div>
 
                 </div>
