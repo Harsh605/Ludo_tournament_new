@@ -14,7 +14,7 @@ let socket = io(path); // This is your existing socket connection
 let sockets; // This will be our WebSocket connection
 
 function initializeSocket() {
-  sockets = new WebSocket("ws://93.127.199.145:7001");
+  sockets = new WebSocket("wss://socket.ludowinners.in");
 
   function openFunc() {
     sockets.onopen = () => {
