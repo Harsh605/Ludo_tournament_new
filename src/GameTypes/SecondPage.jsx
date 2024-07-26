@@ -756,20 +756,20 @@ function SecondPage({ walletUpdate }) {
 
     useEffect(() => {
         // Get the gameMode from localStorage when the component mounts
-        const savedGameMode = localStorage.getItem("gameMode") || "offSite";
+        const savedGameMode = localStorage.getItem("gameMode") || settings?.isOnSiteLudoPlay == 1 ? "onSite" : settings?.isOffSiteLudoPlay == 1 ? "offSite" : "offSite";
         if (savedGameMode) {
             setSelectedMode(savedGameMode);
         }
     }, []);
 
-    const handleChange = (e) => {
-        const selectedMode = e.target.value;
-        if (selectedMode === "onSite" || selectedMode === "offSite") {
-            localStorage.setItem("gameMode", selectedMode);
-            setSelectedMode(selectedMode);
-            window.location.reload();
-        }
-    };
+    // const handleChange = (e) => {
+    //     const selectedMode = e.target.value;
+    //     if (selectedMode === "onSite" || selectedMode === "offSite") {
+    //         localStorage.setItem("gameMode", selectedMode);
+    //         setSelectedMode(selectedMode);
+    //         window.location.reload();
+    //     }
+    // };
 
     return (
         <>
