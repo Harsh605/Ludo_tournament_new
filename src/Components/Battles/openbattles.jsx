@@ -241,12 +241,7 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
                                                 alt=""
                                                 width='40px' height="40px"
                                                 style={{ borderTopLeftRadius: "50%", borderTopRightRadius: "50%", borderBottomRightRadius: "50%", borderBottomLeftRadius: "50%" }}
-                                            />) : (<img
-                                                src={`https://avatar.iran.liara.run/public/2`}
-                                                alt=""
-                                                width='40px' height="40px"
-                                                style={{ borderTopLeftRadius: "50%", borderTopRightRadius: "50%", borderBottomRightRadius: "50%", borderBottomLeftRadius: "50%" }}
-                                            />)}
+                                            />) : null }
                                         {/* </div> */}
                                         {/* <div style={{ lineHeight: 1 }}> */}
                                             <span className={''}>
