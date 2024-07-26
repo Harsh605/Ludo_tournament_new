@@ -13,12 +13,6 @@ function HistoryPage() {
     const [userData, setUserData] = useState({});
     const [itemsPerPage, setItemsPerPage] = useState(6); // Number of items to display per page
 
-
-
-
-
-
-
     const fetchdata = async (transactiontype) => {
         try {
             const accessToken = localStorage.getItem('access_token');

@@ -70,6 +70,30 @@ function SecondPage({ walletUpdate }) {
             Authorization: `Bearer ${access_token}`,
         };
 
+        let amount = JSON.parse(localStorage.getItem("battlePriceToSet"))
+
+        if(amount == 5000){
+            if(Game_Ammount > amount){
+                Swal.fire({
+                    title: 'Please enter under 50 to 5000 amount.',
+                    icon: "warning",
+                    confirmButtonText: "OK",
+                });
+                setLoading(false)
+                return
+            }
+        }else if(amount == 50000){
+            if(Game_Ammount < 50 || Game_Ammount > 50000){
+                Swal.fire({
+                    title: 'Please enter under 50 to 50000 amount.',
+                    icon: "warning",
+                    confirmButtonText: "OK",
+                });
+                setLoading(false)
+                return
+            }
+        }
+
         axios
             .post(
                 baseURL + `/challange/create`,
