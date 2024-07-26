@@ -2,4 +2,4 @@ export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInJvbGUiO
 
 
 export const baseURL = "https://api.ludowinners.in/";
-export const socketURL = "http://api.ludowinners.in/";
+export const socketURL = "https://api.ludowinners.in/";
