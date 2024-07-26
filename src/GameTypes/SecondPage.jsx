@@ -756,6 +756,7 @@ function SecondPage({ walletUpdate }) {
 
     useEffect(() => {
         // Get the gameMode from localStorage when the component mounts
+        localStorage.setItem("gameMode", settings?.isOnSiteLudoPlay == 1 ? "onSite" : settings?.isOffSiteLudoPlay == 1 ? "offSite" : "offSite")
         const savedGameMode = localStorage.getItem("gameMode") || settings?.isOnSiteLudoPlay == 1 ? "onSite" : settings?.isOffSiteLudoPlay == 1 ? "offSite" : "offSite";
         if (savedGameMode) {
             setSelectedMode(savedGameMode);
