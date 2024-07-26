@@ -236,17 +236,17 @@ const Openbattles = React.memo(({ key, allgame, user, deleteChallenge, getPost, 
 
                                     {/* <div className="text-center" style={{width: '115px'}}> */}
                                         {/* <div className="pl-2"> */}
-                                            {allgame.Accepetd_By.avatar ? (<img
+                                            {/* {allgame.Accepetd_By.avatar ? (<img
                                                 src={baseURL + `${allgame.Accepetd_By.avatar}`}
                                                 alt=""
                                                 width='40px' height="40px"
                                                 style={{ borderTopLeftRadius: "50%", borderTopRightRadius: "50%", borderBottomRightRadius: "50%", borderBottomLeftRadius: "50%" }}
-                                            />) : null }
+                                            />) : null } */}
                                         {/* </div> */}
                                         {/* <div style={{ lineHeight: 1 }}> */}
-                                            <span className={''}>
+                                            {/* <span className={''}>
                                                 &nbsp;&nbsp;{allgame.Accepetd_By.Name.slice(0, 6)}
-                                            </span>
+                                            </span> */}
                                         {/* </div> */}
                                     {/* </div> */}
                                 </div>
