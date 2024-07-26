@@ -652,6 +652,25 @@ socket.on("connect", function () {
       resumeHandler(data);
     }, 1000);
   });
+  socket.on("user-disconnected-popup", async function (data) {
+    
+    swal({
+         title: "Oppes..",
+          text: `Please wait for 30 second to rejoin after 30 second you will winn the match`,
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            return  
+          }else{
+           return
+          }
+        });
+    // Wait for 30 seconds before proceeding
+    
+  });
   
   socket.on("resume", function (data) {
     resume(data.id);

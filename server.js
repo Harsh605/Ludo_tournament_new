@@ -514,6 +514,7 @@ nsp.on('connection', (socket) => {
         let roomKey = deleteThisId(socket.id);
         if (roomKey) {
             console.log(rooms[roomKey.room], socket.id);
+            socket.to(roomKey.room).emit('user-disconnected-popup', roomKey.key);
             socketTimeout = setTimeout(() => {
                 
                 socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
