@@ -82,7 +82,6 @@ app.enable('trust proxy');
 //
 let nsp = io.of('/ludo');
 let spectate = io.of('/ludo/spectate');
-let socketTimeout;
 
 // nsp.on('connection',(socket)=>{
 //     console.log('A User has connected to the game');
@@ -311,39 +310,22 @@ nsp.on('connection', (socket) => {
     
     socket.on('fetch', (data, cb) => {
         try {
-            let roomCode = data;
-            if (!rooms[roomCode]) {
-                rooms[roomCode] = {};
-            }
-
-            let existingMember = Object.keys(rooms[roomCode]).find(key => rooms[roomCode][key].sid === socket.id);
-            let member_id;
-
-            if (existingMember) {
-                member_id = existingMember;
-            } else {
-                member_id = generate_member_id(socket.id, roomCode);
-            }
-
-            socket.join(roomCode);
-            clearTimeout(socketTimeout)
-            
+            let member_id = generate_member_id(socket.id, data);
+            socket.join(data);
             if (member_id !== -1) {
-                cb(Object.keys(rooms[roomCode]), member_id);
-                if (!existingMember) {
-                    socket.to(roomCode).emit('new-user-joined', { id: member_id });
-                }
+                cb(Object.keys(rooms[data]), member_id);
+                socket.to(data).emit('new-user-joined', { id: member_id });
             } else {
-                console.log('Room is full');
-                socket.emit('room-full');
+                console.log('There is someone with m_id = -1');
             }
         } catch (err) {
             if (err.name === 'TypeError') {
                 socket.emit('imposter');
             }
-            console.log("Error:", err, rooms);
+            console.log("hello", err, rooms);
         }
     });
+
     // socket.on('roll-dice', (data, cb) => {
     //     if (!rooms[data.room] || !rooms[data.room][data.id]) {
     //         console.log('Invalid room or player ID');
@@ -511,15 +493,13 @@ nsp.on('connection', (socket) => {
     });
 
     socket.on('disconnect', async () => {
-        let roomKey = deleteThisId(socket.id);
-        if (roomKey) {
+        let roomKey = deleteThisid(socket.id);
+        if (roomKey != undefined) {
             console.log(rooms[roomKey.room], socket.id);
-            socketTimeout = setTimeout(() => {
-                
-                socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+            socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
+            spectate.to(roomKey.room).emit('user-disconnected', roomKey.key); // Emitting to spectators
 
-            }, 30000);
-
+            // Check if the room is empty after this user disconnected
             if (rooms[roomKey.room] && Object.keys(rooms[roomKey.room]).length === 0) {
                 delete rooms[roomKey.room];
                 console.log(`Room ${roomKey.room} has been deleted as it's empty`);
@@ -551,31 +531,38 @@ spectate.on('connection', (socket) => {
 });
 
 
-function generate_member_id(s_id, rc) {
-    let available_ids = [0, 1, 2, 3];
-    let used_ids = Object.keys(rooms[rc]);
-    let available = available_ids.filter(id => !used_ids.includes(id.toString()));
-
-    if (available.length > 0) {
-        let m_id = available[0];
-        rooms[rc][m_id] = { sid: s_id, num: 0 };
-        return m_id;
-    } else {
-        return -1; // Room is full
+function generate_member_id(s_id,rc){
+    console.log(s_id, rc)
+    let m_id = Math.floor(Math.random()*2);
+    // let m_id = 3
+    let m_r = Object.keys(rooms[rc]);
+    if(m_r.length <= 3){
+        if(m_r.includes(m_id.toString())){
+            return generate_member_id(s_id,rc)
+        }else{
+            rooms[rc][m_id] = {sid:s_id,num:0};
+            return m_id;
+        }
+    } else{
+        return -1;
     }
 }
 //to delete the extra place when (only one) user refreshes.
-function deleteThisId(id) {
-    for (let roomCode in rooms) {
-        if (rooms.hasOwnProperty(roomCode)) {
-            let key = Object.keys(rooms[roomCode]).find(key => rooms[roomCode][key].sid === id);
-            if (key) {
-                delete rooms[roomCode][key];
-                return { key: key, room: roomCode };
+function deleteThisid(id){
+    for(var roomcd in rooms){
+        if(rooms.hasOwnProperty(roomcd)){
+            ky = Object.keys(rooms[roomcd]).find( key => rooms[roomcd][key]['sid'] == id);
+            if(typeof(ky) === 'string'){
+                delete rooms[roomcd][ky];
+                return {key:ky,room:roomcd};
+            }
+            if(Object.keys(rooms[roomcd]).length == 0){
+                delete rooms[roomcd];
+                return undefined;
             }
         }
     }
-    return undefined;
+    
 }
 
 //to validate a winner, by comparing the data provided by all 4
