@@ -210,199 +210,114 @@ class Player {
     }
   }
 }
-
 class Piece {
   constructor(i, id) {
     this.path = [];
     this.color_id = String(id);
-    console.log(this.color_id, typeof this.color_id);
     this.Pid = String(i);
     this.pos = -1;
     this.x = parseInt(allPiecesePos[this.color_id][this.Pid].x);
     this.y = parseInt(allPiecesePos[this.color_id][this.Pid].y);
     this.image = PIECES[this.color_id];
-    switch (id) {
-      case "0":
-        console.log("switch is working");
-        for (let i = 0; i < 4; i++) {
-          this.path.push(this.oneStepToRight);
+    this.initializePath(id);
+  }
+
+  initializePath(id) {
+    const pathConfigs = {
+      "0": [
+        { method: this.oneStepToRight, count: 4 },
+        { method: this.oneStepTowards45, count: 1 },
+        { method: this.oneStepToTop, count: 5 },
+        { method: this.oneStepToRight, count: 2 },
+        { method: this.oneStepToBottom, count: 5 },
+        { method: this.oneStepTowards315, count: 1 },
+        { method: this.oneStepToRight, count: 5 },
+        { method: this.oneStepToBottom, count: 2 },
+        { method: this.oneStepToLeft, count: 5 },
+        { method: this.oneStepTowards225, count: 1 },
+        { method: this.oneStepToBottom, count: 5 },
+        { method: this.oneStepToLeft, count: 2 },
+        { method: this.oneStepToTop, count: 5 },
+        { method: this.oneStepTowards135, count: 1 },
+        { method: this.oneStepToLeft, count: 5 },
+        { method: this.oneStepToTop, count: 1 },
+        { method: this.oneStepToRight, count: 6 }
+      ],
+      "1": [
+        { method: this.oneStepToBottom, count: 4 },
+        { method: this.oneStepTowards315, count: 1 },
+        { method: this.oneStepToRight, count: 5 },
+        { method: this.oneStepToBottom, count: 2 },
+        { method: this.oneStepToLeft, count: 5 },
+        { method: this.oneStepTowards225, count: 1 },
+        { method: this.oneStepToBottom, count: 5 },
+        { method: this.oneStepToLeft, count: 2 },
+        { method: this.oneStepToTop, count: 5 },
+        { method: this.oneStepTowards135, count: 1 },
+        { method: this.oneStepToLeft, count: 5 },
+        { method: this.oneStepToTop, count: 2 },
+        { method: this.oneStepToRight, count: 5 },
+        { method: this.oneStepTowards45, count: 1 },
+        { method: this.oneStepToTop, count: 5 },
+        { method: this.oneStepToRight, count: 1 },
+        { method: this.oneStepToBottom, count: 6 }
+      ],
+      "2": [
+        { method: this.oneStepToLeft, count: 4 },
+        { method: this.oneStepTowards225, count: 1 },
+        { method: this.oneStepToBottom, count: 5 },
+        { method: this.oneStepToLeft, count: 2 },
+        { method: this.oneStepToTop, count: 5 },
+        { method: this.oneStepTowards135, count: 1 },
+        { method: this.oneStepToLeft, count: 5 },
+        { method: this.oneStepToTop, count: 2 },
+        { method: this.oneStepToRight, count: 5 },
+        { method: this.oneStepTowards45, count: 1 },
+        { method: this.oneStepToTop, count: 5 },
+        { method: this.oneStepToRight, count: 2 },
+        { method: this.oneStepToBottom, count: 5 },
+        { method: this.oneStepTowards315, count: 1 },
+        { method: this.oneStepToRight, count: 5 },
+        { method: this.oneStepToBottom, count: 1 },
+        { method: this.oneStepToLeft, count: 6 }
+      ],
+      "3": [
+        { method: this.oneStepToTop, count: 4 },
+        { method: this.oneStepTowards135, count: 1 },
+        { method: this.oneStepToLeft, count: 5 },
+        { method: this.oneStepToTop, count: 2 },
+        { method: this.oneStepToRight, count: 5 },
+        { method: this.oneStepTowards45, count: 1 },
+        { method: this.oneStepToTop, count: 5 },
+        { method: this.oneStepToRight, count: 2 },
+        { method: this.oneStepToBottom, count: 5 },
+        { method: this.oneStepTowards315, count: 1 },
+        { method: this.oneStepToRight, count: 5 },
+        { method: this.oneStepToBottom, count: 2 },
+        { method: this.oneStepToLeft, count: 5 },
+        { method: this.oneStepTowards225, count: 1 },
+        { method: this.oneStepToBottom, count: 5 },
+        { method: this.oneStepToLeft, count: 1 },
+        { method: this.oneStepToTop, count: 6 }
+      ]
+    };
+
+    const config = pathConfigs[id];
+    if (config) {
+      config.forEach(({ method, count }) => {
+        for (let i = 0; i < count; i++) {
+          this.path.push(method);
         }
-        this.path.push(this.oneStepTowards45);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        this.path.push(this.oneStepTowards315);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        this.path.push(this.oneStepTowards225);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        this.path.push(this.oneStepTowards135);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        this.path.push(this.oneStepToTop);
-        for (let i = 0; i < 6; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        break;
-      case "1":
-        for (let i = 0; i < 4; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        this.path.push(this.oneStepTowards315);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        this.path.push(this.oneStepTowards225);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        this.path.push(this.oneStepTowards135);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        this.path.push(this.oneStepTowards45);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        this.path.push(this.oneStepToRight);
-        for (let i = 0; i < 6; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        break;
-      case "2":
-        for (let i = 0; i < 4; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        this.path.push(this.oneStepTowards225);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        this.path.push(this.oneStepTowards135);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        this.path.push(this.oneStepTowards45);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        this.path.push(this.oneStepTowards315);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        this.path.push(this.oneStepToBottom);
-        for (let i = 0; i < 6; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        break;
-      case "3":
-        for (let i = 0; i < 4; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        this.path.push(this.oneStepTowards135);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        this.path.push(this.oneStepTowards45);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        for (let i = 0; i < 2; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        this.path.push(this.oneStepTowards315);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToRight);
-        }
-        for (let i = 0; i < 2; i++) this.path.push(this.oneStepToBottom);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToLeft);
-        }
-        this.path.push(this.oneStepTowards225);
-        for (let i = 0; i < 5; i++) {
-          this.path.push(this.oneStepToBottom);
-        }
-        this.path.push(this.oneStepToLeft);
-        for (let i = 0; i < 6; i++) {
-          this.path.push(this.oneStepToTop);
-        }
-        break;
+      });
+    } else {
+      console.error(`Invalid id: ${id}`);
     }
   }
 
-  // In the Piece constructor, modify the image drawing
   draw() {
-    const scaleFactor = 1.5; // Increase size by 20%
+    const scaleFactor = 1.5;
     const newWidth = 50 * scaleX * scaleFactor;
     const newHeight = 50 * scaleY * scaleFactor;
-    
-    // Calculate the offset to keep the piece centered
     const offsetX = (newWidth - 50 * scaleX) / 2;
     const offsetY = (newHeight - 50 * scaleY) / 2;
 
@@ -415,116 +330,126 @@ class Piece {
     );
   }
 
-  // update(num) {
-  //   if (this.pos != -1 && this.pos + num <= 56) {
-  //     for (let i = this.pos; i < this.pos + num; i++) {
-  //       this.path[i](this.color_id, this.Pid);
-  //       console.log("hemilo selmon");
-  //     }
-  //     this.pos += num;
-  //     if (this.pos == 56) {
-  //       window.PLAYERS[this.color_id].won += 1;
-  //     }
-  //   } else if (num == 6 && this.pos == -1) {
-  //     this.x = homeTilePos[this.color_id][0].x;
-  //     this.y = homeTilePos[this.color_id][0].y;
-  //     this.pos = 0;
-  //   }
-  // }
+  isOnSafeSquare() {
+    return safeSquares[this.color_id].includes(this.pos);
+  }
 
-    // Add this method to the Piece class
-    isOnSafeSquare() {
-      return safeSquares[this.color_id].includes(this.pos);
-    }
-  
-    // Modify the update method in the Piece class
-    update(num) {
-      if (this.pos != -1 && this.pos + num <= 56) {
-        for (let i = this.pos; i < this.pos + num; i++) {
-          this.path[i](this.color_id, this.Pid);
-        }
-        this.pos += num;
-        if (this.pos == 56) {
-          window.PLAYERS[this.color_id].won += 1;
-        } else {
-          this.checkForKill();
-        }
-      } else if (num == 6 && this.pos == -1) {
-        this.x = homeTilePos[this.color_id][0].x;
-        this.y = homeTilePos[this.color_id][0].y;
-        this.pos = 0;
+  async moveStepByStep(num) {
+    if (this.pos != -1 && this.pos + num <= 56) {
+      for (let i = 0; i < num; i++) {
+        await this.moveOneStep(this.pos + i);
+        this.redrawAllPieces();  // New line
+      }
+      this.pos += num;
+      if (this.pos == 56) {
+        window.PLAYERS[this.color_id].won += 1;
+      } else {
         this.checkForKill();
       }
+    } else if (num == 6 && this.pos == -1) {
+      this.x = homeTilePos[this.color_id][0].x;
+      this.y = homeTilePos[this.color_id][0].y;
+      this.pos = 0;
+      this.redrawAllPieces();  // New line
+      this.checkForKill();
     }
-  
-    // Add this new method to the Piece class
-    checkForKill() {
-      if (this.isOnSafeSquare()) {
-        return;  // Don't kill on safe squares
+    this.redrawAllPieces();  // New line to ensure final state is correct
+  }
+
+  async moveOneStep(pathIndex) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.clearBoard();  // Clear the entire board
+        this.path[pathIndex](this.color_id, this.Pid);
+        this.redrawAllPieces();  // Redraw all pieces
+        resolve();
+      }, 200);
+    });
+  }
+
+  clearBoard() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Redraw the static parts of the board here
+    // For example: drawBoard();
+  }
+
+  redrawAllPieces() {
+    for (let playerId in window.PLAYERS) {
+      let player = window.PLAYERS[playerId];
+      for (let pieceId in player.myPieces) {
+        player.myPieces[pieceId].draw();
       }
-  
-      for (let playerId in window.PLAYERS) {
-        if (playerId !== this.color_id) {
-          let otherPlayer = window.PLAYERS[playerId];
-          for (let pieceId in otherPlayer.myPieces) {
-            let otherPiece = otherPlayer.myPieces[pieceId];
-            if (otherPiece.pos !== -1 && !otherPiece.isOnSafeSquare() &&
-                Math.abs(this.x - otherPiece.x) < 5 * scaleX &&
-                Math.abs(this.y - otherPiece.y) < 5 * scaleY) {
-              otherPiece.kill();
-            }
+    }
+  }
+
+  clearPreviousPosition() {
+    const scaleFactor = 1.5;
+    const clearWidth = 50 * scaleX * scaleFactor;
+    const clearHeight = 50 * scaleY * scaleFactor;
+    const clearX = this.x - (clearWidth - 50 * scaleX) / 2;
+    const clearY = this.y - (clearHeight - 50 * scaleY) / 2;
+
+    ctx.clearRect(clearX, clearY, clearWidth, clearHeight);
+  }
+
+  update(num) {
+    this.moveStepByStep(num);
+  }
+
+  checkForKill() {
+    if (this.isOnSafeSquare()) return;
+
+    for (let playerId in window.PLAYERS) {
+      if (playerId !== this.color_id) {
+        let otherPlayer = window.PLAYERS[playerId];
+        for (let pieceId in otherPlayer.myPieces) {
+          let otherPiece = otherPlayer.myPieces[pieceId];
+          if (otherPiece.pos !== -1 && !otherPiece.isOnSafeSquare() &&
+              Math.abs(this.x - otherPiece.x) < 5 * scaleX &&
+              Math.abs(this.y - otherPiece.y) < 5 * scaleY) {
+            otherPiece.kill();
           }
         }
       }
     }
+  }
 
   oneStepToRight(id, pid) {
     window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
-    console.log("to r", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToLeft(id, pid) {
     window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
-    console.log("to l", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToTop(id, pid) {
     window.PLAYERS[id].myPieces[pid].y -= 50 * scaleY;
-    console.log("to t", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToBottom(id, pid) {
     window.PLAYERS[id].myPieces[pid].y += 50 * scaleY;
-    console.log("to b", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards45(id, pid) {
     window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
     window.PLAYERS[id].myPieces[pid].y -= 50 * scaleY;
-    console.log("to 45", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards135(id, pid) {
     window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
     window.PLAYERS[id].myPieces[pid].y -= 50 * scaleY;
-    console.log("to 135", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards225(id, pid) {
     window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
     window.PLAYERS[id].myPieces[pid].y += 50 * scaleY;
-    console.log("to 225", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards315(id, pid) {
     window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
     window.PLAYERS[id].myPieces[pid].y += 50 * scaleY;
-    console.log("to 315", this.x, this.y, typeof this.x, typeof this.y);
   }
 
-
-
-  // The kill method remains the same
   kill() {
     this.x = allPiecesePos[this.color_id][this.Pid].x;
     this.y = allPiecesePos[this.color_id][this.Pid].y;
