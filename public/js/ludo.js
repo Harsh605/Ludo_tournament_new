@@ -162,7 +162,7 @@ let allPiecesePos = {
 
 let homeTilePos = {
   0: {
-    0: scalePosition({ x: 50, y: 300 }),
+    0: scalePosition({ x: 50, y: 290 }),
     1: scalePosition({ x: 300, y: 100 }),
   },
   1: {
@@ -170,7 +170,7 @@ let homeTilePos = {
     1: scalePosition({ x: 600, y: 300 }),
   },
   2: {
-    0: scalePosition({ x: 650, y: 400 }),
+    0: scalePosition({ x: 650, y: 390 }),
     1: scalePosition({ x: 400, y: 600 }),
   },
   3: {
@@ -315,7 +315,7 @@ class Piece {
   }
 
   draw() {
-    const scaleFactor = 1.5;
+    const scaleFactor = 1.3;
     const newWidth = 50 * scaleX * scaleFactor;
     const newHeight = 50 * scaleY * scaleFactor;
     const offsetX = (newWidth - 50 * scaleX) / 2;
@@ -383,7 +383,7 @@ class Piece {
   }
 
   clearPreviousPosition() {
-    const scaleFactor = 1.5;
+    const scaleFactor = 1.3;
     const clearWidth = 50 * scaleX * scaleFactor;
     const clearHeight = 50 * scaleY * scaleFactor;
     const clearX = this.x - (clearWidth - 50 * scaleX) / 2;
@@ -491,7 +491,7 @@ socket.on("connect", function () {
 
   socket.on("imposter", () => {
     window.localStorage.clear();
-    window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+    window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
       "game_id"
     )}`;
   });
@@ -510,6 +510,9 @@ socket.on("connect", function () {
       });
       togglePlayerTurn(true);
       styleButton(0);
+
+      clearTimeout(avatarTimeout);
+      clearTimeout(diceTimeout);
       
       remaningChance -= 1; // Decrement remainingChance
       localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
@@ -691,12 +694,12 @@ socket.on("connect", function () {
       }).then((willDelete) => {
         if (willDelete) {
           console.log(response);
-          window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+          window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
             "game_id"
           )}`;
         } else {
           console.log(response);
-          window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+          window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
             "game_id"
           )}`;
         }
@@ -868,115 +871,9 @@ function rollDice() {
   }, 300);
 }
 
-//simulates the action of dice and also chance rotation.
-// function diceAction(){
-//     socket.emit('roll-dice',{room:room_code,id:myid},function(num){
-//         console.log('19/6/21 dice rolled, got',num);
-//         let spirit = [];
-//         for(let i=0;i<4;i++){
-//             if(PLAYERS[myid].myPieces[i].pos>-1 && PLAYERS[myid].myPieces[i].pos + num <= 56){
-//                 spirit.push(i);
-
-//             }
-//         }
-//         if(spirit.length!=0 || num==6){
-//             outputMessage('Click on a piece',3)
-//             canvas.addEventListener('click',function clickHandler(e){
-//                 console.log('19/6/21 click event litener added to canvas element');
-//                 let Xp = e.clientX - e.target.getBoundingClientRect().left;
-//                 let Yp = e.clientY - e.target.getBoundingClientRect().top;
-//                 let playerObj = {
-//                     room: room_code,
-//                     id: myid,
-//                     num: num
-//                 }
-//                 let alert1 = true;
-
-//                 for(let i=0;i<4;i++){
-//                     if(Xp-PLAYERS[myid].myPieces[i].x<45 && Xp-PLAYERS[myid].myPieces[i].x>0 && Yp-PLAYERS[myid].myPieces[i].y<45 && Yp-PLAYERS[myid].myPieces[i].y>0){
-//                         console.log(i,'okokokok');
-//                         if((spirit.includes(i) || num==6) && PLAYERS[myid].myPieces[i].pos+num <=56){
-//                             playerObj['pid'] = i;
-//                             console.log(playerObj);
-//                             socket.emit('random',playerObj, function(data){
-//                                 styleButton(0);
-//                                 console.log('random acknowledged');
-//                                 socket.emit('chance',{room: room_code, nxt_id: chanceRotation(myid,data)});
-//                             });
-//                             canvas.removeEventListener('click',clickHandler);
-//                             return 0;
-//                         }else{
-//                             alert('Please click on a valid Piece.');
-//                             alert1 = false;
-//                             break;
-//                         }
-//                     }
-
-//                 }
-//                 if(alert1){alert('You need to click on a piece of your color');}
-//             })
-//         }else{socket.emit('chance',{room: room_code, nxt_id: chanceRotation(myid,num)});console.log('19/6/21 next chance');}
-//     })
-// }
-
-// function diceAction() {
-//     socket.emit('roll-dice', { room: room_code, id: myid }, function (num) {
-//         console.log('19/6/21 dice rolled, got', num);
-//         let spirit = [];
-//         for (let i = 0; i < 4; i++) {
-//             if (PLAYERS[myid].myPieces[i].pos > -1 && PLAYERS[myid].myPieces[i].pos + num <= 56) {
-//                 spirit.push(i);
-//             }
-//         }
-
-//         if (spirit.length != 0 || num == 6) {
-//             outputMessage('Click on a piece', 3);
-//             canvas.addEventListener('click', function clickHandler(e) {
-//                 console.log('19/6/21 click event listener added to canvas element');
-//                 let Xp = e.clientX - e.target.getBoundingClientRect().left;
-//                 let Yp = e.clientY - e.target.getBoundingClientRect().top;
-//                 let playerObj = {
-//                     room: room_code,
-//                     id: myid,
-//                     num: num
-//                 };
-//                 let alert1 = true;
-
-//                 for (let i = 0; i < 4; i++) {
-//                     if (Xp - PLAYERS[myid].myPieces[i].x < 45 && Xp - PLAYERS[myid].myPieces[i].x > 0 && Yp - PLAYERS[myid].myPieces[i].y < 45 && Yp - PLAYERS[myid].myPieces[i].y > 0) {
-//                         console.log(i, 'okokokok');
-//                         if ((spirit.includes(i) || num == 6) && PLAYERS[myid].myPieces[i].pos + num <= 56) {
-//                             playerObj['pid'] = i;
-//                             console.log(playerObj);
-//                             socket.emit('random', playerObj, function (data) {
-//                                 styleButton(0);
-//                                 console.log('random acknowledged');
-//                                 socket.emit('chance', { room: room_code, nxt_id: chanceRotation(myid, data) });
-//                             });
-//                             canvas.removeEventListener('click', clickHandler);
-//                             return;
-//                         } else {
-//                             alert('Please click on a valid Piece.');
-//                             alert1 = false;
-//                             break;
-//                         }
-//                     }
-//                 }
-//                 if (alert1) {
-//                     alert('You need to click on a piece of your color');
-//                 }
-//             });
-//         } else {
-//             socket.emit('chance', { room: room_code, nxt_id: chanceRotation(myid, num) });
-//             console.log('19/6/21 next chance');
-//         }
-//     });
-// }
-
 function diceAction() {
   clearTimeout(avatarTimeout);
   clearTimeout(diceTimeout); // Clear the timeout when the player rolls the dice
-
   socket.emit("roll-dice", { room: room_code, id: myid }, function (num) {
     console.log("Dice rolled, got", num);
     let spirit = [];
@@ -1482,11 +1379,11 @@ function resumeHandler(id) {
     dangerMode: true,
   }).then((willDelete) => {
     if (willDelete) {
-      window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+      window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
         "game_id"
       )}`;
     } else {
-      window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+      window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
         "game_id"
       )}`;
     }
@@ -1552,15 +1449,15 @@ async function cancelGame() {
       //     await sendWebSocketMessage('pageReloadSocketCall');
       //     alert("The game has been successfully cancelled.");
 
-      //   window.location.href = `http://ludowinners.in/viewgame/${urlParams.get('game_id')}`
+      //   window.location.href = `https://ludowinners.in/viewgame/${urlParams.get('game_id')}`
       // } catch (error) {
       //     console.error("Error cancelling the game:", error);
       //     alert("There was an error cancelling the game.");
 
-      //   window.location.href = `http://ludowinners.in/viewgame/${urlParams.get('game_id')}`
+      //   window.location.href = `https://ludowinners.in/viewgame/${urlParams.get('game_id')}`
       // }
 
-      window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+      window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
         "game_id"
       )}`;
     } else {
@@ -1600,7 +1497,7 @@ async function userLose() {
       icon: "error",
     }).then(() => {
       setTimeout(() => {
-        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get("game_id")}`;
+        window.location.href = `https://ludowinners.in/viewgame/${urlParams.get("game_id")}`;
       }, 1000); // 5000 milliseconds = 5 seconds
     });
     
@@ -1647,11 +1544,11 @@ async function userWinn() {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+        window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
           "game_id"
         )}`;
       } else {
-        window.location.href = `http://ludowinners.in/viewgame/${urlParams.get(
+        window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
           "game_id"
         )}`;
       }

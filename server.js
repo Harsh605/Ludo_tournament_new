@@ -519,7 +519,7 @@ nsp.on('connection', (socket) => {
                 
                 socket.to(roomKey.room).emit('user-disconnected', roomKey.key);
 
-            }, 30000);
+            }, 20000);
 
             if (rooms[roomKey.room] && Object.keys(rooms[roomKey.room]).length === 0) {
                 delete rooms[roomKey.room];
@@ -553,7 +553,7 @@ spectate.on('connection', (socket) => {
 
 
 function generate_member_id(s_id, rc) {
-    let available_ids = [0, 2, 3, 1];
+    let available_ids = [2, 0, 3, 1];
     let used_ids = Object.keys(rooms[rc]);
     let available = available_ids.filter(id => !used_ids.includes(id.toString()));
 
