@@ -965,14 +965,12 @@ function diceAction() {
         }
       }
     } else {
-      let nextId = chanceRotation(myid, num);
-      console.log(`No valid moves. Next chance goes to player ${nextId}`);
       socket.emit("chance", {
         room: room_code,
-        nxt_id: nextId,
+        nxt_id: chanceRotation(myid, num),
       });
       console.log("else last call Next chance",{room: room_code,
-        nxt_id: chanceRotation(myid, num)});
+        nxt_id: chanceRotation(myid, num),});
     }
   });
 }
@@ -1187,22 +1185,37 @@ function loadAllPieces() {
 //rotate chance, required for the game
 function chanceRotation(id, num) {
   if (num == 6) {
-    console.log("Next chance (num==6):", id);
+    console.log("19/6/21 nxt 0 chance(num==6)", id);
     return id;
   } else {
-    let currentIndex = MYROOM.indexOf(parseInt(id));
-    let nextIndex = (currentIndex + 1) % MYROOM.length;
-    let nextPlayer = MYROOM[nextIndex];
-
-    console.log("Current player:", id);
-    console.log("MYROOM:", MYROOM);
-    console.log("Next player:", nextPlayer);
-    console.log("Previous chance:", chance);
-
-    // Update the global chance variable
-    chance = nextIndex;
-
-    return nextPlayer;
+    let c = MYROOM[chance + 1];
+    if (c) {
+      console.log(
+        "19/6/21 nxt 1 chance(MYROOM[chance+1])",
+        c,
+        "\nMYROOM",
+        MYROOM,
+        "\nPrevious chance",
+        chance
+      );
+      return c;
+    } else {
+      console.log(
+        "19/6/21 nxt 2 chance(MYROOM[0])",
+        MYROOM[0],
+        "\nMYROOM",
+        MYROOM,
+        "\nPrevious chance",
+        chance,
+        "c:",
+        c,
+        "chance+1",
+        chance + 1,
+        "MYROOM[chance+1]",
+        MYROOM[chance + 1]
+      );
+      return MYROOM[0];
+    }
   }
 }
 

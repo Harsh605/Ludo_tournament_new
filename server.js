@@ -553,7 +553,8 @@ spectate.on('connection', (socket) => {
 
 
 function generate_member_id(s_id, rc) {
-    let available_ids = [2, 0, 3, 1];
+    let available_ids = [3,1,0,2];
+    // let available_ids = [0,1,2,3];
     let used_ids = Object.keys(rooms[rc]);
     let available = available_ids.filter(id => !used_ids.includes(id.toString()));
 
