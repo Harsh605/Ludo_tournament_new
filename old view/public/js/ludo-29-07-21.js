@@ -119,10 +119,6 @@ var styleHeight = parseInt(window.getComputedStyle(canvas).height);
 canvas.width = styleWidth;
 canvas.height = styleHeight;
 
-let diceTimeout;
-let avatarTimeout;
-let remaningChance = 5;
-
 
 // Scale factor
 scaleX = styleWidth / CANVAS_SIZE;
@@ -346,7 +342,6 @@ class Piece {
       this.pos += num;
       if (this.pos == 56) {
         window.PLAYERS[this.color_id].won += 1;
-        this.giveExtraTurn(); // Give an extra turn when piece reaches home
       } else {
         this.checkForKill();
       }
@@ -402,6 +397,7 @@ class Piece {
 
   checkForKill() {
     if (this.isOnSafeSquare()) return;
+
     for (let playerId in window.PLAYERS) {
       if (playerId !== this.color_id) {
         let otherPlayer = window.PLAYERS[playerId];
@@ -411,22 +407,10 @@ class Piece {
               Math.abs(this.x - otherPiece.x) < 5 * scaleX &&
               Math.abs(this.y - otherPiece.y) < 5 * scaleY) {
             otherPiece.kill();
-            this.giveExtraTurn(); // Give an extra turn when piece reaches home      
           }
         }
       }
     }
-  }
-
-    giveExtraTurn() {
-    clearTimeout(avatarTimeout);
-    clearTimeout(diceTimeout);
-    
-    // Emit an event to give the current player another turn
-    socket.emit("chance", {
-      room: room_code,
-      nxt_id: myid, // Keep the turn with the current player
-    });
   }
 
   oneStepToRight(id, pid) {
@@ -472,7 +456,9 @@ class Piece {
   }
 }
 
-
+let diceTimeout;
+let avatarTimeout;
+let remaningChance = 5;
 
 socket.on("connect", function () {
   console.log("You are connected to the server!!");
@@ -502,9 +488,14 @@ socket.on("connect", function () {
       });
   }
 
+  socket.on("imposter", () => {
+    window.localStorage.clear();
+    window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
+      "game_id"
+    )}`;
+  });
+
   socket.on("is-it-your-chance", function (data) {
-    clearTimeout(avatarTimeout)
-    clearTimeout(diceTimeout)
     if (data === myid) {
       togglePlayerTurn(true);
       styleButton(1);
@@ -547,7 +538,6 @@ socket.on("connect", function () {
     }
     loadNewPiece(data.id);
     outputMessage({ Name: USERNAMES[data.id], id: data.id }, 0);
-    hideLoader();
     //stop timer,and hide modal.
     document.getElementById("myModal-2").style.display = "none";
     let butt = document.getElementById("WAIT");
@@ -589,28 +579,22 @@ socket.on("connect", function () {
       resumeHandler(data);
     }, 1000);
   });
-
   socket.on("user-disconnected-popup", async function (data) {
     
-    // swal({
-    //      title: "Oppes..",
-    //       text: `Please wait for 30 second to rejoin after 30 second you will winn the match`,
-    //       icon: "warning",
-    //       buttons: true,
-    //       dangerMode: true,
-    //     })
-    //     .then((willDelete) => {
-    //       if (willDelete) {
-    //         return  
-    //       }else{
-    //        return
-    //       }
-    //     });
-
-    showLoader();
-    clearTimeout(avatarTimeout);
-    clearTimeout(diceTimeout);
-   
+    swal({
+         title: "Oppes..",
+          text: `Please wait for 30 second to rejoin after 30 second you will winn the match`,
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            return  
+          }else{
+           return
+          }
+        });
     // Wait for 30 seconds before proceeding
     
   });
@@ -724,14 +708,6 @@ socket.on("connect", function () {
       alert("There was an error winning the game.");
     }
   }
-
-  socket.on("imposter", () => {
-    window.localStorage.clear();
-    window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
-      "game_id"
-    )}`;
-  });
-  
 });
 
 // To know if the client has disconnected with the server
@@ -923,7 +899,7 @@ function diceAction() {
     if (allAtHome && num == 6 && !canMoveOut) {
       socket.emit("chance", {
         room: room_code,
-        nxt_id: chanceRotation(myid, 0),
+        nxt_id: chanceRotation(myid, num),
       });
       console.log("Next chance");
       return;
@@ -973,7 +949,6 @@ function diceAction() {
                   room: room_code,
                   nxt_id: chanceRotation(myid, data),
                 });
-                console.log("styleButton(0);")
               });
               canvas.removeEventListener("click", clickHandler);
               return;
@@ -1199,7 +1174,7 @@ function loadAllPieces() {
             allPlayerHandler();
           }
         } else {
-          // window.localStorage.clear();
+          window.localStorage.clear();
           window.localStorage.setItem("room", room_code);
           allPlayerHandler();
         }

@@ -1068,8 +1068,10 @@ router.post('/challange/pice/number/update/live/:id', Auth, async (req, res) => 
 
             if(game.Created_by == reqUser){
                 game.liveGameCreaterPiceNo = req.body.liveGamePiceNumber
+                // game.socketId = req.body.socketId || null
             }else{
                 game.liveGameAcceptorPiceNo = req.body.liveGamePiceNumber
+                // game.socketId = req.body.socketId || null
             }
 
             await game.save();         

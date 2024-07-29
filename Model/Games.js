@@ -155,6 +155,10 @@ const transactionSchema = new mongoose.Schema({
             default: 0
         },
     },
+    socketId:{
+        type:String,
+        default: null
+    }
 }, { timestamps: true })
 
 const Game = mongoose.model("Game", transactionSchema)
