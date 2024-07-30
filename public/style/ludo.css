@@ -9,19 +9,13 @@ body {
     margin: auto;
     height: 99.5vh;
     overflow: hidden;
-    text-align: center;
+    /* text-align: center; */
     background-image: url("../images/lk_h5_bg.jpg");
     background-size: contain;
     background-repeat:initial;
     font-family: Helvetica, Verdana, Arial, sans-serif;
   }
 
-  
-  
-
-  canvas {
-    background-color: rgba(0, 0, 0, 0);
-  }
 
   div {
     outline: none;
