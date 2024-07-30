@@ -169,7 +169,7 @@ let homeTilePos = {
     1: scalePosition({ x: 300, y: 100 }),
   },
   1: {
-    0: scalePosition({ x: 400, y: 35 }),
+    0: scalePosition({ x: 400, y: 28 }),
     1: scalePosition({ x: 600, y: 300 }),
   },
   2: {
@@ -177,7 +177,7 @@ let homeTilePos = {
     1: scalePosition({ x: 400, y: 600 }),
   },
   3: {
-    0: scalePosition({ x: 300, y: 635 }),
+    0: scalePosition({ x: 300, y: 630 }),
     1: scalePosition({ x: 100, y: 400 }),
   },
 };
@@ -194,6 +194,7 @@ class Player {
   constructor(id) {
     this.id = String(id);
     this.myPieces = new Object();
+    this.piecesAtHome = 0;  // New property to track pieces at home
     for (let i = 0; i < 4; i++) {
       this.myPieces[i] = new Piece(String(i), String(id));
     }
@@ -205,14 +206,18 @@ class Player {
     }
   }
 
+  // didIwin() {
+  //   if (this.won == 4) {
+  //     return 1;
+  //   } else {
+  //     return 0;
+  //   }
+  // }
   didIwin() {
-    if (this.won == 4) {
-      return 1;
-    } else {
-      return 0;
-    }
+    return this.piecesAtHome === 4;  // Win condition: all 4 pieces at home
   }
 }
+
 class Piece {
   constructor(i, id) {
     this.path = [];
@@ -319,8 +324,8 @@ class Piece {
 
   draw() {
     const scaleFactor = 1.3;
-    const newWidth = 50 * scaleX * scaleFactor;
-    const newHeight = 50 * scaleY * scaleFactor;
+    const newWidth = 45 * scaleX * scaleFactor;
+    const newHeight = 60 * scaleY * scaleFactor;
     const offsetX = (newWidth - 50 * scaleX) / 2;
     const offsetY = (newHeight - 50 * scaleY) / 2;
 
@@ -341,12 +346,13 @@ class Piece {
     if (this.pos != -1 && this.pos + num <= 56) {
       for (let i = 0; i < num; i++) {
         await this.moveOneStep(this.pos + i);
-        this.redrawAllPieces();  // New line
+        this.redrawAllPieces();
       }
       this.pos += num;
       if (this.pos == 56) {
+        window.PLAYERS[this.color_id].piecesAtHome += 1;  // Increment pieces at home
         window.PLAYERS[this.color_id].won += 1;
-        this.giveExtraTurn(); // Give an extra turn when piece reaches home
+        this.giveExtraTurn();
       } else {
         this.checkForKill();
       }
@@ -527,7 +533,7 @@ socket.on("connect", function () {
       
       showRemaningDots();
       console.log("Timeout reached, next chance");
-    }, 10000); // 10 seconds
+    }, 20000); // 10 seconds
     } else {
       outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
       togglePlayerTurn(false);
@@ -548,6 +554,8 @@ socket.on("connect", function () {
     loadNewPiece(data.id);
     outputMessage({ Name: USERNAMES[data.id], id: data.id }, 0);
     hideLoader();
+     togglePlayerTurn(true);
+     styleButton(1);
     //stop timer,and hide modal.
     document.getElementById("myModal-2").style.display = "none";
     let butt = document.getElementById("WAIT");
@@ -656,7 +664,6 @@ socket.on("connect", function () {
     await PLAYERS[data.id].myPieces[data.pid].update(data.num);
     if (iKill(data.id, data.pid)) {
       outputMessage({ msg: "Oops got killed", id: data.id }, 5);
-      //alert({ msg: "Oops got killed", id: data.id }, 5)
       allPlayerHandler();
     } else {
       allPlayerHandler();
@@ -1114,7 +1121,7 @@ function togglePlayerTurn(isPlayer1Turn) {
   avatarTimeout = setTimeout(() => {
     player1.classList.remove("animated-border");
     player2.classList.remove("animated-border");
-  }, 10000); // 10 seconds
+  }, 20000); // 10 seconds
 }
 
 
