@@ -490,20 +490,6 @@ nsp.on('connection', (socket) => {
         }
     });
 
-    socket.on('resume', (data, cb) => {
-        socket.to(data.room).emit('resume', data);
-        spectate.to(data.room).emit('resume', data); // Emitting to spectators
-        NumberOfMembers[data.room].members = Math.max(2, NumberOfMembers[data.room].members - 1);
-        NumberOfMembers[data.room].constant = true;
-        cb();
-    });
-
-    socket.on('wait', (data, cb) => {
-        socket.to(data.room).emit('wait', data);
-        spectate.to(data.room).emit('wait', data); // Emitting to spectators
-        cb();
-    });
-
     socket.on('admin', (data) => {
         console.log(data);
         nsp.emit('admin', data);

@@ -194,7 +194,6 @@ class Player {
   constructor(id) {
     this.id = String(id);
     this.myPieces = new Object();
-    this.piecesAtHome = 0;  // New property to track pieces at home
     for (let i = 0; i < 4; i++) {
       this.myPieces[i] = new Piece(String(i), String(id));
     }
@@ -206,15 +205,12 @@ class Player {
     }
   }
 
-  // didIwin() {
-  //   if (this.won == 4) {
-  //     return 1;
-  //   } else {
-  //     return 0;
-  //   }
-  // }
   didIwin() {
-    return this.piecesAtHome === 4;  // Win condition: all 4 pieces at home
+    if (this.won == 4) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 }
 
@@ -350,7 +346,6 @@ class Piece {
       }
       this.pos += num;
       if (this.pos == 56) {
-        window.PLAYERS[this.color_id].piecesAtHome += 1;  // Increment pieces at home
         window.PLAYERS[this.color_id].won += 1;
         this.giveExtraTurn();
       } else {
@@ -364,6 +359,7 @@ class Piece {
       this.checkForKill();
     }
     this.redrawAllPieces();  // New line to ensure final state is correct
+    allPlayerHandler();
   }
 
   async moveOneStep(pathIndex) {
@@ -373,7 +369,9 @@ class Piece {
         this.path[pathIndex](this.color_id, this.Pid);
         this.redrawAllPieces();  // Redraw all pieces
         resolve();
-      }, 200);
+        // var piceSound = document.getElementById("piceSound");
+        // piceSound.play();
+      }, 150);
     });
   }
 
@@ -394,8 +392,8 @@ class Piece {
 
   clearPreviousPosition() {
     const scaleFactor = 1.3;
-    const clearWidth = 50 * scaleX * scaleFactor;
-    const clearHeight = 50 * scaleY * scaleFactor;
+    const clearWidth = 45 * scaleX * scaleFactor;
+    const clearHeight = 60 * scaleY * scaleFactor;
     const clearX = this.x - (clearWidth - 50 * scaleX) / 2;
     const clearY = this.y - (clearHeight - 50 * scaleY) / 2;
 
@@ -424,15 +422,13 @@ class Piece {
     }
   }
 
-    giveExtraTurn() {
-    clearTimeout(avatarTimeout);
-    clearTimeout(diceTimeout);
-    
-    // Emit an event to give the current player another turn
+  giveExtraTurn() {
     socket.emit("chance", {
       room: room_code,
-      nxt_id: myid, // Keep the turn with the current player
+      nxt_id: chanceRotation(myid, 0),
     });
+    togglePlayerTurn(false); // Player's turn ends after rolling
+    styleButton(0);
   }
 
   oneStepToRight(id, pid) {
@@ -509,38 +505,40 @@ socket.on("connect", function () {
   }
 
   socket.on("is-it-your-chance", function (data) {
-    clearTimeout(avatarTimeout)
-    clearTimeout(diceTimeout)
-    if (data === myid) {
-      togglePlayerTurn(true);
-      styleButton(1);
-      outputMessage({ Name: "your", id: data }, 4);
-      
-     // Set a timeout for 10 seconds
-    diceTimeout = setTimeout(() => {
-      socket.emit("chance", {
-        room: room_code,
-        nxt_id: chanceRotation(myid, 0), // Assuming 0 can be used to indicate no roll
-      });
-      togglePlayerTurn(true);
-      styleButton(0);
+    clearTimeout(avatarTimeout);
+    clearTimeout(diceTimeout);
 
-      clearTimeout(avatarTimeout);
-      clearTimeout(diceTimeout);
-      
-      remaningChance -= 1; // Decrement remainingChance
-      localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
-      
-      showRemaningDots();
-      console.log("Timeout reached, next chance");
-    }, 20000); // 10 seconds
+    if (data === myid) {
+        togglePlayerTurn(true);
+        styleButton(1);
+        outputMessage({ Name: "your", id: data }, 4);
+
+        // Set a timeout for 10 seconds
+        diceTimeout = setTimeout(() => {
+            socket.emit("chance", {
+                room: room_code,
+                nxt_id: chanceRotation(myid, 0) // Assuming 0 can be used to indicate no roll
+            });
+            togglePlayerTurn(false); // Player's turn ends after rolling
+            styleButton(0);
+
+            clearTimeout(avatarTimeout);
+            clearTimeout(diceTimeout);
+
+            remaningChance -= 1; // Decrement remainingChance
+            localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
+            showRemaningDots();
+            console.log("Timeout reached, next chance");
+        }, 20000); // 10 seconds
     } else {
-      outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
-      togglePlayerTurn(false);
+        outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
+        togglePlayerTurn(false);
     }
+
     chance = Number(data);
     window.localStorage.setItem("chance", chance.toString());
-  });
+});
+
 
   socket.on("new-user-joined", function (data) {
     MYROOM.push(data.id);
@@ -622,32 +620,7 @@ socket.on("connect", function () {
     // Wait for 30 seconds before proceeding
     
   });
-  
-  socket.on("resume", function (data) {
-    resume(data.id);
-    data.id == data.click
-      ? outputMessage(
-          { id: data.id, msg: `Resumed the game without ${USERNAMES[id]}` },
-          5
-        )
-      : outputMessage(
-          {
-            id: data.click,
-            msg: `${USERNAMES[data.click]} has resumed the game without ${
-              USERNAMES[data.id]
-            }`,
-          },
-          5
-        );
-  });
 
-  socket.on("wait", function (data) {
-    wait();
-    outputMessage(
-      { id: data.click, msg: `${USERNAMES[data.click]} has decided to wait` },
-      5
-    );
-  });
 
   socket.on("rolled-dice", function (data) {
     Number(data.id) != myid
@@ -1333,13 +1306,6 @@ function inAhomeTile(id, pid) {
   return false;
 }
 
-function showModal(id) {
-  document.getElementById("myModal-1").style.display = "block";
-  document.getElementById(
-    "win-win"
-  ).innerHTML = `The winner is ${USERNAMES[id]}`;
-}
-
 function resumeHandler(id) {
   // document.getElementById("myModal-2").style.display = "block";
   // //who left+timer!
@@ -1409,23 +1375,6 @@ function resumeHandler(id) {
   });
 }
 
-function resume(id) {
-  document.getElementById("myModal-2").style.display = "none";
-  clearInterval(timer);
-  MYROOM.splice(id, 1);
-  delete PLAYERS[id];
-  allPlayerHandler();
-}
-
-function wait() {
-  clearInterval(timer);
-  document.getElementById("seconds").innerHTML = "";
-  let butt = document.getElementById("WAIT");
-  butt.disabled = true;
-  butt.style.opacity = 0.6;
-  butt.style.cursor = "not-allowed";
-}
-
 function showToast(message) {
   var toast = document.getElementById("toast");
   toast.textContent = message; // Set the message content
@@ -1434,7 +1383,6 @@ function showToast(message) {
     toast.classList.remove("show");
   }, 3000); // Adjust the timeout as needed
 }
-
 
 async function cancelGame() {
   swal({
@@ -1575,6 +1523,7 @@ async function userWinn() {
   } catch (e) {
     console.log(e);
     alert("There was an error cancelling the game.");
+    window.localStorage.clear();
   }
 }
 
