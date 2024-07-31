@@ -12,6 +12,7 @@ const path = url.substring(ludoIndex, ludoIndex + 5); // "/ludo"
 let socket = io(path); // This is your existing socket connection
 
 let sockets; // This will be our WebSocket connection
+let JoinTimeOut;
 
 function initializeSocket() {
   sockets = new WebSocket("wss://socket.ludowinners.in");
@@ -224,6 +225,40 @@ class Piece {
     this.y = parseInt(allPiecesePos[this.color_id][this.Pid].y);
     this.image = PIECES[this.color_id];
     this.initializePath(id);
+    this.isAnimating = false;
+  }
+
+  bounceAnimation() {
+    if (this.isAnimating) return;
+    this.isAnimating = true;
+    
+    const originalY = this.y;
+    const bounceHeight = 20 * scaleY;
+    const animationDuration = 500; // ms
+    const startTime = Date.now();
+
+    const animate = () => {
+      const elapsedTime = Date.now() - startTime;
+      const progress = elapsedTime / animationDuration;
+
+      if (progress < 1) {
+        // Easing function for smooth animation
+        const easeProgress = Math.sin(progress * Math.PI);
+        this.y = originalY - bounceHeight * easeProgress;
+        
+        this.clearPreviousPosition();
+        this.draw();
+        
+        requestAnimationFrame(animate);
+      } else {
+        this.y = originalY;
+        this.clearPreviousPosition();
+        this.draw();
+        this.isAnimating = false;
+      }
+    };
+
+    animate();
   }
 
   initializePath(id) {
@@ -371,7 +406,7 @@ class Piece {
         resolve();
         // var piceSound = document.getElementById("piceSound");
         // piceSound.play();
-      }, 150);
+      }, 200);
     });
   }
 
@@ -489,6 +524,7 @@ socket.on("connect", function () {
     myid = id;
     console.log("19/6/21 fetched:", MYROOM, myid, chance);
     StartTheGame();
+   
   });
 
   //To simulate dice
@@ -541,6 +577,7 @@ socket.on("connect", function () {
 
 
   socket.on("new-user-joined", function (data) {
+    clearTimeout(JoinTimeOut);
     MYROOM.push(data.id);
     MYROOM = [...new Set(MYROOM)];
     MYROOM.sort(function (a, b) {
@@ -883,19 +920,19 @@ function diceAction() {
     let allAtHome = true;
     let canMoveOut = false;
 
-    // Check if there are any pieces that can move
+   // Check for valid moves and animate valid pieces
     for (let i = 0; i < 4; i++) {
-      if (
-        PLAYERS[myid].myPieces[i].pos > -1 &&
-        PLAYERS[myid].myPieces[i].pos + num <= 56
-      ) {
+      let piece = PLAYERS[myid].myPieces[i];
+      if (piece.pos > -1 && piece.pos + num <= 56) {
         spirit.push(i);
+        piece.bounceAnimation(); // Animate valid pieces
       }
-      if (PLAYERS[myid].myPieces[i].pos != -1) {
+      if (piece.pos != -1) {
         allAtHome = false;
       }
-      if (num == 6 && PLAYERS[myid].myPieces[i].pos == -1) {
+      if (num == 6 && piece.pos == -1) {
         canMoveOut = true;
+        piece.bounceAnimation(); // Animate pieces that can move out
       }
     }
 
@@ -1098,17 +1135,21 @@ function togglePlayerTurn(isPlayer1Turn) {
 }
 
 
-//Initialise the game with the one who created the room.
+
+// Initialise the game with the one who created the room.
 function StartTheGame() {
+  // Set up player messages and UI
   MYROOM.forEach(function (numb) {
-    numb == myid
+    numb === myid
       ? outputMessage({ Name: "You", id: numb }, 0)
       : outputMessage({ Name: USERNAMES[numb], id: numb }, 0);
   });
   document.getElementById("my-name").innerHTML += USERNAMES[myid];
-  console.log(myid); //my-name
+  console.log(myid); // my-name
   let copyText = `\n\nMy room:\n${window.location.href} \nor join the room via\nMy room code:${room_code}`;
   document.getElementById("copy").innerHTML += copyText;
+
+  // Check the number of players
   if (MYROOM.length === 1) {
     togglePlayerTurn(true);
     styleButton(1);
@@ -1117,6 +1158,29 @@ function StartTheGame() {
     togglePlayerTurn(false);
     styleButton(0);
   }
+
+  // Clear any existing timeout before setting a new one
+  if (JoinTimeOut) {
+    clearTimeout(JoinTimeOut);
+  }
+
+  // Set a new timeout
+  JoinTimeOut = setTimeout(async () => {
+    // alert("Match cancel not join anyone")
+    await notJoinCancelGame();
+  }, 60000);
+
+  showLoader();
+
+  // Hide loader and clear timeout if there are 2 players
+  if (MYROOM.length === 2) {
+    hideLoader();
+    if (JoinTimeOut) {
+      clearTimeout(JoinTimeOut);
+      console.log("Timeout cleared"); // Debugging line
+    }
+  }
+
   loadAllPieces();
 }
 
@@ -1431,6 +1495,40 @@ async function cancelGame() {
       return;
     }
   });
+}
+
+async function notJoinCancelGame() {
+ 
+      const headers = {
+          Authorization: `Bearer ${urlParams.get('token')}`,
+          'Content-Type': 'application/json'
+      };
+      try {
+          const response = await fetch(`/challange/result/live/${urlParams.get('game_id')}`, {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({
+                  status: "cancelled"
+              })
+          });
+
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+
+          const responseData = await response.json();
+          console.log(responseData);
+
+          await sendWebSocketMessage('pageReloadSocketCall');
+          alert("The game has been successfully cancelled.");
+
+        window.location.href = `https://ludowinners.in/viewgame/${urlParams.get('game_id')}`
+      } catch (error) {
+          console.error("Error cancelling the game:", error);
+          alert("There was an error cancelling the game.");
+
+        window.location.href = `https://ludowinners.in/viewgame/${urlParams.get('game_id')}`
+      }
 }
 
 async function userLose() {
