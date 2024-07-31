@@ -53,8 +53,8 @@ exports.post = (req,res)=>{
         rooms[p0th] = {};
         win[p0th] = {};
         NumberOfMembers[p0th] = {constant:false,members:4};
-        res.redirect(301, 'ludo/' + p0th);
-      // res.status(200).send(`https://api.ludowinners.in/ludo/${p0th}`);
+        //res.redirect(301, 'ludo/' + p0th);
+       res.status(200).send(`https://api.ludowinners.in/ludo/${p0th}`);
     } else if(req.body.action_to_do === 'join'){
             if(Object.keys(rooms).includes(req.body.roomcode)){
                 res.redirect(301, 'ludo/' + req.body.roomcode);
