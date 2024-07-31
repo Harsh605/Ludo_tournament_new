@@ -145,10 +145,10 @@ let allPiecesePos = {
     scalePosition({ x: 82, y: 155 }),
   ],
   1: [
-    scalePosition({ x: 532, y: 65 }),
-    scalePosition({ x: 625, y: 65 }),
-    scalePosition({ x: 533, y: 155 }),
-    scalePosition({ x: 625, y: 155 }),
+    scalePosition({ x: 525, y: 60 }),
+    scalePosition({ x: 620, y: 60 }),
+    scalePosition({ x: 530, y: 150 }),
+    scalePosition({ x: 620, y: 150 }),
   ],
   2: [
     scalePosition({ x: 533, y: 515 }),
@@ -409,8 +409,8 @@ class Piece {
         this.path[pathIndex](this.color_id, this.Pid);
         this.redrawAllPieces();  // Redraw all pieces
         resolve();
-        // var piceSound = document.getElementById("piceSound");
-        // piceSound.play();
+        var piceSound = document.getElementById("piceSound");
+        piceSound.play();
       }, 200);
     });
   }
@@ -440,9 +440,9 @@ class Piece {
     ctx.clearRect(clearX, clearY, clearWidth, clearHeight);
   }
 
-  update(num) {
-    this.moveStepByStep(num);
-  }
+  // update(num) {
+  //   this.moveStepByStep(num);
+  // }
 
   async update(num) {
     console.log(`Updating piece ${this.id} with move ${num}`);
@@ -724,6 +724,29 @@ socket.on("Thrown-dice", async function (data) {
     hideLoader();
   });
 
+  socket.on("oppnentLose", async function (data) {
+    swal({
+      title: "Loser",
+      text: `You lose 🤦‍♂️`,
+      icon: "error",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+
+        console.log(response);
+        window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
+          "game_id"
+        )}`;
+      } else {
+        console.log(response);
+        window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
+          "game_id"
+        )}`;
+      }
+    });    
+  });
+
   async function userLiveWinn(t, g) {
     const headers = {
       Authorization: `Bearer ${t}`,
@@ -744,6 +767,14 @@ socket.on("Thrown-dice", async function (data) {
 
       await sendWebSocketMessage("pageReloadSocketCall");
 
+      socket.emit("Lose", {
+        room: data.room,
+        id: data.id,
+        player: myid,
+        token: urlParams.get("token"),
+        game_id: urlParams.get("game_id"),
+      });
+
       swal({
         title: "Winner",
         text: `you are the winner`,
@@ -752,6 +783,7 @@ socket.on("Thrown-dice", async function (data) {
         dangerMode: true,
       }).then((willDelete) => {
         if (willDelete) {
+
           console.log(response);
           window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
             "game_id"
@@ -981,9 +1013,9 @@ function diceAction() {
 
       canvas.addEventListener("click", clickHandler);
 
-      function clickHandler(e) {
-        var piceSound = document.getElementById("piceSound");
-        piceSound.play();
+      async function clickHandler(e) {
+        // var piceSound = document.getElementById("piceSound");
+        // piceSound.play();
         console.log("Click event listener triggered");
 
         let Xp = e.clientX - e.target.getBoundingClientRect().left;
