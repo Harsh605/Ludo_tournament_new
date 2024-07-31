@@ -198,7 +198,7 @@ class Player {
     for (let i = 0; i < 4; i++) {
       this.myPieces[i] = new Piece(String(i), String(id));
     }
-    this.won = parseInt(0);
+    this.won = 0;
   }
   draw() {
     for (let i = 0; i < 4; i++) {
@@ -213,6 +213,11 @@ class Player {
       return 0;
     }
   }
+  incrementWon() {
+    this.won += 1;
+    console.log(`Player ${this.id} won count: ${this.won}`);
+  }
+
 }
 
 class Piece {
@@ -381,7 +386,7 @@ class Piece {
       }
       this.pos += num;
       if (this.pos == 56) {
-        window.PLAYERS[this.color_id].won += 1;
+         window.PLAYERS[this.color_id].incrementWon();
         this.giveExtraTurn();
       } else {
         this.checkForKill();
@@ -437,6 +442,13 @@ class Piece {
 
   update(num) {
     this.moveStepByStep(num);
+  }
+
+  async update(num) {
+    console.log(`Updating piece ${this.id} with move ${num}`);
+    await this.moveStepByStep(num);
+    console.log(`Piece ${this.id} update complete`);
+    return this.pos == 56; // Return true if the piece has reached the end
   }
 
   checkForKill() {
@@ -669,16 +681,30 @@ socket.on("connect", function () {
     rollDice();
   });
 
-  socket.on("Thrown-dice", async function (data) {
-    console.log(data);
-    await PLAYERS[data.id].myPieces[data.pid].update(data.num);
-    if (iKill(data.id, data.pid)) {
-      outputMessage({ msg: "Oops got killed", id: data.id }, 5);
-      allPlayerHandler();
-    } else {
-      allPlayerHandler();
-    }
+  // socket.on("Thrown-dice", async function (data) {
+  //   console.log(data);
+  //   await PLAYERS[data.id].myPieces[data.pid].update(data.num);
+  //   console.log("didIwin", PLAYERS[data.id].didIwin())
+  //   if (PLAYERS[data.id].didIwin()) {
+  //     socket.emit("WON", {
+  //       room: data.room,
+  //       id: data.id,
+  //       player: myid,
+  //       token: urlParams.get("token"),
+  //       game_id: urlParams.get("game_id"),
+  //     });
+  //   }
+  // });
+
+  // Main game logic
+socket.on("Thrown-dice", async function (data) {
+  console.log(`Handling move for player ${data.id}, piece ${data.pid}, move ${data.num}`);
+  const pieceReachedEnd = await PLAYERS[data.id].myPieces[data.pid].update(data.num);
+  
+  if (pieceReachedEnd) {
+    console.log(`Piece ${data.pid} reached end. Checking if player ${data.id} won.`);
     if (PLAYERS[data.id].didIwin()) {
+      console.log(`Player ${data.id} has won!`);
       socket.emit("WON", {
         room: data.room,
         id: data.id,
@@ -687,7 +713,8 @@ socket.on("connect", function () {
         game_id: urlParams.get("game_id"),
       });
     }
-  });
+  }
+})
 
   socket.on("winner", async function (data) {
     //showToast(`you are the winner ${USERNAMES[id]}`);
@@ -990,7 +1017,6 @@ function diceAction() {
                   room: room_code,
                   nxt_id: chanceRotation(myid, data),
                 });
-                console.log("styleButton(0);")
               });
               canvas.removeEventListener("click", clickHandler);
               return;
