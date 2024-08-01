@@ -558,7 +558,7 @@ router.patch('/challange/roomcode/:id', Auth, async (req, res) => {
         const user = req.user.id
         const game = await Game.findById(req.params.id)
         if (game.Created_by == user && game.Status == "running") {
-            const game1 = await Game.findByIdAndUpdate(req.params.id, { Room_code: req.body.Room_code }, { new: true })
+            const game1 = await Game.findByIdAndUpdate(req.params.id, {$set:{Room_code: req.body.Room_code , is_live_game: req.body.is_live_game || false}}, { new: true })
             res.status(200).send(game1)
         }
 

@@ -158,7 +158,11 @@ const transactionSchema = new mongoose.Schema({
     socketId:{
         type:String,
         default: null
-    }
+    },
+    is_live_game:{
+        type:Boolean,
+        default: false
+    },
 }, { timestamps: true })
 
 const Game = mongoose.model("Game", transactionSchema)
