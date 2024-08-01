@@ -97,9 +97,9 @@ const room_code =
     ? url.substring(roomCodeStartIndex, roomCodeEndIndex)
     : url.substring(roomCodeStartIndex);
 
-const USERNAMES = ["Red", "Green", "Yellow", "Blue"];
+const USERNAMES = ["Blue", "Green", "Yellow", "Red"];
 const PIECES = [];
-const colors = ["red", "green", "yellow", "blue"];
+const colors = ["blue", "green", "yellow", "red"];
 let MYROOM = [];
 let myid = -1;
 let chance = Number(-1);
@@ -860,7 +860,7 @@ function outputMessage(anObject, k) {
     if (!player1Set) {
       document.getElementById("player1").innerHTML = `
         <div>
-          <img class="AvatarSize" id="isPlayer1" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar2.png" alt="">
+          <img class="AvatarSize" id="isPlayer1" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar1.png" alt="">
         </div>    
         <div class="">
           <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
@@ -879,7 +879,7 @@ function outputMessage(anObject, k) {
     } else {
       document.getElementById("player2").innerHTML = `            
         <div>
-          <img class="AvatarSize" id="isPlayer2" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar1.png" alt="">
+          <img class="AvatarSize" id="isPlayer2" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar6.png" alt="">
         </div>    
         <div class="">
           <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
