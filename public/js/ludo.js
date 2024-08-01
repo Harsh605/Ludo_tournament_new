@@ -526,6 +526,22 @@ class Piece {
 socket.on("connect", function () {
   console.log("You are connected to the server!!");
 
+  socket.on('already-connected', () => {
+    showLoader();
+    swal({
+        title: "Oops...",
+        text: "You are already connected to the game from another tab.",
+        icon: "error",
+        buttons: true,
+        dangerMode: true,
+    }).then((willClose) => {
+        if (willClose) {
+            window.close(); // Close the current window/tab
+        }
+    });
+  });
+
+
   socket.emit("fetch", room_code, function (data, id) {
     MYROOM = data.sort(function (a, b) {
       return a - b;
@@ -623,7 +639,7 @@ socket.on("connect", function () {
   socket.on("user-disconnected", async function (data) {
     showLoader();
     // swal({
-    //      title: "Oppes..",
+    //      title: "Oops...",
     //       text: `Please wait for 30 second to rejoin after 30 second you will winn the match`,
     //       icon: "warning",
     //       buttons: true,
@@ -648,7 +664,7 @@ socket.on("connect", function () {
   socket.on("user-disconnected-popup", async function (data) {
     
     // swal({
-    //      title: "Oppes..",
+    //      title: "Oops...",
     //       text: `Please wait for 30 second to rejoin after 30 second you will winn the match`,
     //       icon: "warning",
     //       buttons: true,

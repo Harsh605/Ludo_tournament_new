@@ -1009,6 +1009,7 @@ router.post('/challange/result/live/:id', Auth, upload.array('file'), async (req
 
                         game.Winner_closingbalance = (acceptor_closingbalance + winnAmount + game.Game_Ammount);
                         game.Loser_closingbalance = creator_closingbalance;
+                    
                         await game.save();
                         return res.status(200).send(game)
 

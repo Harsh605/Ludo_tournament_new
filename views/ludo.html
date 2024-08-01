@@ -105,11 +105,7 @@
       height: 30px;
     }
 
-  .AvatarSize {
-    width: 50px; /* Adjust size as needed */
-    height: 50px; /* Adjust size as needed */
-  }
-
+ 
 
     .msgBoard {
         float: top;
@@ -169,23 +165,6 @@
 
         .hidden { display: none; }
 
-        /* .toast {
-          position: fixed;
-          bottom: 20px;
-          left: 50%;
-          transform: translateX(-50%);
-          background-color: #fe3c3c;
-          color: #ffffff;
-          padding: 10px 20px;
-          border-radius: 5px;
-          opacity: 0;
-          transition: opacity 0.3s ease-in-out;
-        }
-        
-        .toast.show {
-          opacity: 1;
-        } */
-
         .toast {
           position: fixed;
           top: 20px; /* Adjust top position as needed */
@@ -203,6 +182,10 @@
           opacity: 1;
         }
 
+        .AvatarSize {
+        width: 50px; /* Adjust size as needed */
+        height: 50px; /* Adjust size as needed */
+      }
         @keyframes glowing-border {
           0% {
             border-color: yellow;
@@ -210,7 +193,7 @@
           }
           50% {
             border-color: transparent;
-            box-shadow: 0 0 10px yellow;
+            box-shadow: 0 0 5px yellow;
           }
           100% {
             border-color: yellow;
