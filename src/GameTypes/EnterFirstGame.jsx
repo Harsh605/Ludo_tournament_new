@@ -305,7 +305,8 @@ function EnterFirstGame(props) {
     
             await axios.patch(baseURL + `/challange/roomcode/${path}`,
                 {
-                    Room_code: lastSegment
+                    Room_code: lastSegment,
+                    is_live_game: true
                 },
                 { headers }
             )

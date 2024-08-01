@@ -143,7 +143,7 @@ const Runningbattles = ({ runnig, user, winnAmount, key }) => {
                         <p className="text-light mb-0">{runnig.Created_by.Name}</p>
                     </div>
                     <div className="col-4 d-flex justify-content-center">
-                        <img src="./images/versus.png" className="rounded-circle mx-1" style={{ width: '25%', height: 25 }} alt="" />
+                        <img src="/images/versus.png" className="rounded-circle mx-1" style={{ width: '25%', height: 25 }} alt="" />
                     </div>
                     <div className="col-4 d-flex justify-content-end">
                         <p className="text-light text-end mb-0">{runnig.Accepetd_By.Name}</p>

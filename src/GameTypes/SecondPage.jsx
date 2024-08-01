@@ -13,6 +13,7 @@ import MyBattles from '../Components/Battles/MyBattles';
 import Swal from 'sweetalert2';
 import { useRef } from 'react';
 import { handleUnAuthorized } from '../Components/hooks/handleUnAuthorized'
+import LiveRunningBattle from '../Components/Battles/LiveRunningBattle';
 
 
 function SecondPage({ walletUpdate }) {
@@ -858,6 +859,27 @@ function SecondPage({ walletUpdate }) {
                         {/* <div className="col-12 my-2 bg-purple2 py-3">
                             <CreateBattles fetchData={fetchData} battletype={propValue} />
                         </div> */}
+                        <div className=''>
+                        <div className='scroll-container'>
+                                    {ownRunning && ownRunning.map((runnig) => {
+                                        if (((user == runnig.Accepetd_By._id ? ((runnig.Status === "running" && user == runnig.Accepetd_By._id && runnig.Acceptor_seen == true) || (runnig.Status === "pending")) : ((runnig.Status === "running" && user == runnig.Created_by._id) || (runnig.Status === "pending"))) || runnig.Status == "conflict") && runnig.Game_type == game_type)
+                                            return (
+
+                                                <LiveRunningBattle key={runnig._id} loading={false} runnig={runnig} user={user} winnAmount={winnAmount} />
+
+                                            );
+                                    })}
+                                    {runningGames &&
+                                        runningGames.map((runnig) => {
+                                            if (((user == runnig.Accepetd_By._id || user == runnig.Created_by._id) ? (user == runnig.Accepetd_By._id ? ((runnig.Status === "running" && user == runnig.Accepetd_By._id && runnig.Acceptor_seen == true) || (runnig.Status === "pending" && runnig.Acceptor_status == null)) : ((runnig.Status === "running" && user == runnig.Created_by._id) || (runnig.Status === "pending" && runnig.Creator_Status == null))) : (runnig.Status === "running" || runnig.Status === "pending")) && runnig.Game_type == game_type)
+                                                return (
+
+                                                    <LiveRunningBattle key={runnig._id} loading={false} runnig={runnig} user={user} winnAmount={winnAmount} />
+
+                                                );
+                                        })}
+                                </div>
+                        </div>
                         <div className="col-12 my-2 bg-purple2 py-3">
                             <div className="row">
                                 <div className="col-12  mb-3 d-flex justify-content-between text-light">
@@ -893,6 +915,26 @@ function SecondPage({ walletUpdate }) {
                                     </div>
                                     </div>
                                 </div>
+                                {/* <div className='scroll-container'>
+                                    {ownRunning && ownRunning.map((runnig) => {
+                                        if (((user == runnig.Accepetd_By._id ? ((runnig.Status === "running" && user == runnig.Accepetd_By._id && runnig.Acceptor_seen == true) || (runnig.Status === "pending")) : ((runnig.Status === "running" && user == runnig.Created_by._id) || (runnig.Status === "pending"))) || runnig.Status == "conflict") && runnig.Game_type == game_type)
+                                            return (
+
+                                                <Runningbattles key={runnig._id} loading={false} runnig={runnig} user={user} winnAmount={winnAmount} />
+
+                                            );
+                                    })}
+                                    {runningGames &&
+                                        runningGames.map((runnig) => {
+                                            if (((user == runnig.Accepetd_By._id || user == runnig.Created_by._id) ? (user == runnig.Accepetd_By._id ? ((runnig.Status === "running" && user == runnig.Accepetd_By._id && runnig.Acceptor_seen == true) || (runnig.Status === "pending" && runnig.Acceptor_status == null)) : ((runnig.Status === "running" && user == runnig.Created_by._id) || (runnig.Status === "pending" && runnig.Creator_Status == null))) : (runnig.Status === "running" || runnig.Status === "pending")) && runnig.Game_type == game_type)
+                                                return (
+
+                                                    <Runningbattles key={runnig._id} loading={false} runnig={runnig} user={user} winnAmount={winnAmount} />
+
+                                                );
+                                        })}
+                                </div> */}
+                                
                                 <div className='scroll-container'>
                                     {created &&
                                         created.map((allgame) =>
