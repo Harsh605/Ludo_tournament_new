@@ -498,9 +498,14 @@ nsp.on('connection', (socket) => {
             spectate.to(OBJ.room).emit('winner', OBJ); // Emitting to spectators
         }
     });
+
     socket.on('Lose', async (OBJ) => {
             nsp.to(OBJ.room).emit('oppnentLose', OBJ);
             spectate.to(OBJ.room).emit('oppnentLose', OBJ); // Emitting to spectators
+    });
+    socket.on('Winner', async (OBJ) => {
+            nsp.to(OBJ.room).emit('oppnentWin', OBJ);
+            spectate.to(OBJ.room).emit('oppnentWin', OBJ); // Emitting to spectators
     });
 
     socket.on('admin', (data) => {

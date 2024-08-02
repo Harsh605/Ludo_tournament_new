@@ -809,6 +809,30 @@ socket.on("connect", function () {
     });    
   });
 
+
+  socket.on("oppnentWinn", async function (data) {
+    swal({
+      title: "Winner",
+      text: `You winn `,
+      icon: "success",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+
+        console.log(response);
+        window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
+          "game_id"
+        )}`;
+      } else {
+        console.log(response);
+        window.location.href = `https://ludowinners.in/viewgame/${urlParams.get(
+          "game_id"
+        )}`;
+      }
+    });    
+  });
+
   async function userLiveWinn(t, g) {
     const headers = {
       Authorization: `Bearer ${t}`,
@@ -1715,6 +1739,14 @@ async function userLose() {
       alert("Network response was not ok");
       throw new Error("Network response was not ok");
     }
+
+    socket.emit("Winner", {
+      room: data.room,
+      id: data.id,
+      player: myid,
+      token: urlParams.get("token"),
+      game_id: urlParams.get("game_id"),
+    });
 
     hideLoader();
     await sendWebSocketMessage("pageReloadSocketCall");
