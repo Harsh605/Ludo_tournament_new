@@ -447,7 +447,21 @@ nsp.on('connection', (socket) => {
         spectate.to(data.room).emit('rolled-dice', data); // Emitting to spectators
         cb(diceRoll);
     });
+
+
+    socket.on('updateChance', (data) => {
+        const {myRemaingChance, oppnentRemaningChance } = data;
     
+        // Broadcast updated chances to all clients in the room
+        nsp.to(data.room).emit('updateChances', {
+          myRemaingChance,
+          oppnentRemaningChance
+        });
+        spectate.to(data.room).emit('updateChances', {
+          myRemaingChance,
+          oppnentRemaningChance
+        });
+      });
     
 
     socket.on('chance', (data) => {

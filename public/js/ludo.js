@@ -122,7 +122,14 @@ canvas.height = styleHeight;
 
 let diceTimeout;
 let avatarTimeout;
-let remaningChance = 5;
+let isMyGame = false;
+
+let myRemaingChance = parseInt(localStorage.getItem("myRemaingChance")) || 5;
+let oppnentRemaningChance = parseInt(localStorage.getItem("oppnentRemaningChance")) || 5;
+
+localStorage.setItem("myRemaingChance", myRemaingChance);
+localStorage.setItem("oppnentRemaningChance", oppnentRemaningChance);
+
 
 
 // Scale factor
@@ -584,13 +591,11 @@ socket.on("connect", function () {
         });
         togglePlayerTurn(false); // Player's turn ends after rolling
         styleButton(0);
+        updateChance();
   
         clearTimeout(avatarTimeout);
         clearTimeout(diceTimeout);
-  
-        remaningChance -= 1; // Decrement remainingChance
-        localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
-        showRemaningDots();
+        
         console.log("Timeout reached, next chance");
       }, 20000); // 20 seconds for this example
     } else {
@@ -600,6 +605,35 @@ socket.on("connect", function () {
   
     chance = Number(data);
     window.localStorage.setItem("chance", chance.toString());
+  });
+
+  function updateChance() {
+    myRemaingChance -= 1; // Decrement remainingChance
+    isMyGame = true;
+  
+    socket.emit("updateChance", {
+      room: room_code,
+      myRemaingChance,
+      oppnentRemaningChance
+    });
+  }
+  
+  
+  socket.on("updateChances", function (data) {
+
+    if(isMyGame){
+      myRemaingChance = data.myRemaingChance;
+      oppnentRemaningChance = data.oppnentRemaningChance;
+    }else{
+      myRemaingChance = data.oppnentRemaningChance;
+      oppnentRemaningChance = data.myRemaingChance;
+    }
+  
+    localStorage.setItem("myRemaingChance", myRemaingChance);
+    localStorage.setItem("oppnentRemaningChance", oppnentRemaningChance);
+  
+    showRemaningDots(myRemaingChance, oppnentRemaningChance);
+    isMyGame = false;
   });
   
 
@@ -825,6 +859,7 @@ socket.on("connect", function () {
       });
     } catch (e) {
       console.log(e);
+      window.localStorage.clear();
       alert("There was an error winning the game.");
     }
   }
@@ -835,6 +870,8 @@ socket.on("connect", function () {
       "game_id"
     )}`;
   });
+
+
   
 });
 
@@ -848,6 +885,30 @@ var randomPiceNumber;
 var randomPiceNumber;
 var player1Set = false; // Track if player1 is set
 var player2Set = false
+
+// Function to update player info
+function updatePlayerInfo(playerNumber, anObject) {
+  const playerId = playerNumber === 1 ? "player1" : "player2";
+  const isPlayerId = playerNumber === 1 ? "isPlayer1" : "isPlayer2";
+  const remaningDotsId = playerNumber === 1 ? "remaningDots1" : "remaningDots2";
+  const colorMessageId = playerNumber === 1 ? "color-message-span1" : "color-message-span2";
+  
+  document.getElementById(playerId).innerHTML = `
+    <div class="AvatarSize">
+      <img id="${isPlayerId}" style="" src="../images/avatar/Avatar${playerNumber}.png" alt="">
+    </div>    
+    <div class="">
+      <span id="${colorMessageId}" style="color: ${colors[anObject.id]};">${anObject.Name}</span>
+      <span id="color-message-span2"></span>
+      <img style="width: 15px" src="../images/pieces/${colors[anObject.id]}.png" alt="${anObject.Name} Piece">
+    </div>
+    <div id="${remaningDotsId}">
+      <img style="width: 40px" src="../images/dots/five.png" alt="dots">
+    </div>
+  `;
+}
+
+
 
 //Output the message through DOM manipulation
 function outputMessage(anObject, k) {
@@ -887,41 +948,21 @@ function outputMessage(anObject, k) {
     }</span><span id="color-message-span2"> entered the game</span></p>`;
     msgBoard.appendChild(div);
    // The code for setting up players when they join remains the same
+    // Determine the player slot based on current state
     if (!player1Set) {
-      document.getElementById("player1").innerHTML = `
-        <div class="AvatarSize">
-          <img  id="isPlayer1" style="" src="../images/avatar/Avatar1.png" alt="">
-        </div>    
-        <div class="">
-          <span id="color-message-span1" style="color: ${colors[anObject.id]};">${anObject.Name}</span>
-          <span id="color-message-span2"></span>
-          <img style="width: 15px" src="../images/pieces/${
-            colors[anObject.id]
-          }.png" alt="${anObject.Name} Piece">
-        </div>
-        <div id="remaningDots1">
-          <img style="width: 40px" src="../images/dots/five.png" alt="dots">
-        </div> 
-      `;
+      updatePlayerInfo(1, anObject);
       player1Set = true;
     } else if (!player2Set) {
-      document.getElementById("player2").innerHTML = `            
-        <div class="AvatarSize">
-          <img id="isPlayer2" style="" src="../images/avatar/Avatar6.png" alt="">
-        </div>    
-        <div class="">
-          <span class="" id="color-message-span1" style="color: ${colors[anObject.id]};">${anObject.Name}</span>
-          <span id="color-message-span2"></span>
-          <img style="width: 15px" src="../images/pieces/${
-            colors[anObject.id]
-          }.png" alt="${anObject.Name} Piece">
-        </div>
-        <div id="remaningDots2">
-          <img style="width: 40px" src="../images/dots/five.png" alt="dots">
-        </div>                   
-      `;
+      updatePlayerInfo(2, anObject);
       player2Set = true;
+    } else {
+      // Both players are set, update existing slots with new player info
+      // You can modify the logic here based on your requirements.
+      // For example, you can alternate between updating player 1 and player 2.
+      // Here we just update player 2 as an example:
+      updatePlayerInfo(2, anObject);
     }
+
   } else if (k === 3) {
     const div = document.createElement("div");
     div.classList.add("messageFromServer");
@@ -988,30 +1029,31 @@ function findPlayerElementByColor(color) {
   return null;
 }
 
-async function showRemaningDots() {
+async function showRemaningDots(myRemaingChance, oppnentRemaningChance) {
   const remaningDots1 = document.getElementById("remaningDots1");
   const remaningDots2 = document.getElementById("remaningDots2");
   
   const dotImages = ["one.png", "two.png", "three.png", "four.png", "five.png"];
-  const currentDotsImage = remaningChance >= 1 && remaningChance <= 5 ? dotImages[remaningChance - 1] : "zero.png";
+  const currentDotsImage1 = myRemaingChance >= 1 && myRemaingChance <= 5 ? dotImages[myRemaingChance - 1] : "zero.png";
+  const currentDotsImage2 = oppnentRemaningChance >= 1 && oppnentRemaningChance <= 5 ? dotImages[oppnentRemaningChance - 1] : "zero.png";
   
-  if (remaningChance === 0) {
+  if (myRemaingChance === 0) {
     showLoader();
     clearTimeout(avatarTimeout);
     clearTimeout(diceTimeout); // Clear the timeout when the player rolls the dice
-   await userLose();
-   hideLoader();
+    await userLose();
+    hideLoader();
   }
 
-
   if (remaningDots1) {
-    remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage}" alt="dots">`;
+    remaningDots1.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage1}" alt="dots">`;
   }
   
   if (remaningDots2) {
-    remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage}" alt="dots">`;
+    remaningDots2.innerHTML = `<img style="width: 40px" src="../images/dots/${currentDotsImage2}" alt="dots">`;
   }
 }
+
 
 function rollDice() {
   const dice = document.getElementById("randomButt");
@@ -1030,8 +1072,8 @@ function rollDice() {
 }
 
 function diceAction() {
-  clearTimeout(avatarTimeout);
-  clearTimeout(diceTimeout); // Clear the timeout when the player rolls the dice
+  //clearTimeout(avatarTimeout);
+  //clearTimeout(diceTimeout); // Clear the timeout when the player rolls the dice
   socket.emit("roll-dice", { room: room_code, id: myid }, function (num) {
     console.log("Dice rolled, got", num);
     let spirit = [];
@@ -1644,6 +1686,7 @@ async function notJoinCancelGame() {
 
         window.location.href = `https://ludowinners.in/viewgame/${urlParams.get('game_id')}`
       } catch (error) {
+          window.localStorage.clear();
           console.error("Error cancelling the game:", error);
           alert("There was an error cancelling the game.");
 
@@ -1688,6 +1731,7 @@ async function userLose() {
     
   } catch (e) {
     console.log(e);
+    window.localStorage.clear();
     alert("There was an error cancelling the game.");
   }
 }
@@ -1740,8 +1784,8 @@ async function userWinn() {
     });
   } catch (e) {
     console.log(e);
-    alert("There was an error cancelling the game.");
     window.localStorage.clear();
+    alert("There was an error cancelling the game.");
   }
 }
 
