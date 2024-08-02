@@ -678,6 +678,7 @@ socket.on("connect", function () {
     //       }
     //     });
 
+    outputMessage({ Name: USERNAMES[data], id: data }, 6);
     showLoader();
     clearTimeout(avatarTimeout);
     clearTimeout(diceTimeout);
@@ -835,6 +836,7 @@ var randomPiceNumber;
 //Output the message through DOM manipulation
 var randomPiceNumber;
 var player1Set = false; // Track if player1 is set
+var player2Set = false
 
 //Output the message through DOM manipulation
 function outputMessage(anObject, k) {
@@ -873,10 +875,11 @@ function outputMessage(anObject, k) {
       anObject.Name
     }</span><span id="color-message-span2"> entered the game</span></p>`;
     msgBoard.appendChild(div);
+   // The code for setting up players when they join remains the same
     if (!player1Set) {
       document.getElementById("player1").innerHTML = `
-        <div>
-          <img class="AvatarSize" id="isPlayer1" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar1.png" alt="">
+        <div class="AvatarSize">
+          <img  id="isPlayer1" style="" src="../images/avatar/Avatar1.png" alt="">
         </div>    
         <div class="">
           <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
@@ -892,10 +895,10 @@ function outputMessage(anObject, k) {
         </div> 
       `;
       player1Set = true;
-    } else {
+    } else if (!player2Set) {
       document.getElementById("player2").innerHTML = `            
-        <div>
-          <img class="AvatarSize" id="isPlayer2" style="border: 2px solid white; border-radius: 50%;" src="../images/avatar/Avatar6.png" alt="">
+        <div class="AvatarSize">
+          <img id="isPlayer2" style="" src="../images/avatar/Avatar6.png" alt="">
         </div>    
         <div class="">
           <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
@@ -910,6 +913,7 @@ function outputMessage(anObject, k) {
           <img style="width: 40px" src="../images/dots/five.png" alt="dots">
         </div>                   
       `;
+      player2Set = true;
     }
   } else if (k === 3) {
     const div = document.createElement("div");
@@ -941,8 +945,40 @@ function outputMessage(anObject, k) {
       anObject.Name
     }</span><span id="color-message-span2"> just left the game</span></p>`;
     msgBoard.appendChild(div);
+
+    // Find and remove the specific player who left
+    const playerElement = findPlayerElementByColor(colors[anObject.id]);
+    if (playerElement) {
+      removePlayerInfo(playerElement);
+      if (playerElement.id === "player1") {
+        player1Set = false;
+      } else if (playerElement.id === "player2") {
+        player2Set = false;
+      }
+    }
   }
   msgBoard.scrollTop = msgBoard.scrollHeight - msgBoard.clientHeight;
+}
+
+
+// Function to remove player information
+function removePlayerInfo(playerElement) {
+  if (playerElement) {
+    playerElement.innerHTML = '';
+  }
+}
+
+// Function to find player element by color
+function findPlayerElementByColor(color) {
+  const player1 = document.getElementById("player1");
+  const player2 = document.getElementById("player2");
+
+  if (player1 && player1.querySelector(`img[src="../images/pieces/${color}.png"]`)) {
+    return player1;
+  } else if (player2 && player2.querySelector(`img[src="../images/pieces/${color}.png"]`)) {
+    return player2;
+  }
+  return null;
 }
 
 async function showRemaningDots() {
@@ -1183,30 +1219,33 @@ function diceAction() {
 //   }
 // }
 
+
 function togglePlayerTurn(isPlayer1Turn) {
   const player1 = document.getElementById("isPlayer1");
   const player2 = document.getElementById("isPlayer2");
-
+  
   // Remove the animation class from both players
-  player1.classList.remove("animated-border");
-  player2.classList.remove("animated-border");
-
-  if (isPlayer1Turn) {
-    player1.style.border = "3px solid yellow";
-    player2.style.border = "none";
-    player1.classList.add("animated-border");
-  } else {
-    player1.style.border = "none";
-    player2.style.border = "3px solid yellow";
-    player2.classList.add("animated-border");
+  player1.parentElement.classList.remove("animated-border");
+  player2.parentElement.classList.remove("animated-border");
+  
+  // Clear any existing timeout
+  if (avatarTimeout) {
+      clearTimeout(avatarTimeout);
   }
-
-  // Stop the animation after 10 seconds
+  
+  if (isPlayer1Turn) {
+      player1.parentElement.classList.add("animated-border");
+  } else {
+      player2.parentElement.classList.add("animated-border");
+  }
+  
+  // Stop the animation after 20 seconds
   avatarTimeout = setTimeout(() => {
-    player1.classList.remove("animated-border");
-    player2.classList.remove("animated-border");
-  }, 20000); // 10 seconds
+      player1.parentElement.classList.remove("animated-border");
+      player2.parentElement.classList.remove("animated-border");
+  }, 20000); // 20 seconds
 }
+
 
 
 

@@ -182,40 +182,67 @@
           opacity: 1;
         }
 
+        
         .AvatarSize {
-        width: 50px; /* Adjust size as needed */
-        height: 50px; /* Adjust size as needed */
-      }
-        @keyframes glowing-border {
-          0% {
-            border-color: yellow;
-            box-shadow: 0 0 5px yellow;
-          }
-          50% {
-            border-color: transparent;
-            box-shadow: 0 0 5px yellow;
-          }
-          100% {
-            border-color: yellow;
-            box-shadow: 0 0 5px yellow;
-          }
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-
-        .animated-border {
-          animation: glowing-border 1s infinite;
+        .AvatarSize img {
+            width: 80%;
+            height: 80%;
+            border-radius: inherit;
+            object-fit: cover;
+            position: relative;
+            z-index: 1;
         }
-
-
+        .animated-border::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            background-image: conic-gradient(yellow 0deg, transparent 0deg);
+            animation: borderAnimation 20s linear reverse;
+        }
+        @keyframes borderAnimation {
+            0% { background-image: conic-gradient(yellow 0deg, transparent 0deg); }
+            5% { background-image: conic-gradient(yellow 18deg, transparent 0deg); }
+            10% { background-image: conic-gradient(yellow 36deg, transparent 0deg); }
+            15% { background-image: conic-gradient(yellow 54deg, transparent 0deg); }
+            20% { background-image: conic-gradient(yellow 72deg, transparent 0deg); }
+            25% { background-image: conic-gradient(yellow 90deg, transparent 0deg); }
+            30% { background-image: conic-gradient(yellow 108deg, transparent 0deg); }
+            35% { background-image: conic-gradient(yellow 126deg, transparent 0deg); }
+            40% { background-image: conic-gradient(yellow 144deg, transparent 0deg); }
+            45% { background-image: conic-gradient(yellow 162deg, transparent 0deg); }
+            50% { background-image: conic-gradient(yellow 180deg, transparent 0deg); }
+            55% { background-image: conic-gradient(yellow 198deg, transparent 0deg); }
+            60% { background-image: conic-gradient(yellow 216deg, transparent 0deg); }
+            65% { background-image: conic-gradient(yellow 234deg, transparent 0deg); }
+            70% { background-image: conic-gradient(yellow 252deg, transparent 0deg); }
+            75% { background-image: conic-gradient(yellow 270deg, transparent 0deg); }
+            80% { background-image: conic-gradient(yellow 288deg, transparent 0deg); }
+            85% { background-image: conic-gradient(yellow 306deg, transparent 0deg); }
+            90% { background-image: conic-gradient(yellow 324deg, transparent 0deg); }
+            95% { background-image: conic-gradient(yellow 342deg, transparent 0deg); }
+            100% { background-image: conic-gradient(yellow 360deg, transparent 0deg); }
+        }
       body{
         background: hsla(258, 73%, 22%, 1);
+        background: linear-gradient(0deg, hsla(258, 73%, 22%, 1) 10%, hsla(263, 77%, 35%, 1) 50%, hsla(258, 73%, 22%, 1) 90%);
 
-background: linear-gradient(0deg, hsla(258, 73%, 22%, 1) 10%, hsla(263, 77%, 35%, 1) 50%, hsla(258, 73%, 22%, 1) 90%);
+        background: -moz-linear-gradient(0deg, hsla(258, 73%, 22%, 1) 10%, hsla(263, 77%, 35%, 1) 50%, hsla(258, 73%, 22%, 1) 90%);
 
-background: -moz-linear-gradient(0deg, hsla(258, 73%, 22%, 1) 10%, hsla(263, 77%, 35%, 1) 50%, hsla(258, 73%, 22%, 1) 90%);
+        background: -webkit-linear-gradient(0deg, hsla(258, 73%, 22%, 1) 10%, hsla(263, 77%, 35%, 1) 50%, hsla(258, 73%, 22%, 1) 90%);
 
-background: -webkit-linear-gradient(0deg, hsla(258, 73%, 22%, 1) 10%, hsla(263, 77%, 35%, 1) 50%, hsla(258, 73%, 22%, 1) 90%);
-
-filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#270F60", endColorstr="#4B159F", GradientType=1 );
+        filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#270F60", endColorstr="#4B159F", GradientType=1 );
       }
 
   </style>
@@ -265,8 +292,8 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#270F60", en
             <div class="card bg-black shadow text-center cd">
               <div class="d-flex justify-content-around align-items-center">
                 <div class="mt-1" id="player1">
-                  <!-- <img class="AvatarSize" id="isPlayer1" style="border: 2px solid yellow; border-radius: 50%;" src="../images/avatar/Avatar2.png" alt="">
-                  <p id="player1"></p> -->
+                  <img class="AvatarSize" id="isPlayer1" style="border: none; border-radius: 50%;" src="../images/avatar/loading.gif" alt="">
+                  <!-- <p id="player1"></p> -->
                 </div>
                 <div class="goButt">
                   <div style="position: relative; display: inline-block;">
@@ -283,7 +310,7 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#270F60", en
           </div>
           <div class="col-12 col-md-4">
             <!-- Content for the right column -->
-            <div class="diceBoard mt-2 d-none">
+            <div class="diceBoard mt-2">
               <div class="msgBoard">
                 <div class="messageFromServer">
                   <strong>LET US START THE GAME!!!</strong>
