@@ -84,9 +84,10 @@ let socket = io(window.location.href.substring(0,window.location.href.length-7))
 const room_code = window.location.href.substring(window.location.href.length-6);
 
 
-const USERNAMES = ["Blue", "Green", "Yellow", "Red"];
+const USERNAMES = ["Green", "Red", "Blue", "Yellow"];
 const PIECES = [];
-const colors = ["blue", "green", "yellow", "red"];
+const colors = ["green", "red", "blue", "yellow"];
+const dice = ["one", "two", "three", "four", "five", "six"];
 let MYROOM = [];
 let myid = -1;
 let chance = Number(-1);
@@ -117,56 +118,48 @@ function scalePosition(position) {
 
 let allPiecesePos = {
   0: [
-    scalePosition({ x: 80, y: 65 }),
-    scalePosition({ x: 172, y: 65 }),
-    scalePosition({ x: 172, y: 155 }),
-    scalePosition({ x: 82, y: 155 }),
+    scalePosition({ x: 82, y: 80 }),
+    scalePosition({ x: 172, y: 80 }),
+    scalePosition({ x: 172, y: 170 }),
+    scalePosition({ x: 82, y: 170 }),
   ],
   1: [
-    scalePosition({ x: 525, y: 60 }),
-    scalePosition({ x: 620, y: 60 }),
-    scalePosition({ x: 530, y: 150 }),
-    scalePosition({ x: 620, y: 150 }),
+    scalePosition({ x: 532, y: 80 }),
+    scalePosition({ x: 625, y: 80 }),
+    scalePosition({ x: 533, y: 175 }),
+    scalePosition({ x: 625, y: 175 }),
   ],
   2: [
-    scalePosition({ x: 533, y: 515 }),
-    scalePosition({ x: 625, y: 515 }),
-    scalePosition({ x: 624, y: 605 }),
-    scalePosition({ x: 535, y: 605 }),
+    scalePosition({ x: 533, y: 533 }),
+    scalePosition({ x: 625, y: 533 }),
+    scalePosition({ x: 624, y: 625 }),
+    scalePosition({ x: 535, y: 624 }),
   ],
   3: [
-    scalePosition({ x: 82, y: 515 }),
-    scalePosition({ x: 172, y: 515 }),
-    scalePosition({ x: 173, y: 605 }),
-    scalePosition({ x: 80, y: 605 }),
+    scalePosition({ x: 82, y: 530 }),
+    scalePosition({ x: 172, y: 530 }),
+    scalePosition({ x: 173, y: 620 }),
+    scalePosition({ x: 80, y: 620 }),
   ],
 };
 
 let homeTilePos = {
   0: {
-    0: scalePosition({ x: 50, y: 290 }),
+    0: scalePosition({ x: 50, y: 300 }),
     1: scalePosition({ x: 300, y: 100 }),
   },
   1: {
-    0: scalePosition({ x: 400, y: 28 }),
+    0: scalePosition({ x: 400, y: 50 }),
     1: scalePosition({ x: 600, y: 300 }),
   },
   2: {
-    0: scalePosition({ x: 650, y: 390 }),
+    0: scalePosition({ x: 650, y: 400 }),
     1: scalePosition({ x: 400, y: 600 }),
   },
   3: {
-    0: scalePosition({ x: 300, y: 630 }),
+    0: scalePosition({ x: 300, y: 650 }),
     1: scalePosition({ x: 100, y: 400 }),
   },
-};
-
-// Define safe squares (stamps) for each player
-const safeSquares = {
-  0: [0, 8, 13, 21, 26, 34, 39, 47],  // Adjust these indices as needed
-  1: [0, 8, 13, 21, 26, 34, 39, 47],
-  2: [0, 8, 13, 21, 26, 34, 39, 47],
-  3: [0, 8, 13, 21, 26, 34, 39, 47]
 };
 
 class Player {
@@ -176,7 +169,7 @@ class Player {
     for (let i = 0; i < 4; i++) {
       this.myPieces[i] = new Piece(String(i), String(id));
     }
-    this.won = 0;
+    this.won = parseInt(0);
   }
   draw() {
     for (let i = 0; i < 4; i++) {
@@ -191,304 +184,262 @@ class Player {
       return 0;
     }
   }
-  incrementWon() {
-    this.won += 1;
-    console.log(`Player ${this.id} won count: ${this.won}`);
-  }
-
 }
 
 class Piece {
   constructor(i, id) {
     this.path = [];
     this.color_id = String(id);
+    console.log(this.color_id, typeof this.color_id);
     this.Pid = String(i);
     this.pos = -1;
     this.x = parseInt(allPiecesePos[this.color_id][this.Pid].x);
     this.y = parseInt(allPiecesePos[this.color_id][this.Pid].y);
     this.image = PIECES[this.color_id];
-    this.initializePath(id);
-    this.isAnimating = false;
-    this.isPiceReachedHome = false; // Reset flags before update
-    this.isKilled = false;
-    this.isFourPiceReachedHome = false
-  }
-
-  bounceAnimation() {
-    if (this.isAnimating) return;
-    this.isAnimating = true;
-    
-    const originalY = this.y;
-    const bounceHeight = 20 * scaleY;
-    const animationDuration = 500; // ms
-    const startTime = Date.now();
-
-    const animate = () => {
-      const elapsedTime = Date.now() - startTime;
-      const progress = elapsedTime / animationDuration;
-
-      if (progress < 1) {
-        // Easing function for smooth animation
-        const easeProgress = Math.sin(progress * Math.PI);
-        this.y = originalY - bounceHeight * easeProgress;
-        
-        this.clearPreviousPosition();
-        this.draw();
-        
-        requestAnimationFrame(animate);
-      } else {
-        this.y = originalY;
-        this.clearPreviousPosition();
-        this.draw();
-        this.isAnimating = false;
-      }
-    };
-    animate();
-  }
-
-  initializePath(id) {
-    const pathConfigs = {
-      "0": [
-        { method: this.oneStepToRight, count: 4 },
-        { method: this.oneStepTowards45, count: 1 },
-        { method: this.oneStepToTop, count: 5 },
-        { method: this.oneStepToRight, count: 2 },
-        { method: this.oneStepToBottom, count: 5 },
-        { method: this.oneStepTowards315, count: 1 },
-        { method: this.oneStepToRight, count: 5 },
-        { method: this.oneStepToBottom, count: 2 },
-        { method: this.oneStepToLeft, count: 5 },
-        { method: this.oneStepTowards225, count: 1 },
-        { method: this.oneStepToBottom, count: 5 },
-        { method: this.oneStepToLeft, count: 2 },
-        { method: this.oneStepToTop, count: 5 },
-        { method: this.oneStepTowards135, count: 1 },
-        { method: this.oneStepToLeft, count: 5 },
-        { method: this.oneStepToTop, count: 1 },
-        { method: this.oneStepToRight, count: 6 }
-      ],
-      "1": [
-        { method: this.oneStepToBottom, count: 4 },
-        { method: this.oneStepTowards315, count: 1 },
-        { method: this.oneStepToRight, count: 5 },
-        { method: this.oneStepToBottom, count: 2 },
-        { method: this.oneStepToLeft, count: 5 },
-        { method: this.oneStepTowards225, count: 1 },
-        { method: this.oneStepToBottom, count: 5 },
-        { method: this.oneStepToLeft, count: 2 },
-        { method: this.oneStepToTop, count: 5 },
-        { method: this.oneStepTowards135, count: 1 },
-        { method: this.oneStepToLeft, count: 5 },
-        { method: this.oneStepToTop, count: 2 },
-        { method: this.oneStepToRight, count: 5 },
-        { method: this.oneStepTowards45, count: 1 },
-        { method: this.oneStepToTop, count: 5 },
-        { method: this.oneStepToRight, count: 1 },
-        { method: this.oneStepToBottom, count: 6 }
-      ],
-      "2": [
-        { method: this.oneStepToLeft, count: 4 },
-        { method: this.oneStepTowards225, count: 1 },
-        { method: this.oneStepToBottom, count: 5 },
-        { method: this.oneStepToLeft, count: 2 },
-        { method: this.oneStepToTop, count: 5 },
-        { method: this.oneStepTowards135, count: 1 },
-        { method: this.oneStepToLeft, count: 5 },
-        { method: this.oneStepToTop, count: 2 },
-        { method: this.oneStepToRight, count: 5 },
-        { method: this.oneStepTowards45, count: 1 },
-        { method: this.oneStepToTop, count: 5 },
-        { method: this.oneStepToRight, count: 2 },
-        { method: this.oneStepToBottom, count: 5 },
-        { method: this.oneStepTowards315, count: 1 },
-        { method: this.oneStepToRight, count: 5 },
-        { method: this.oneStepToBottom, count: 1 },
-        { method: this.oneStepToLeft, count: 6 }
-      ],
-      "3": [
-        { method: this.oneStepToTop, count: 4 },
-        { method: this.oneStepTowards135, count: 1 },
-        { method: this.oneStepToLeft, count: 5 },
-        { method: this.oneStepToTop, count: 2 },
-        { method: this.oneStepToRight, count: 5 },
-        { method: this.oneStepTowards45, count: 1 },
-        { method: this.oneStepToTop, count: 5 },
-        { method: this.oneStepToRight, count: 2 },
-        { method: this.oneStepToBottom, count: 5 },
-        { method: this.oneStepTowards315, count: 1 },
-        { method: this.oneStepToRight, count: 5 },
-        { method: this.oneStepToBottom, count: 2 },
-        { method: this.oneStepToLeft, count: 5 },
-        { method: this.oneStepTowards225, count: 1 },
-        { method: this.oneStepToBottom, count: 5 },
-        { method: this.oneStepToLeft, count: 1 },
-        { method: this.oneStepToTop, count: 6 }
-      ]
-    };
-
-    const config = pathConfigs[id];
-    if (config) {
-      config.forEach(({ method, count }) => {
-        for (let i = 0; i < count; i++) {
-          this.path.push(method);
+    switch (id) {
+      case "0":
+        console.log("switch is working");
+        for (let i = 0; i < 4; i++) {
+          this.path.push(this.oneStepToRight);
         }
-      });
-    } else {
-      console.error(`Invalid id: ${id}`);
+        this.path.push(this.oneStepTowards45);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        this.path.push(this.oneStepTowards315);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        this.path.push(this.oneStepTowards225);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        this.path.push(this.oneStepTowards135);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        this.path.push(this.oneStepToTop);
+        for (let i = 0; i < 6; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        break;
+      case "1":
+        for (let i = 0; i < 4; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        this.path.push(this.oneStepTowards315);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        this.path.push(this.oneStepTowards225);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        this.path.push(this.oneStepTowards135);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        this.path.push(this.oneStepTowards45);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        this.path.push(this.oneStepToRight);
+        for (let i = 0; i < 6; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        break;
+      case "2":
+        for (let i = 0; i < 4; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        this.path.push(this.oneStepTowards225);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        this.path.push(this.oneStepTowards135);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        this.path.push(this.oneStepTowards45);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        this.path.push(this.oneStepTowards315);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        this.path.push(this.oneStepToBottom);
+        for (let i = 0; i < 6; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        break;
+      case "3":
+        for (let i = 0; i < 4; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        this.path.push(this.oneStepTowards135);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        this.path.push(this.oneStepTowards45);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        for (let i = 0; i < 2; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        this.path.push(this.oneStepTowards315);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToRight);
+        }
+        for (let i = 0; i < 2; i++) this.path.push(this.oneStepToBottom);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToLeft);
+        }
+        this.path.push(this.oneStepTowards225);
+        for (let i = 0; i < 5; i++) {
+          this.path.push(this.oneStepToBottom);
+        }
+        this.path.push(this.oneStepToLeft);
+        for (let i = 0; i < 6; i++) {
+          this.path.push(this.oneStepToTop);
+        }
+        break;
     }
   }
 
   draw() {
-    const scaleFactor = 1.3;
-    const newWidth = 45 * scaleX * scaleFactor;
-    const newHeight = 60 * scaleY * scaleFactor;
-    const offsetX = (newWidth - 50 * scaleX) / 2;
-    const offsetY = (newHeight - 50 * scaleY) / 2;
-
     ctx.drawImage(
       this.image,
-      this.x - offsetX,
-      this.y - offsetY,
-      newWidth,
-      newHeight
+      this.x,
+      this.y,
+      50 / (750 / styleHeight),
+      50 / (750 / styleWidth)
     );
   }
 
-  isOnSafeSquare() {
-    return safeSquares[this.color_id].includes(this.pos);
-  }
-
-  async moveStepByStep(num) {
+  update(num) {
     if (this.pos != -1 && this.pos + num <= 56) {
-      for (let i = 0; i < num; i++) {
-        await this.moveOneStep(this.pos + i);
-        this.redrawAllPieces();
+      for (let i = this.pos; i < this.pos + num; i++) {
+        this.path[i](this.color_id, this.Pid);
+        console.log("hemilo selmon");
       }
       this.pos += num;
       if (this.pos == 56) {
-         window.PLAYERS[this.color_id].incrementWon();
-        this.isPiceReachedHome = true;
-      } else {
-        this.checkForKill();
+        window.PLAYERS[this.color_id].won += 1;
       }
     } else if (num == 6 && this.pos == -1) {
       this.x = homeTilePos[this.color_id][0].x;
       this.y = homeTilePos[this.color_id][0].y;
       this.pos = 0;
-      this.redrawAllPieces();  // New line
-      this.checkForKill();
-    }
-    this.redrawAllPieces();  // New line to ensure final state is correct
-    allPlayerHandler();
-  }
-
-  async moveOneStep(pathIndex) {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        this.clearBoard();  // Clear the entire board
-        this.path[pathIndex](this.color_id, this.Pid);
-        this.redrawAllPieces();  // Redraw all pieces
-        resolve();
-        var piceSound = document.getElementById("piceSound");
-        piceSound.play();
-      }, 200);
-    });
-  }
-
-  clearBoard() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Redraw the static parts of the board here
-    // For example: drawBoard();
-  }
-
-  redrawAllPieces() {
-    for (let playerId in window.PLAYERS) {
-      let player = window.PLAYERS[playerId];
-      for (let pieceId in player.myPieces) {
-        player.myPieces[pieceId].draw();
-      }
     }
   }
-
-  clearPreviousPosition() {
-    const scaleFactor = 1.3;
-    const clearWidth = 45 * scaleX * scaleFactor;
-    const clearHeight = 60 * scaleY * scaleFactor;
-    const clearX = this.x - (clearWidth - 50 * scaleX) / 2;
-    const clearY = this.y - (clearHeight - 50 * scaleY) / 2;
-
-    ctx.clearRect(clearX, clearY, clearWidth, clearHeight);
-  }
-
-  async update(num) {
-    console.log(`Updating piece ${this.Pid} with move ${num}`);
-    this.isPiceReachedHome = false; // Reset flags before update
-    this.isKilled = false;
-    this.isFourPiceReachedHome = false
-    
-    await this.moveStepByStep(num);
-    
-    if (this.pos === 56) {
-      this.isFourPiceReachedHome = true;
-    }
-    
-    console.log(`Piece ${this.Pid} update complete`);
-    return { isFourPiceReachedHome: this.isFourPiceReachedHome, isPiceReachedHome: this.isPiceReachedHome, isKilled: this.isKilled };
-  }
-
-  checkForKill() {
-    if (this.isOnSafeSquare()) return;
-    for (let playerId in window.PLAYERS) {
-      if (playerId !== this.color_id) {
-        let otherPlayer = window.PLAYERS[playerId];
-        for (let pieceId in otherPlayer.myPieces) {
-          let otherPiece = otherPlayer.myPieces[pieceId];
-          if (otherPiece.pos !== -1 && !otherPiece.isOnSafeSquare() &&
-              Math.abs(this.x - otherPiece.x) < 5 * scaleX &&
-              Math.abs(this.y - otherPiece.y) < 5 * scaleY) {
-              otherPiece.kill();
-              this.isKilled = true; // Give an extra turn when piece reaches home      
-          }
-        }
-      }
-    }
-  }
-
 
   oneStepToRight(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
+    window.PLAYERS[id].myPieces[pid].x += 50 / (750 / styleHeight);
+    console.log("to r", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToLeft(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
+    window.PLAYERS[id].myPieces[pid].x -= 50 / (750 / styleHeight);
+    console.log("to l", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToTop(id, pid) {
-    window.PLAYERS[id].myPieces[pid].y -= 50 * scaleY;
+    window.PLAYERS[id].myPieces[pid].y -= 50 / (750 / styleWidth);
+    console.log("to t", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepToBottom(id, pid) {
-    window.PLAYERS[id].myPieces[pid].y += 50 * scaleY;
+    window.PLAYERS[id].myPieces[pid].y += 50 / (750 / styleWidth);
+    console.log("to b", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards45(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
-    window.PLAYERS[id].myPieces[pid].y -= 50 * scaleY;
+    window.PLAYERS[id].myPieces[pid].x += 50 / (750 / styleHeight);
+    window.PLAYERS[id].myPieces[pid].y -= 50 / (750 / styleWidth);
+    console.log("to 45", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards135(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
-    window.PLAYERS[id].myPieces[pid].y -= 50 * scaleY;
+    window.PLAYERS[id].myPieces[pid].x -= 50 / (750 / styleHeight);
+    window.PLAYERS[id].myPieces[pid].y -= 50 / (750 / styleWidth);
+    console.log("to 135", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards225(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x -= 50 * scaleX;
-    window.PLAYERS[id].myPieces[pid].y += 50 * scaleY;
+    window.PLAYERS[id].myPieces[pid].x -= 50 / (750 / styleHeight);
+    window.PLAYERS[id].myPieces[pid].y += 50 / (750 / styleWidth);
+    console.log("to 225", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   oneStepTowards315(id, pid) {
-    window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
-    window.PLAYERS[id].myPieces[pid].y += 50 * scaleY;
+    window.PLAYERS[id].myPieces[pid].x += 50 / (750 / styleHeight);
+    window.PLAYERS[id].myPieces[pid].y += 50 / (750 / styleWidth);
+    console.log("to 315", this.x, this.y, typeof this.x, typeof this.y);
   }
 
   kill() {
