@@ -6,7 +6,6 @@ const cors = require("cors")
 const http = require("http");
 const User = require("./Model/User");
 const server = http.createServer(app);
-const io = require('socket.io')(server);
 const mongoose = require("mongoose");
 const Game = require("./Model/Games");
 const morgan = require('morgan')
@@ -17,6 +16,12 @@ app.use(cookieParser());
 
 
 const {join} = require('path');
+const socketIO = require('socket.io');
+const io = socketIO(server, {
+    cors: {
+    origin: '*'
+}});
+
 
 
 const rootRouter = require('./Routes/rootRouter')
@@ -67,6 +72,7 @@ app.get('/v2', function (req, res) {
 // server.listen(port, () => console.log(`Listening on port ${port}`));
 
 // ----------socket
+
 
 app.use(express.static(join(__dirname, 'public/')));
 app.use(express.urlencoded({ extended: true }));
@@ -301,6 +307,9 @@ let socketTimeout;
 //     }
 // }
 
+const sessions = new Map(); // Store active sessions
+
+
 nsp.on('connection', (socket) => {
     console.log('A User has connected to the game');
     
@@ -311,26 +320,44 @@ nsp.on('connection', (socket) => {
                 rooms[roomCode] = {};
             }
 
-            let existingMember = Object.keys(rooms[roomCode]).find(key => rooms[roomCode][key].sid === socket.id);
-            let member_id;
+            // Check if this socket ID is already associated with a session
+            const existingSession = Array.from(sessions.entries()).find(([_, value]) => value.socketId === socket.id);
+            console.log(existingSession)
 
-            if (existingMember) {
-                member_id = existingMember;
-            } else {
-                member_id = generate_member_id(socket.id, roomCode);
-            }
-            
-            socket.join(roomCode);
-            clearTimeout(socketTimeout)
-            
-            if (member_id !== -1) {
+            if (existingSession) {
+                // User is already connected, allow reconnection
+                let [sessionId, sessionData] = existingSession;
+                let member_id = sessionData.memberId;
+
+                socket.join(roomCode);
+                clearTimeout(socketTimeout);
+
                 cb(Object.keys(rooms[roomCode]), member_id);
-                if (!existingMember) {
-                    socket.to(roomCode).emit('new-user-joined', { id: member_id });
-                }
             } else {
-                console.log('Room is full');
-                socket.emit('room-full');
+                // Check if user is already connected in another tab
+                const sessionId = socket.handshake.headers.cookie; // Assuming session ID is in cookie
+                if (sessions.has(sessionId)) {
+                    // User is trying to connect in another tab
+                    socket.emit('already-connected');
+                    return;
+                }
+
+                // New connection
+                let member_id = generate_member_id(socket.id, roomCode);
+
+                if (member_id !== -1) {
+                    socket.join(roomCode);
+                    clearTimeout(socketTimeout);
+
+                    // Store session information
+                    sessions.set(sessionId, { socketId: socket.id, memberId: member_id });
+
+                    cb(Object.keys(rooms[roomCode]), member_id);
+                    socket.to(roomCode).emit('new-user-joined', { id: member_id });
+                } else {
+                    console.log('Room is full');
+                    socket.emit('room-full');
+                }
             }
         } catch (err) {
             if (err.name === 'TypeError') {
@@ -497,6 +524,10 @@ nsp.on('connection', (socket) => {
 
     socket.on('disconnect', async () => {
         let roomKey = deleteThisId(socket.id);
+        const sessionToRemove = Array.from(sessions.entries()).find(([_, value]) => value.socketId === socket.id);
+        if (sessionToRemove) {
+            sessions.delete(sessionToRemove[0]);
+        }
         if (roomKey) {
             console.log(rooms[roomKey.room], socket.id);
             socket.to(roomKey.room).emit('user-disconnected-popup', roomKey.key);

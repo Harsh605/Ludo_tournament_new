@@ -231,9 +231,6 @@ class Piece {
     this.image = PIECES[this.color_id];
     this.initializePath(id);
     this.isAnimating = false;
-    this.isPiceReachedHome = false; // Reset flags before update
-    this.isKilled = false;
-    this.isFourPiceReachedHome = false
   }
 
   bounceAnimation() {
@@ -265,6 +262,7 @@ class Piece {
         this.isAnimating = false;
       }
     };
+
     animate();
   }
 
@@ -389,7 +387,7 @@ class Piece {
       this.pos += num;
       if (this.pos == 56) {
          window.PLAYERS[this.color_id].incrementWon();
-        this.isPiceReachedHome = true;
+        this.giveExtraTurn();
       } else {
         this.checkForKill();
       }
@@ -442,20 +440,15 @@ class Piece {
     ctx.clearRect(clearX, clearY, clearWidth, clearHeight);
   }
 
+  // update(num) {
+  //   this.moveStepByStep(num);
+  // }
+
   async update(num) {
-    console.log(`Updating piece ${this.Pid} with move ${num}`);
-    this.isPiceReachedHome = false; // Reset flags before update
-    this.isKilled = false;
-    this.isFourPiceReachedHome = false
-    
+    console.log(`Updating piece ${this.id} with move ${num}`);
     await this.moveStepByStep(num);
-    
-    if (this.pos === 56) {
-      this.isFourPiceReachedHome = true;
-    }
-    
-    console.log(`Piece ${this.Pid} update complete`);
-    return { isFourPiceReachedHome: this.isFourPiceReachedHome, isPiceReachedHome: this.isPiceReachedHome, isKilled: this.isKilled };
+    console.log(`Piece ${this.id} update complete`);
+    return this.pos == 56; // Return true if the piece has reached the end
   }
 
   checkForKill() {
@@ -468,14 +461,22 @@ class Piece {
           if (otherPiece.pos !== -1 && !otherPiece.isOnSafeSquare() &&
               Math.abs(this.x - otherPiece.x) < 5 * scaleX &&
               Math.abs(this.y - otherPiece.y) < 5 * scaleY) {
-              otherPiece.kill();
-              this.isKilled = true; // Give an extra turn when piece reaches home      
+            otherPiece.kill();
+            this.giveExtraTurn(); // Give an extra turn when piece reaches home      
           }
         }
       }
     }
   }
 
+  giveExtraTurn() {
+    socket.emit("chance", {
+      room: room_code,
+      nxt_id: chanceRotation(myid, 0),
+    });
+    togglePlayerTurn(false); // Player's turn ends after rolling
+    styleButton(0);
+  }
 
   oneStepToRight(id, pid) {
     window.PLAYERS[id].myPieces[pid].x += 50 * scaleX;
@@ -570,38 +571,38 @@ socket.on("connect", function () {
   socket.on("is-it-your-chance", function (data) {
     clearTimeout(avatarTimeout);
     clearTimeout(diceTimeout);
-  
+
     if (data === myid) {
-      togglePlayerTurn(true);
-      styleButton(1);
-      outputMessage({ Name: "your", id: data }, 4);
-  
-      // Set a timeout for 20 seconds (adjust if needed)
-      diceTimeout = setTimeout(() => {
-        socket.emit("chance", {
-          room: room_code,
-          nxt_id: chanceRotation(myid, 0) // Assuming 0 can be used to indicate no roll
-        });
-        togglePlayerTurn(false); // Player's turn ends after rolling
-        styleButton(0);
-  
-        clearTimeout(avatarTimeout);
-        clearTimeout(diceTimeout);
-  
-        remaningChance -= 1; // Decrement remainingChance
-        localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
-        showRemaningDots();
-        console.log("Timeout reached, next chance");
-      }, 20000); // 20 seconds for this example
+        togglePlayerTurn(true);
+        styleButton(1);
+        outputMessage({ Name: "your", id: data }, 4);
+
+        // Set a timeout for 10 seconds
+        diceTimeout = setTimeout(() => {
+            socket.emit("chance", {
+                room: room_code,
+                nxt_id: chanceRotation(myid, 0) // Assuming 0 can be used to indicate no roll
+            });
+            togglePlayerTurn(false); // Player's turn ends after rolling
+            styleButton(0);
+
+            clearTimeout(avatarTimeout);
+            clearTimeout(diceTimeout);
+
+            remaningChance -= 1; // Decrement remainingChance
+            localStorage.setItem("remaningChance", remaningChance); // Update localStorage with the new value
+            showRemaningDots();
+            console.log("Timeout reached, next chance");
+        }, 20000); // 10 seconds
     } else {
-      outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
-      togglePlayerTurn(false);
+        outputMessage({ Name: USERNAMES[data] + "'s", id: data }, 4);
+        togglePlayerTurn(false);
     }
-  
+
     chance = Number(data);
     window.localStorage.setItem("chance", chance.toString());
-  });
-  
+});
+
 
   socket.on("new-user-joined", function (data) {
     clearTimeout(JoinTimeOut);
@@ -713,36 +714,24 @@ socket.on("connect", function () {
   // });
 
   // Main game logic
-  socket.on("Thrown-dice", async function (data) {
-    console.log(`Handling move for player ${data.id}, piece ${data.pid}, move ${data.num}`);
-
-    const piece = PLAYERS[data.id].myPieces[data.pid];
-    const { isFourPiceReachedHome, isPiceReachedHome, isKilled } = await piece.update(data.num);
-    
-    if (isFourPiceReachedHome) {
-      console.log(`Piece ${data.pid} reached end. Checking if player ${data.id} won.`);
-      if (PLAYERS[data.id].didIwin()) {
-        console.log(`Player ${data.id} has won!`);
-        socket.emit("WON", {
-          room: data.room,
-          id: data.id,
-          player: myid,
-          token: urlParams.get("token"),
-          game_id: urlParams.get("game_id"),
-        });
-      }
+socket.on("Thrown-dice", async function (data) {
+  console.log(`Handling move for player ${data.id}, piece ${data.pid}, move ${data.num}`);
+  const pieceReachedEnd = await PLAYERS[data.id].myPieces[data.pid].update(data.num);
+  
+  if (pieceReachedEnd) {
+    console.log(`Piece ${data.pid} reached end. Checking if player ${data.id} won.`);
+    if (PLAYERS[data.id].didIwin()) {
+      console.log(`Player ${data.id} has won!`);
+      socket.emit("WON", {
+        room: data.room,
+        id: data.id,
+        player: myid,
+        token: urlParams.get("token"),
+        game_id: urlParams.get("game_id"),
+      });
     }
-  
-    // Determine the next player based on whether a piece was killed or not
-  const nextPlayerId = (data.num === 6 || isKilled || isPiceReachedHome ) ? data.id : chanceRotation(data.id, data.num);
-
-    
-    socket.emit("chance", {
-      room: room_code,
-      nxt_id: nextPlayerId,
-    });
-  });
-  
+  }
+})
 
   socket.on("winner", async function (data) {
     //showToast(`you are the winner ${USERNAMES[id]}`);
@@ -893,7 +882,9 @@ function outputMessage(anObject, k) {
           <img  id="isPlayer1" style="" src="../images/avatar/Avatar1.png" alt="">
         </div>    
         <div class="">
-          <span id="color-message-span1" style="color: ${colors[anObject.id]};">${anObject.Name}</span>
+          <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
+            colors[anObject.id]
+          };">${anObject.Name}</span>
           <span id="color-message-span2"></span>
           <img style="width: 15px" src="../images/pieces/${
             colors[anObject.id]
@@ -910,7 +901,9 @@ function outputMessage(anObject, k) {
           <img id="isPlayer2" style="" src="../images/avatar/Avatar6.png" alt="">
         </div>    
         <div class="">
-          <span class="" id="color-message-span1" style="color: ${colors[anObject.id]};">${anObject.Name}</span>
+          <span class="text-white" id="color-message-span1" style="text-shadow: 0 0 4px ${
+            colors[anObject.id]
+          };">${anObject.Name}</span>
           <span id="color-message-span2"></span>
           <img style="width: 15px" src="../images/pieces/${
             colors[anObject.id]
@@ -1103,11 +1096,11 @@ function diceAction() {
               console.log(playerObj);
               socket.emit("random", playerObj, function (data) {
                 styleButton(0);
-                // console.log("random acknowledged");
-                // socket.emit("chance", {
-                //   room: room_code,
-                //   nxt_id: chanceRotation(myid, data),
-                // });
+                console.log("random acknowledged");
+                socket.emit("chance", {
+                  room: room_code,
+                  nxt_id: chanceRotation(myid, data),
+                });
               });
               canvas.removeEventListener("click", clickHandler);
               return;
