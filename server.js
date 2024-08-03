@@ -78,6 +78,8 @@ app.enable('trust proxy');
 let nsp = io.of('/ludo');
 let spectate = io.of('/ludo/spectate');
 let socketTimeout;
+const userSessions = {}; // Track user sessions
+
 
 // nsp.on('connection',(socket)=>{
 //     console.log('A User has connected to the game');
@@ -306,6 +308,20 @@ nsp.on('connection', (socket) => {
     
     socket.on('fetch', (data, cb) => {
         try {
+                    
+            const userId = socket.handshake.query.userId; // Assuming user ID is passed in the query
+
+            console.log("userSessions[userId]", userSessions)
+            // Check if the user is already connected
+            if (userSessions[userId]) {
+                // Disconnect the previous socket
+                socket.emit('already-connected');
+                return;
+            }
+
+            // Update the userSessions object with the new socket
+            userSessions[userId] = socket.id;
+
             let roomCode = data;
             if (!rooms[roomCode]) {
                 rooms[roomCode] = {};
@@ -516,6 +532,10 @@ nsp.on('connection', (socket) => {
 
     socket.on('disconnect', async () => {
         let roomKey = deleteThisId(socket.id);
+        const userId = socket.handshake.query.userId;
+        if (userId) {
+            delete userSessions[userId]; // Remove user session on disconnect
+        }
         if (roomKey) {
             console.log(rooms[roomKey.room], socket.id);
             socket.to(roomKey.room).emit('user-disconnected-popup', roomKey.key);

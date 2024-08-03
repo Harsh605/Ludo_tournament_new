@@ -5,11 +5,15 @@ const urlParams = new URLSearchParams(window.location.search);
 const token = urlParams.get("token");
 const gameId = urlParams.get("game_id");
 
+
 const url = window.location.href;
 const ludoIndex = url.indexOf("/ludo");
 const path = url.substring(ludoIndex, ludoIndex + 5); // "/ludo"
 
-let socket = io(path); // This is your existing socket connection
+
+// let socket = io(socketUrl, {
+//   query: { userId: 'uniqueUserId' } // Add any necessary query parameters here
+// });
 
 let sockets; // This will be our WebSocket connection
 let JoinTimeOut;
@@ -96,6 +100,11 @@ const room_code =
   roomCodeEndIndex !== -1
     ? url.substring(roomCodeStartIndex, roomCodeEndIndex)
     : url.substring(roomCodeStartIndex);
+
+let socket = io(path,{
+      query: { userId:  token} // Add any necessary query parameters here
+    }); // This is your existing socket connection
+    
 
 const USERNAMES = ["Blue", "Green", "Yellow", "Red"];
 const PIECES = [];
