@@ -853,13 +853,13 @@ socket.on("connect", function () {
 
       await sendWebSocketMessage("pageReloadSocketCall");
 
-      socket.emit("Lose", {
-        room: data.room,
-        id: data.id,
-        player: myid,
-        token: urlParams.get("token"),
-        game_id: urlParams.get("game_id"),
-      });
+      // socket.emit("Lose", {
+      //   room: data.room,
+      //   id: data.id,
+      //   player: myid,
+      //   token: urlParams.get("token"),
+      //   game_id: urlParams.get("game_id"),
+      // });
 
       swal({
         title: "Winner",
@@ -1740,13 +1740,13 @@ async function userLose() {
       throw new Error("Network response was not ok");
     }
 
-    socket.emit("Winner", {
-      room: data.room,
-      id: data.id,
-      player: myid,
-      token: urlParams.get("token"),
-      game_id: urlParams.get("game_id"),
-    });
+    // socket.emit("Winner", {
+    //   room: data.room,
+    //   id: data.id,
+    //   player: myid,
+    //   token: urlParams.get("token"),
+    //   game_id: urlParams.get("game_id"),
+    // });
 
     hideLoader();
     await sendWebSocketMessage("pageReloadSocketCall");
